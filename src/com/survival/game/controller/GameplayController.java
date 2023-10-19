@@ -18,7 +18,7 @@ public class GameplayController {
     private final Vector2 myBoundary;
     public GameplayController() {
         gameWorld = new GameWorld();
-        myBoundary = new Vector2(GameScreen.getGameSize().intX() >> 1, GameScreen.getGameSize().intY() >> 1);
+        myBoundary = new Vector2(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         // origin of entity
         myCache = new Vector2(0, 0);
 

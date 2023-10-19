@@ -6,17 +6,38 @@ import com.survival.game.utility.Vector2;
 import java.awt.Color;
 import java.awt.Graphics;
 
+/**
+ * GameObjectRenderer provides functionality to render all kinds of Game objects. This is a
+ * collection of draw functionality to keep models free from directly handling textures.
+ */
 public class GameObjectRenderer extends GameObjectVisitor<Void> {
+    /** The graphics for drawing. */
     private Graphics myGraphics;
+    /** The origin of the screen. */
     private final Vector2 myOrigin;
+
+    /**
+     * Constructor initializing the origin.
+     * @param theOrigin the origin
+     */
     public GameObjectRenderer(final Vector2 theOrigin) {
         myOrigin = new Vector2(theOrigin);
+        myGraphics = null;
     }
 
+    /**
+     * Updates the graphics.
+     * @param theG the graphics
+     */
     public void updateGraphics(final Graphics theG) {
         myGraphics = theG;
     }
 
+    /**
+     * Draws the temporary entity for testing and development.
+     * @param theEntity the TempEntity
+     * @return null
+     */
     @Override
     public Void visit(TempEntity theEntity) {
         int x = myOrigin.intX() + theEntity.getPosition().intX();

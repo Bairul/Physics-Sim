@@ -39,6 +39,7 @@ public abstract class MovableObject extends GameObject {
         myPosition.add(myVelocity);
     }
 
+    @Override
     public void postUpdate() {
         myAcceleration.set(0, 0);
     }

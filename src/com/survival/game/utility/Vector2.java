@@ -1,65 +1,131 @@
 package com.survival.game.utility;
 
+/**
+ * My own vector class.
+ */
 public class Vector2 {
+    /** The x component. */
     private float myX;
+    /** The y component. */
     private float myY;
+
+    /**
+     * Constructs a vector given the x and y component as a float.
+     * @param theX the x (float)
+     * @param theY the y (float)
+     */
     public Vector2(final float theX, final float theY) {
         set(theX, theY);
     }
-    public Vector2(final Vector2 theV) {
-        set(theV.getX(), theV.getY());
-    }
 
+    /**
+     * Constructs a vector given the x and y component as a double.
+     * @param theX the x (double)
+     * @param theY the y (double)
+     */
     public Vector2(final double theX, final double theY) {
         set(theX, theY);
     }
 
+    /**
+     * Constructs a vector given another vector. This copies the x and y components.
+     * @param theV the other vector
+     */
+    public Vector2(final Vector2 theV) {
+        if (theV == null)
+            set(0, 0);
+        else
+            set(theV.getX(), theV.getY());
+    }
+
+    /**
+     * Default constructor when no parameter is given.
+     */
     public Vector2() {
         this(0, 0);
     }
 
     // ============ vector math ============
-    public void add(Vector2 theV) {
+
+    /**
+     * Adds another vector.
+     * @param theV the other vector
+     */
+    public void add(final Vector2 theV) {
         myX += theV.myX;
         myY += theV.myY;
     }
 
-    public void sub(Vector2 theV) {
+    /**
+     * Subtracts another vector.
+     * @param theV the other vector
+     */
+    public void sub(final Vector2 theV) {
         myX -= theV.myX;
         myY -= theV.myY;
     }
 
-    public void mul(float theScalar) {
+    /**
+     * Multiplies by a scalar.
+     * @param theScalar the scalar
+     */
+    public void mul(final float theScalar) {
         myX *= theScalar;
         myY *= theScalar;
     }
 
-    public void div(float theScalar) {
+    /**
+     * Divides by a scalar.
+     * @param theScalar the scalar
+     */
+    public void div(final float theScalar) {
         myX /= theScalar;
         myY /= theScalar;
     }
 
+    /**
+     * Converts this vector to a unit vector.
+     */
     public void normalize() {
-        float mag = getMagnitude();
-        myX /= mag;
-        myY /= mag;
+        div(getMagnitude());
     }
 
+    /**
+     * Gets the magnitude (length to the origin: 0,0) of the vector.
+     * @return the magnitude as a float
+     */
     public float getMagnitude() {
         return (float) Math.sqrt(myX * myX + myY * myY);
     }
 
     // ============ getters ============
+
+    /**
+     * Gets the x component as a float.
+     * @return the x
+     */
     public float getX() { return myX; }
 
+    /**
+     * Gets the y component as a float.
+     * @return the y
+     */
     public float getY() {
         return myY;
     }
 
+    /**
+     * Gets the x component as an int.
+     * @return the x
+     */
     public int intX() {
         return Math.round(myX);
     }
 
+    /**
+     * Gets the y component as an int.
+     * @return the y
+     */
     public int intY() {
         return Math.round(myY);
     }
@@ -67,53 +133,74 @@ public class Vector2 {
     // ============ setters ============
 
     // set floats
+    /**
+     * Sets the x component when given a float.
+     * @param theX the new x (float)
+     */
     public void setX(final float theX) {
         myX = theX;
     }
 
+    /**
+     * Sets the y component when given a float.
+     * @param theY the new y (float)
+     */
     public void setY(final float theY) {
         myY = theY;
     }
 
+    /**
+     * Sets both the x and y components when given floats.
+     * @param theX the new x (float)
+     * @param theY the new y (float)
+     */
     public void set(final float theX, final float theY) {
         setX(theX);
         setY(theY);
     }
 
     // set doubles
+    /**
+     * Sets the x component when given a double.
+     * @param theX the new x (double)
+     */
     public void setX(final double theX) {
         myX = (float) theX;
     }
 
+    /**
+     * Sets the y component when given a double.
+     * @param theY the new y (double)
+     */
     public void setY(final double theY) {
         myY = (float) theY;
     }
 
+    /**
+     * Sets both the x and y components when given doubles.
+     * @param theX the new x (double)
+     * @param theY the new y (double)
+     */
     public void set(final double theX, final double theY) {
         setX(theX);
         setY(theY);
     }
 
     // set vector
+    /**
+     * Sets both the x and y components when given a vector.
+     * @param theV the vector to copy from
+     */
     public void set(final Vector2 theV) {
         set(theV.getX(), theV.getY());
     }
 
+    /**
+     * Returns the current state of the vector as a string.
+     * @return the x and y values in a string
+     */
     @Override
     public String toString() {
         return "(" + myX + ", " + myY + ")";
-    }
-
-    public static void linearInterpolationPoint(final Vector2 theA, final Vector2 theB, final Vector2 theReturnVector) {
-        if (theReturnVector.getX() == 0) {
-            theReturnVector.setX((theB.getX() - theA.getX()) / (theB.getY() - theA.getY()) * (theReturnVector.getY() - theA.getY()) + theA.getX());
-        } else {
-            theReturnVector.setY((theB.getY() - theA.getY()) / (theB.getX() - theA.getX()) * (theReturnVector.getX() - theA.getX()) + theA.getY());
-        }
-    }
-
-    public static float linearInterpolationTime(final Vector2 theA, final Vector2 theB, final Vector2 theBoundary, final float theRadius, final boolean isY) {
-        if (isY) return (theBoundary.getY() - theRadius - theA.getY()) / (theB.getY() - theA.getY());
-        return (theBoundary.getX() + theRadius - theA.getX()) / (theB.getX() - theA.getX());
     }
 }

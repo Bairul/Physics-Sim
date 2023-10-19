@@ -1,5 +1,6 @@
 package com.survival.game.controller;
 
+import com.survival.game.controller.input.Mouse;
 import com.survival.game.utility.Vector2;
 import com.survival.game.view.GameCanvas;
 import com.survival.game.view.GameScreen;
@@ -30,6 +31,8 @@ public final class GameRoot implements  Runnable {
     /** A reusable vector to attempt to save some memory. */
     private final Vector2 myCache;
 
+    private Mouse myMouse;
+
     /**
      * Constructor that initializes the game's rendering.
      */
@@ -40,18 +43,25 @@ public final class GameRoot implements  Runnable {
         // triple buffering
         myGameCanvas.getCanvas().createBufferStrategy(3);
         myBufferStrategy = myGameCanvas.getCanvas().getBufferStrategy();
+        // inputs
+        myMouse = new Mouse();
+        myGameCanvas.getCanvas().addMouseListener(myMouse);
+        myGameCanvas.getCanvas().addMouseMotionListener(myMouse);
+        myGameCanvas.getFrame().addMouseListener(myMouse);
+        myGameCanvas.getFrame().addMouseMotionListener(myMouse);
     }
 
     /**
      * Sets up the current state of the game.
      */
     private void setUp() {
+        // Set Game Origin
         myCache.set(myGameCanvas.getWidth(), myGameCanvas.getHeight());
-        GameScreen.setGameSize(myCache);
-        // Game Origin
         myCache.mul(0.5F);
+        GameScreen.setOrigin(myCache);
+        GameScreen.setCanvas(myGameCanvas);
 
-        myGameplayScreen = new GameplayScreen("GameplayScreen", myCache);
+        myGameplayScreen = new GameplayScreen("GameplayScreen");
         GameScreen.setCurrentScreen(myGameplayScreen);
     }
 

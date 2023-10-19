@@ -15,7 +15,6 @@ public abstract class GameObject {
     public Vector2 getPosition() {
         return myPosition;
     }
-
     public int getRadius() {
         return (int) myRadius;
     }
@@ -27,7 +26,15 @@ public abstract class GameObject {
         myRadius = theRadius;
     }
 
+    /**
+     * Updates the object.
+     */
     public abstract void update();
+
+    /**
+     * Updates the object at the very end. Useful to reset fields.
+     */
+    public abstract void postUpdate();
 
     /**
      * The act of accepting a visitor is to apply the underlying function specified in the visitor

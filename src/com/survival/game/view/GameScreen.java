@@ -4,15 +4,20 @@ import com.survival.game.utility.Vector2;
 
 import java.awt.Graphics;
 
+/**
+ * Functionality of GameScreen should be allowing the switching of screens, i.e. from loading screen to gameplay screen.
+ */
 public abstract class GameScreen {
-    /**
-     * Tracks the current screen that the game is on. It can change to potentially different screens like menu or options.
-     */
+    // static fields
+    /** Tracks the current screen that the game is on. It can change to potentially different screens like menu or options. */
     private static GameScreen myCurrentScreen;
+    /** Size of the screen in case I want to change it. */
+    protected static GameCanvas myCanvas;
+    protected static Vector2 myOrigin;
+
+    // instance fields
     /** The name of the screen. */
     private final String myName;
-    /** Size of the screen in case I want to change it. */
-    protected static Vector2 myGameSize;
 
     /**
      * Constructs a screen.
@@ -23,6 +28,56 @@ public abstract class GameScreen {
         myName = theName;
     }
 
+    // ========= static methods =========
+    /**
+     * Gets the current screen that active.
+     * @return the current screen
+     */
+    public static GameScreen getCurrentScreen() {
+        return myCurrentScreen;
+    }
+
+    /**
+     * Changes the current active screen. Shouldn't change.
+     * @param theCurrentScreen the new screen to change to
+     */
+    public static void setCurrentScreen(final GameScreen theCurrentScreen) {
+        myCurrentScreen = theCurrentScreen;
+    }
+
+    /**
+     * Sets the canvas.
+     * @param theCanvas the game canvas
+     */
+    public static void setCanvas(final GameCanvas theCanvas) {
+        myCanvas = theCanvas;
+    }
+
+    /**
+     * Sets the origin of the screen.
+     * @param theOrigin the origin in a vector
+     */
+    public static void setOrigin(final Vector2 theOrigin) {
+        myOrigin.set(theOrigin);
+    }
+    /**
+     * Gets the width of the screen.
+     * @return the width, but if canvas is not set, it returns 0
+     */
+    public static int getWidth() {
+        if (myCanvas == null) return 0;
+        return myCanvas.getWidth();
+    }
+    /**
+     * Gets the height of the screen.
+     * @return the height, but if canvas is not set, it returns 0
+     */
+    public static int getHeight() {
+        if (myCanvas == null) return 0;
+        return myCanvas.getHeight();
+    }
+
+    // ========= instance methods =========
     /**
      * Gets the name of the screen
      * @return the name of the screen
@@ -45,37 +100,13 @@ public abstract class GameScreen {
     }
 
     /**
-     * Gets the current screen that active.
-     * @return the current screen
+     * Update method.
      */
-    public static GameScreen getCurrentScreen() {
-        return myCurrentScreen;
-    }
-
-    /**
-     * Changes the current active screen.
-     * @param theCurrentScreen the new screen to change to
-     */
-    public static void setCurrentScreen(final GameScreen theCurrentScreen) {
-        myCurrentScreen = theCurrentScreen;
-    }
-
-    /**
-     * Changes the size of the screen.
-     * @param theGameSize a vector with the new size
-     */
-    public static void setGameSize(Vector2 theGameSize) {
-        myGameSize = new Vector2(theGameSize);
-    }
-
-    /**
-     * Gets the size of the screen.
-     * @return
-     */
-    public static Vector2 getGameSize() {
-        return myGameSize;
-    }
-
     public abstract void tick();
+
+    /**
+     * Render method.
+     * @param theG the graphics
+     */
     public abstract void render(final Graphics theG);
 }
