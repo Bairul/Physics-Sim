@@ -4,24 +4,27 @@ import com.survival.game.utility.Vector2;
 import com.survival.game.visitor.GameObjectVisitor;
 
 public abstract class GameObject {
+    private static final int SIZE_SCALE = 20;
     protected Vector2 myPosition;
-    // diameter
-    protected float mySize;
-    public GameObject(final Vector2 thePosition, final float theSize) {
+    protected float myRadius;
+    public GameObject(final Vector2 thePosition, final float theRadius) {
         myPosition = new Vector2(thePosition);
-        mySize = theSize;
+        myRadius = theRadius * SIZE_SCALE;
     }
 
     public Vector2 getPosition() {
         return myPosition;
     }
 
-    public int getSize() {
-        return (int) mySize;
+    public int getRadius() {
+        return (int) myRadius;
+    }
+    public int getDiameter() {
+        return (int) (myRadius * 2);
     }
 
-    public void setSize(float theSize) {
-        mySize = theSize;
+    public void setRadius(float theRadius) {
+        myRadius = theRadius;
     }
 
     public abstract void update();

@@ -22,9 +22,9 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         int x = myOrigin.intX() + theEntity.getPosition().intX();
         int y = myOrigin.intY() + theEntity.getPosition().intY();
         myGraphics.setColor(Color.black);
-        myGraphics.fillOval(x - theEntity.getSize() / 2,y - theEntity.getSize() / 2, theEntity.getSize(), theEntity.getSize());
+        myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
         myGraphics.setColor(Color.yellow);
-        myGraphics.fillOval(x - theEntity.getSize() / 2 + 1,y - theEntity.getSize() / 2 + 1, theEntity.getSize() - 2, theEntity.getSize() - 2);
+        myGraphics.fillOval(x - theEntity.getRadius() + 1,y - theEntity.getRadius() + 1, theEntity.getDiameter() - 2, theEntity.getDiameter() - 2);
         return null;
     }
 }

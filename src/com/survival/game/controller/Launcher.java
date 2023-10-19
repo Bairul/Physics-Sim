@@ -1,5 +1,8 @@
 package com.survival.game.controller;
 
+/**
+ * Class for launching the program.
+ */
 public final class Launcher {
     private Launcher() {}
 

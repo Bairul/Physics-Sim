@@ -4,8 +4,8 @@ import com.survival.game.utility.Vector2;
 import com.survival.game.visitor.GameObjectVisitor;
 
 public class TempEntity extends MovableObject {
-    public TempEntity(Vector2 thePosition, float theSize) {
-        super(thePosition, theSize);
+    public TempEntity(Vector2 thePosition, float theMass) {
+        super(thePosition, theMass);
     }
 
     @Override

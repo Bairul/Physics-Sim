@@ -34,6 +34,11 @@ public class Vector2 {
         myY *= theScalar;
     }
 
+    public void div(float theScalar) {
+        myX /= theScalar;
+        myY /= theScalar;
+    }
+
     public void normalize() {
         float mag = getMagnitude();
         myX /= mag;
