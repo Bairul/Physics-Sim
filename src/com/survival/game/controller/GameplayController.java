@@ -25,20 +25,34 @@ public class GameplayController {
         gameWorld = new GameWorld();
         myBoundary = new Vector2(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         // origin of entity
-        myCache = new Vector2(0, 0);
-        final int initialVelocity = 20;
+        myCache = new Vector2(-250, 0);
+        final int initialVelocity = 30;
 
-        for (int i = 0; i < 2; i++) {
-            // creates new entity with random mass
-            TempEntity te = new TempEntity(myCache, (float) Math.random() * 5 + 1);
-            // sets random initial velocity of entity
-            te.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
-            // cache stores a random x value
-            myCache.setX(Math.random() * myBoundary.getX());
-            te.setLimitVelocity(true, 40);
+        TempEntity te = new TempEntity(myCache, 5);
+        myCache.set(250, 0);
+        TempEntity te2 = new TempEntity(myCache, 5);
+        myCache.set(0, -200);
+        TempEntity te3 = new TempEntity(myCache, 5);
 
-            gameWorld.addGameObject(te);
-        }
+        te.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
+        te2.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
+        te3.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
+
+        gameWorld.addGameObject(te);
+        gameWorld.addGameObject(te2);
+        gameWorld.addGameObject(te3);
+
+//        for (int i = 0; i < 2; i++) {
+//            // creates new entity with random mass
+//            TempEntity te = new TempEntity(myCache, (float) Math.random() * 5 + 1);
+//            // sets random initial velocity of entity
+//            te.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
+//            // cache stores a random x value
+//            myCache.setX(Math.random() * myBoundary.getX());
+//            te.setLimitVelocity(true, 40);
+//
+//            gameWorld.addGameObject(te);
+//        }
     }
 
     /**
