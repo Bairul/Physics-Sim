@@ -7,16 +7,15 @@ public abstract class MovableObject extends GameObject {
     protected final Vector2 myVelocity;
     protected final Vector2 myAcceleration;
     private final Vector2 myCache;
-    private final float myMass;
     private boolean limitVelocity;
     private float myVelocityLimit;
 
     public MovableObject(Vector2 thePosition, float theMass) {
-        super(thePosition, (float) Math.sqrt(theMass));
+        super(thePosition, theMass);
         myVelocity = new Vector2();
         myAcceleration = new Vector2();
         myCache = new Vector2();
-        myMass = theMass;
+        limitVelocity = false;
     }
 
     public void applyImpulse(final Vector2 theForce, final float theTime) {
@@ -25,6 +24,7 @@ public abstract class MovableObject extends GameObject {
         myCache.set(theForce);
         myCache.div(myMass);
 
+        // P = F * dT
         myCache.mul(theTime);
         myAcceleration.add(myCache);
     }
@@ -35,7 +35,16 @@ public abstract class MovableObject extends GameObject {
     }
 
     public void move() {
-        myVelocity.add(myAcceleration);
+        if (limitVelocity) {
+            myCache.set(myVelocity);
+            myCache.add(myAcceleration);
+            float mag = myCache.getMagnitude();
+            if (mag < myVelocityLimit || Math.signum(mag) != Math.signum(myAcceleration.getMagnitude())) {
+                myVelocity.add(myAcceleration);
+            }
+        } else {
+            myVelocity.add(myAcceleration);
+        }
         myPosition.add(myVelocity);
     }
 

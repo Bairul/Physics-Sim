@@ -7,13 +7,18 @@ public abstract class GameObject {
     private static final int SIZE_SCALE = 20;
     protected Vector2 myPosition;
     protected float myRadius;
-    public GameObject(final Vector2 thePosition, final float theRadius) {
+    protected float myMass;
+    public GameObject(final Vector2 thePosition, final float theMass) {
         myPosition = new Vector2(thePosition);
-        myRadius = theRadius * SIZE_SCALE;
+        myMass = theMass;
+        myRadius = (float) Math.sqrt(theMass) * SIZE_SCALE;
     }
 
     public Vector2 getPosition() {
         return myPosition;
+    }
+    public float getMass() {
+        return myMass;
     }
     public int getRadius() {
         return (int) myRadius;

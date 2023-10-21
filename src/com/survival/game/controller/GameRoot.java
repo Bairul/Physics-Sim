@@ -1,5 +1,6 @@
 package com.survival.game.controller;
 
+import com.survival.game.controller.input.InputController;
 import com.survival.game.controller.input.Mouse;
 import com.survival.game.utility.Vector2;
 import com.survival.game.view.GameCanvas;
@@ -31,8 +32,6 @@ public final class GameRoot implements  Runnable {
     /** A reusable vector to attempt to save some memory. */
     private final Vector2 myCache;
 
-    private Mouse myMouse;
-
     /**
      * Constructor that initializes the game's rendering.
      */
@@ -43,12 +42,6 @@ public final class GameRoot implements  Runnable {
         // triple buffering
         myGameCanvas.getCanvas().createBufferStrategy(3);
         myBufferStrategy = myGameCanvas.getCanvas().getBufferStrategy();
-        // inputs
-        myMouse = new Mouse();
-        myGameCanvas.getCanvas().addMouseListener(myMouse);
-        myGameCanvas.getCanvas().addMouseMotionListener(myMouse);
-        myGameCanvas.getFrame().addMouseListener(myMouse);
-        myGameCanvas.getFrame().addMouseMotionListener(myMouse);
     }
 
     /**

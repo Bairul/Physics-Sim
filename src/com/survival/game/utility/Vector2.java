@@ -91,6 +91,15 @@ public class Vector2 {
     }
 
     /**
+     * Computes the dot product between 2 vecotrs.
+     * @param theOther the other vector to take the dot product of
+     * @return the dot product
+     */
+    public float dotProduct(final Vector2 theOther) {
+        return myX * theOther.myX + myY * theOther.myY;
+    }
+
+    /**
      * Gets the magnitude (length to the origin: 0,0) of the vector.
      * @return the magnitude as a float
      */

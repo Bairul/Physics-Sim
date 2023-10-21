@@ -1,9 +1,12 @@
 package com.survival.game.controller;
 
+import com.survival.game.controller.input.ClickType;
+import com.survival.game.controller.input.InputController;
 import com.survival.game.model.GameObject;
 import com.survival.game.model.GameWorld;
 import com.survival.game.model.MovableObject;
 import com.survival.game.model.TempEntity;
+import com.survival.game.utility.CheckCollide;
 import com.survival.game.utility.Vector2;
 import com.survival.game.view.GameScreen;
 
@@ -15,20 +18,24 @@ public class GameplayController {
     /** A reusable vector to save some memory. */
     private Vector2 myCache;
     /** The boundary of the screen. */
+    private final InputController myInputs;
     private final Vector2 myBoundary;
-    public GameplayController() {
+    public GameplayController(final InputController theInput) {
+        myInputs = theInput;
         gameWorld = new GameWorld();
         myBoundary = new Vector2(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         // origin of entity
         myCache = new Vector2(0, 0);
+        final int initialVelocity = 20;
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             // creates new entity with random mass
             TempEntity te = new TempEntity(myCache, (float) Math.random() * 5 + 1);
             // sets random initial velocity of entity
-            te.getVelocity().set(Math.random() * 10 - 5, Math.random() * 10 - 5);
+            te.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
             // cache stores a random x value
             myCache.setX(Math.random() * myBoundary.getX());
+            te.setLimitVelocity(true, 40);
 
             gameWorld.addGameObject(te);
         }
@@ -43,13 +50,18 @@ public class GameplayController {
             for (GameObject go : gameWorld.getObjects()) {
                 if (go instanceof MovableObject) {
                     MovableObject mo = (MovableObject) go;
-                    // gravity
-//                    myCache.set(0, 0.3);
-//                    mo.applyImpulse(myCache, 1);
+
+                    // horizontal wind (applied when mouse is pressed)
+//                    if (myInputs.getMouse().getButton() == ClickType.LeftClick) {
+//                        myCache.set(2, 0);
+//                        mo.applyImpulse(myCache, 1);
+//                    }
                     bounceOfWall(mo);
                 }
                 go.update();
             }
+
+            CheckCollide.checkForCollisions(gameWorld.getObjects(), myCache);
         }
     }
 

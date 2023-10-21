@@ -58,7 +58,7 @@ public abstract class GameScreen {
      * @param theOrigin the origin in a vector
      */
     public static void setOrigin(final Vector2 theOrigin) {
-        myOrigin.set(theOrigin);
+        myOrigin = new Vector2(theOrigin);
     }
     /**
      * Gets the width of the screen.

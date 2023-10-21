@@ -1,6 +1,7 @@
 package com.survival.game.view;
 
 import com.survival.game.controller.GameplayController;
+import com.survival.game.controller.input.InputController;
 import com.survival.game.utility.Vector2;
 import com.survival.game.visitor.GameObjectRenderer;
 
@@ -23,7 +24,7 @@ public class GameplayScreen extends GameScreen {
     public GameplayScreen(final String theName) {
         super(theName);
 
-        myGameplayController = new GameplayController();
+        myGameplayController = new GameplayController(new InputController(myCanvas));
         myRenderer = new GameObjectRenderer(myOrigin);
     }
 
