@@ -43,11 +43,11 @@ public class Mouse implements MouseListener, MouseMotionListener {
      * @return true if left click is lifted, and false otherwise
      */
     public boolean isLeftLifted() {
-        if (isLeftLifted) {
-            isLeftLifted = false;
-            return true;
-        }
-        return false;
+        return isLeftLifted;
+    }
+
+    public void offLeftLifted() {
+        isLeftLifted = false;
     }
 
     // mouse motion listener implemented methods
@@ -86,7 +86,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
     @Override
     public void mouseReleased(final MouseEvent theE) {
         myButton = -1;
-        if (theE.getButton() == MouseEvent.BUTTON3)
+        if (theE.getButton() == MouseEvent.BUTTON1)
             isLeftLifted = true;
     }
 

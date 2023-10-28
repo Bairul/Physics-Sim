@@ -86,7 +86,7 @@ public class Vector2 {
     /**
      * Converts this vector to a unit vector.
      */
-    public void normalize() {
+    public void unit() {
         div(getMagnitude());
     }
 

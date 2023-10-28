@@ -46,6 +46,8 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
         myGraphics.setColor(Color.yellow);
         myGraphics.fillOval(x - theEntity.getRadius() + 1,y - theEntity.getRadius() + 1, theEntity.getDiameter() - 2, theEntity.getDiameter() - 2);
+//        myGraphics.setColor(Color.black);
+//        myGraphics.drawLine(x, y, theEntity.getVelocity().intX() + x, theEntity.getVelocity().intY() + y);
         return null;
     }
 }

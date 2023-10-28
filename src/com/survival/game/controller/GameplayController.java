@@ -26,33 +26,31 @@ public class GameplayController {
         myBoundary = new Vector2(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         // origin of entity
         myCache = new Vector2(-250, 0);
-        final int initialVelocity = 30;
+        final int initialVelocity = 20;
 
-        TempEntity te = new TempEntity(myCache, 5);
+        TempEntity te = new TempEntity(myCache, 3);
         myCache.set(250, 0);
-        TempEntity te2 = new TempEntity(myCache, 5);
+        TempEntity te2 = new TempEntity(myCache, 6);
         myCache.set(0, -200);
-        TempEntity te3 = new TempEntity(myCache, 5);
+        TempEntity te3 = new TempEntity(myCache, 10);
 
         te.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
         te2.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
         te3.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
 
+//        te.getVelocity().set(-18.48703, -19.09471);
+//        te2.getVelocity().set(6.1653986, 13.285335);
+//        te3.getVelocity().set(1.1543714, -16.001493);
+
         gameWorld.addGameObject(te);
         gameWorld.addGameObject(te2);
         gameWorld.addGameObject(te3);
 
-//        for (int i = 0; i < 2; i++) {
-//            // creates new entity with random mass
-//            TempEntity te = new TempEntity(myCache, (float) Math.random() * 5 + 1);
-//            // sets random initial velocity of entity
-//            te.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
-//            // cache stores a random x value
-//            myCache.setX(Math.random() * myBoundary.getX());
-//            te.setLimitVelocity(true, 40);
-//
-//            gameWorld.addGameObject(te);
-//        }
+        System.out.println("Initial Velocity Conditions:\nLeft: " + te.getVelocity() + "\nRight: " + te2.getVelocity() + "\nTop: " + te3.getVelocity());
+        // bug happens at these conditions
+//        Left: (-18.48703, -19.09471)
+//        Right: (6.1653986, 13.285335)
+//        Top: (1.1543714, -16.001493)
     }
 
     /**
@@ -72,10 +70,12 @@ public class GameplayController {
 //                    }
                     bounceOfWall(mo);
                 }
+
                 go.update();
             }
-
             CheckCollide.checkForCollisions(gameWorld.getObjects(), myCache);
+
+            myInputs.getMouse().offLeftLifted();
         }
     }
 
@@ -96,6 +96,7 @@ public class GameplayController {
             theMO.getVelocity().setY(theMO.getVelocity().getY() * -1);
         }
         myBoundary.set(myBoundary.getX() + theMO.getRadius(), myBoundary.getY() + theMO.getRadius());
+
     }
 
     /**
