@@ -24,7 +24,7 @@ public class GameplayScreen extends GameScreen {
     public GameplayScreen(final String theName) {
         super(theName);
 
-        myGameplayController = new GameplayController(new InputController(myCanvas));
+        myGameplayController = new GameplayController(new InputController(myCanvas, myOrigin));
         myRenderer = new GameObjectRenderer(myOrigin);
     }
 

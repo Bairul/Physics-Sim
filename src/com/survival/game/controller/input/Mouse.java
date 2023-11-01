@@ -10,6 +10,7 @@ import java.awt.event.MouseMotionListener;
  * Class for mouse input.
  */
 public class Mouse implements MouseListener, MouseMotionListener {
+    private final Vector2 myOrigin;
     /** The X and Y coordinate of the mouse. */
     private final Vector2 myPosition;
     /** The button on the mouse that was pressed. */
@@ -20,10 +21,19 @@ public class Mouse implements MouseListener, MouseMotionListener {
     /**
      * Constructor for mouse.
      */
-    public Mouse() {
+    public Mouse(final Vector2 theOrigin) {
         myPosition = new Vector2();
+        myOrigin = new Vector2(theOrigin);
         myButton = -1;
         isLeftLifted = false;
+    }
+
+    /**
+     * Returns the mouse position.
+     * @return the position in a vector
+     */
+    public Vector2 getPos() {
+        return myPosition;
     }
 
     /**
@@ -57,7 +67,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
      */
     @Override
     public void mouseDragged(final MouseEvent theE) {
-        myPosition.set(theE.getX(), theE.getY());
+        myPosition.set(theE.getX() - myOrigin.getX(), theE.getY() - myOrigin.getY());
     }
 
     /**
@@ -66,7 +76,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
      */
     @Override
     public void mouseMoved(final MouseEvent theE) {
-        myPosition.set(theE.getX(), theE.getY());
+        myPosition.set(theE.getX() - myOrigin.getX(), theE.getY() - myOrigin.getY());
     }
 
     // mouse listener implemented methods

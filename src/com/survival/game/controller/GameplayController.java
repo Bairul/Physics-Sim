@@ -13,6 +13,7 @@ import com.survival.game.view.GameScreen;
 import java.util.List;
 
 public class GameplayController {
+    private static final int myInitialVelocity = 30;
     /** World that holds entities and other stuff. */
     private GameWorld gameWorld;
     /** A reusable vector to save some memory. */
@@ -25,32 +26,9 @@ public class GameplayController {
         gameWorld = new GameWorld();
         myBoundary = new Vector2(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         // origin of entity
-        myCache = new Vector2(-250, 0);
-        final int initialVelocity = 20;
+        myCache = new Vector2();
 
-        TempEntity te = new TempEntity(myCache, 3);
-        myCache.set(250, 0);
-        TempEntity te2 = new TempEntity(myCache, 6);
-        myCache.set(0, -200);
-        TempEntity te3 = new TempEntity(myCache, 10);
-
-        te.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
-        te2.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
-        te3.getVelocity().set(Math.random() * initialVelocity - (initialVelocity >> 1), Math.random() * initialVelocity - (initialVelocity >> 1));
-
-//        te.getVelocity().set(-18.48703, -19.09471);
-//        te2.getVelocity().set(6.1653986, 13.285335);
-//        te3.getVelocity().set(1.1543714, -16.001493);
-
-        gameWorld.addGameObject(te);
-        gameWorld.addGameObject(te2);
-        gameWorld.addGameObject(te3);
-
-        System.out.println("Initial Velocity Conditions:\nLeft: " + te.getVelocity() + "\nRight: " + te2.getVelocity() + "\nTop: " + te3.getVelocity());
-        // bug happens at these conditions
-//        Left: (-18.48703, -19.09471)
-//        Right: (6.1653986, 13.285335)
-//        Top: (1.1543714, -16.001493)
+        // System.out.println("Initial Velocity Conditions:\nLeft: " + te.getVelocity() + "\nRight: " + te2.getVelocity() + "\nTop: " + te3.getVelocity());
     }
 
     /**
@@ -58,24 +36,30 @@ public class GameplayController {
      *
      */
     public void update() {
+        // add object with mouse click
+        if (myInputs.getMouse().isLeftLifted()) {
+            myCache.set(myInputs.getMousePos());
+            TempEntity te = new TempEntity(myCache, 2);
+            te.getVelocity().set(2, 0);
+//            te.getVelocity().set(Math.random() * myInitialVelocity - (myInitialVelocity >> 1), Math.random() * myInitialVelocity - (myInitialVelocity >> 1));
+            gameWorld.addGameObject(te);
+            myInputs.getMouse().offLeftLifted();
+        }
+
         if (gameWorld.getObjects() != null) {
             for (GameObject go : gameWorld.getObjects()) {
                 if (go instanceof MovableObject) {
                     MovableObject mo = (MovableObject) go;
-
-                    // horizontal wind (applied when mouse is pressed)
-//                    if (myInputs.getMouse().getButton() == ClickType.LeftClick) {
-//                        myCache.set(2, 0);
-//                        mo.applyImpulse(myCache, 1);
-//                    }
-                    bounceOfWall(mo);
+                    myCache.set(0, 1);
+                    mo.applyImpulse(myCache, 1);
+                    constraintOnWall(mo);
                 }
 
                 go.update();
             }
             CheckCollide.checkForCollisions(gameWorld.getObjects(), myCache);
 
-            myInputs.getMouse().offLeftLifted();
+
         }
     }
 
@@ -97,6 +81,32 @@ public class GameplayController {
         }
         myBoundary.set(myBoundary.getX() + theMO.getRadius(), myBoundary.getY() + theMO.getRadius());
 
+    }
+
+    private void constraintOnWall(final MovableObject theMO) {
+        myBoundary.set(myBoundary.getX() - theMO.getRadius(), myBoundary.getY() - theMO.getRadius());
+        if (Math.abs(theMO.getPosition().getX()) >= myBoundary.getX()) {
+            theMO.getPosition().setX(myBoundary.getX() * Math.signum(theMO.getPosition().getX()));
+            // y velocity is 0
+            theMO.getVelocity().setX(0);
+
+            // apply equal and opposite force
+//            myCache.set(theMO.getAcceleration());
+//            myCache.mul(theMO.getMass() * -1);
+//            theMO.applyImpulse(myCache, 1);
+        }
+        if (Math.abs(theMO.getPosition().getY()) >= myBoundary.getY()) {
+            // push the ball back to the screen
+            theMO.getPosition().setY(myBoundary.getY() * Math.signum(theMO.getPosition().getY()));
+            // y velocity is 0
+            theMO.getVelocity().setY(0);
+
+            // apply equal and opposite force
+            myCache.set(theMO.getAcceleration());
+            myCache.mul(theMO.getMass() * -1);
+            theMO.applyImpulse(myCache, 1);
+        }
+        myBoundary.set(myBoundary.getX() + theMO.getRadius(), myBoundary.getY() + theMO.getRadius());
     }
 
     /**
