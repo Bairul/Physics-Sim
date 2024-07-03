@@ -1,7 +1,5 @@
 package com.survival.game.controller;
 
-import com.survival.game.controller.input.InputController;
-import com.survival.game.controller.input.Mouse;
 import com.survival.game.utility.Vector2;
 import com.survival.game.view.GameCanvas;
 import com.survival.game.view.GameScreen;

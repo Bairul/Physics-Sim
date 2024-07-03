@@ -6,6 +6,7 @@ import com.survival.game.model.MovableObject;
 import java.util.List;
 
 public final class CheckCollide {
+    /*
     private static final Vector2 myCacheVector = new Vector2();
     private CheckCollide() {}
 
@@ -72,4 +73,6 @@ public final class CheckCollide {
             }
         }
     }
+
+     */
 }

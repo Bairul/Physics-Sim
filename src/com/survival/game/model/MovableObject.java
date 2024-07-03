@@ -3,7 +3,7 @@ package com.survival.game.model;
 import com.survival.game.utility.Vector2;
 
 /**
- * Class for moving objects. This uses Euler's integration
+ * Class for moving objects. This uses Semi-Implicit Euler integration
  */
 public abstract class MovableObject extends GameObject {
     /** The velocity vector. */
@@ -31,7 +31,7 @@ public abstract class MovableObject extends GameObject {
      * @param theForce the force as a vector to apply
      * @param theTime the time that the force is applied over
      */
-    public void applyImpulse(final Vector2 theForce, final float theTime) {
+    public void applyImpulse(final Vector2 theForce, final double theTime) {
         // F = MA
         // A = F / M
         myCache.set(theForce);
@@ -43,7 +43,7 @@ public abstract class MovableObject extends GameObject {
     }
 
     /**
-     * Moves using Euler's integration. Not the best method but it's the simplest to start off.
+     * Moves using Semi-Implicit Euler integration. Not the best method but it's the simplest to start off.
      */
     public void move() {
         myVelocity.add(myAcceleration);

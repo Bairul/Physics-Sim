@@ -5,18 +5,9 @@ package com.survival.game.utility;
  */
 public class Vector2 {
     /** The x component. */
-    private float myX;
+    private double myX;
     /** The y component. */
-    private float myY;
-
-    /**
-     * Constructs a vector given the x and y component as a float.
-     * @param theX the x (float)
-     * @param theY the y (float)
-     */
-    public Vector2(final float theX, final float theY) {
-        set(theX, theY);
-    }
+    private double myY;
 
     /**
      * Constructs a vector given the x and y component as a double.
@@ -69,7 +60,7 @@ public class Vector2 {
      * Multiplies by a scalar.
      * @param theScalar the scalar
      */
-    public void mul(final float theScalar) {
+    public void mul(final double theScalar) {
         myX *= theScalar;
         myY *= theScalar;
     }
@@ -78,7 +69,7 @@ public class Vector2 {
      * Divides by a scalar.
      * @param theScalar the scalar
      */
-    public void div(final float theScalar) {
+    public void div(final double theScalar) {
         myX /= theScalar;
         myY /= theScalar;
     }
@@ -90,12 +81,58 @@ public class Vector2 {
         div(getMagnitude());
     }
 
+    // === vector math with return ===
+
     /**
-     * Computes the dot product between 2 vecotrs.
+     * Adds another vector to this vector. This vector remains unaffected.
+     * @param theV the other vector
+     * @return the sum of the 2 vectors
+     */
+    public Vector2 addNew(final Vector2 theV) {
+        return new Vector2(myX + theV.myX, myY + theV.myY);
+    }
+
+    /**
+     * Subtracts another vector to this vector. This vector remains unaffected.
+     * @param theV the other vector
+     * @return the difference of the 2 vectors
+     */
+    public Vector2 subNew(final Vector2 theV) {
+        return new Vector2(myX - theV.myX, myY - theV.myY);
+    }
+
+    /**
+     * Multiplies by a scalar to this vector. This vector remains unaffected.
+     * @param theScalar the scalar
+     * @return the scalar product
+     */
+    public Vector2 mulNew(final double theScalar) {
+        return new Vector2(myX * theScalar, myY * theScalar);
+    }
+
+    /**
+     * Divides by a scalar to this vector. This vector remains unaffected.
+     * @param theScalar the scalar
+     * @return the scalar quotient
+     */
+    public Vector2 divNew(final double theScalar) {
+        return new Vector2(myX / theScalar, myY / theScalar);
+    }
+
+    /**
+     * Converts this vector to a unit vector. This vector remains unaffected.
+     * @return the unit vector
+     */
+    public Vector2 unitNew() {
+        return divNew(getMagnitude());
+    }
+
+    /**
+     * Computes the dot product between 2 vectors.
      * @param theOther the other vector to take the dot product of
      * @return the dot product
      */
-    public float dotProduct(final Vector2 theOther) {
+    public double dotProduct(final Vector2 theOther) {
         return myX * theOther.myX + myY * theOther.myY;
     }
 
@@ -103,7 +140,7 @@ public class Vector2 {
      * Gets the magnitude (length to the origin: 0,0) of the vector.
      * @return the magnitude as a float
      */
-    public float getMagnitude() {
+    public double getMagnitude() {
         return (float) Math.sqrt(myX * myX + myY * myY);
     }
 
@@ -111,32 +148,32 @@ public class Vector2 {
 
     /**
      * Gets the x component as a float.
-     * @return the x
+     * @return the x (float)
      */
-    public float getX() { return myX; }
+    public double getX() { return myX; }
 
     /**
      * Gets the y component as a float.
-     * @return the y
+     * @return the y (float)
      */
-    public float getY() {
+    public double getY() {
         return myY;
     }
 
     /**
      * Gets the x component as an int.
-     * @return the x
+     * @return the x (int)
      */
     public int intX() {
-        return Math.round(myX);
+        return Math.round((float) myX);
     }
 
     /**
      * Gets the y component as an int.
-     * @return the y
+     * @return the y (int)
      */
     public int intY() {
-        return Math.round(myY);
+        return Math.round((float) myY);
     }
 
     // ============ setters ============
@@ -146,7 +183,7 @@ public class Vector2 {
      * Sets the x component when given a float.
      * @param theX the new x (float)
      */
-    public void setX(final float theX) {
+    public void setX(final double theX) {
         myX = theX;
     }
 
@@ -154,7 +191,7 @@ public class Vector2 {
      * Sets the y component when given a float.
      * @param theY the new y (float)
      */
-    public void setY(final float theY) {
+    public void setY(final double theY) {
         myY = theY;
     }
 
@@ -162,33 +199,6 @@ public class Vector2 {
      * Sets both the x and y components when given floats.
      * @param theX the new x (float)
      * @param theY the new y (float)
-     */
-    public void set(final float theX, final float theY) {
-        setX(theX);
-        setY(theY);
-    }
-
-    // set doubles
-    /**
-     * Sets the x component when given a double.
-     * @param theX the new x (double)
-     */
-    public void setX(final double theX) {
-        myX = (float) theX;
-    }
-
-    /**
-     * Sets the y component when given a double.
-     * @param theY the new y (double)
-     */
-    public void setY(final double theY) {
-        myY = (float) theY;
-    }
-
-    /**
-     * Sets both the x and y components when given doubles.
-     * @param theX the new x (double)
-     * @param theY the new y (double)
      */
     public void set(final double theX, final double theY) {
         setX(theX);

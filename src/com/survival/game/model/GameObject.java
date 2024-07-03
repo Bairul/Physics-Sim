@@ -8,7 +8,7 @@ import com.survival.game.visitor.GameObjectVisitor;
  */
 public abstract class GameObject {
     /** Constant for the sizing. */
-    private static final int SIZE_SCALE = 20;
+    private static final int SIZE_SCALE = 4;
     /** The position vector. */
     protected Vector2 myPosition;
     /** The radius of the object. */

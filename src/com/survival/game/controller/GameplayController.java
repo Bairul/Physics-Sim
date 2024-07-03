@@ -39,8 +39,8 @@ public class GameplayController {
         // add object with mouse click
         if (myInputs.getMouse().isLeftLifted()) {
             myCache.set(myInputs.getMousePos());
-            TempEntity te = new TempEntity(myCache, 2);
-            te.getVelocity().set(2, 0);
+            TempEntity te = new TempEntity(myCache, 20);
+//            te.getVelocity().set(2, 0);
 //            te.getVelocity().set(Math.random() * myInitialVelocity - (myInitialVelocity >> 1), Math.random() * myInitialVelocity - (myInitialVelocity >> 1));
             gameWorld.addGameObject(te);
             myInputs.getMouse().offLeftLifted();
@@ -51,15 +51,13 @@ public class GameplayController {
                 if (go instanceof MovableObject) {
                     MovableObject mo = (MovableObject) go;
                     myCache.set(0, 1);
+                    // gravity
                     mo.applyImpulse(myCache, 1);
-                    constraintOnWall(mo);
+                    bounceOfWall(mo);
                 }
-
                 go.update();
             }
-            CheckCollide.checkForCollisions(gameWorld.getObjects(), myCache);
-
-
+//            CheckCollide.checkForCollisions(gameWorld.getObjects(), myCache);
         }
     }
 
@@ -78,33 +76,6 @@ public class GameplayController {
         if (Math.abs(theMO.getPosition().getY()) > myBoundary.getY()) {
             theMO.getPosition().setY(myBoundary.getY() * Math.signum(theMO.getPosition().getY()));
             theMO.getVelocity().setY(theMO.getVelocity().getY() * -1);
-        }
-        myBoundary.set(myBoundary.getX() + theMO.getRadius(), myBoundary.getY() + theMO.getRadius());
-
-    }
-
-    private void constraintOnWall(final MovableObject theMO) {
-        myBoundary.set(myBoundary.getX() - theMO.getRadius(), myBoundary.getY() - theMO.getRadius());
-        if (Math.abs(theMO.getPosition().getX()) >= myBoundary.getX()) {
-            theMO.getPosition().setX(myBoundary.getX() * Math.signum(theMO.getPosition().getX()));
-            // y velocity is 0
-            theMO.getVelocity().setX(0);
-
-            // apply equal and opposite force
-//            myCache.set(theMO.getAcceleration());
-//            myCache.mul(theMO.getMass() * -1);
-//            theMO.applyImpulse(myCache, 1);
-        }
-        if (Math.abs(theMO.getPosition().getY()) >= myBoundary.getY()) {
-            // push the ball back to the screen
-            theMO.getPosition().setY(myBoundary.getY() * Math.signum(theMO.getPosition().getY()));
-            // y velocity is 0
-            theMO.getVelocity().setY(0);
-
-            // apply equal and opposite force
-            myCache.set(theMO.getAcceleration());
-            myCache.mul(theMO.getMass() * -1);
-            theMO.applyImpulse(myCache, 1);
         }
         myBoundary.set(myBoundary.getX() + theMO.getRadius(), myBoundary.getY() + theMO.getRadius());
     }
