@@ -3,6 +3,7 @@ package com.physicsim.game.visitor;
 import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.VerletPoint;
 import com.physicsim.game.model.VerletStick;
+import com.physicsim.game.model.mesh.VerletBox;
 
 /**
  * A (GameObject) visitor implements a function F for which objects belonging to the GameObject
@@ -27,6 +28,9 @@ public abstract class GameObjectVisitor<V> {
         return visit((GameObject) theEntity);
     }
     public V visit(final VerletStick theEntity) {
+        return visit((GameObject) theEntity);
+    }
+    public V visit(final VerletBox theEntity) {
         return visit((GameObject) theEntity);
     }
 }

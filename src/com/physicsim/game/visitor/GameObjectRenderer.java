@@ -2,6 +2,7 @@ package com.physicsim.game.visitor;
 
 import com.physicsim.game.model.VerletPoint;
 import com.physicsim.game.model.VerletStick;
+import com.physicsim.game.model.mesh.VerletBox;
 import com.physicsim.game.utility.Vector2;
 
 import java.awt.Color;
@@ -51,13 +52,24 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     }
 
     @Override
-    public Void visit(VerletStick theEntity) {
+    public Void visit(final VerletStick theEntity) {
         int x = myOrigin.intX() + theEntity.getPoint1().getPosition().intX();
         int y = myOrigin.intY() + theEntity.getPoint1().getPosition().intY();
         int x2 = myOrigin.intX() + theEntity.getPoint2().getPosition().intX();
         int y2 = myOrigin.intY() + theEntity.getPoint2().getPosition().intY();
         myGraphics.setColor(Color.black);
         myGraphics.drawLine(x, y, x2, y2);
+        return null;
+    }
+
+    @Override
+    public Void visit(final VerletBox theEntity) {
+        for (VerletStick s : theEntity.getEdges()) {
+            s.accept(this);
+        }
+        for (VerletPoint p : theEntity.getVertices()) {
+            p.accept(this);
+        }
         return null;
     }
 }
