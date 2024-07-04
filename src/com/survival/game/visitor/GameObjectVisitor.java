@@ -1,7 +1,6 @@
 package com.survival.game.visitor;
 
 import com.survival.game.model.GameObject;
-import com.survival.game.model.TempEntity;
 import com.survival.game.model.VerletEntity;
 
 /**
@@ -22,10 +21,6 @@ import com.survival.game.model.VerletEntity;
 public abstract class GameObjectVisitor<V> {
     public V visit(final GameObject theDefault) {
         return null;
-    }
-
-    public V visit(final TempEntity theEntity) {
-        return visit((GameObject) theEntity);
     }
     public V visit(final VerletEntity theEntity) {
         return visit((GameObject) theEntity);

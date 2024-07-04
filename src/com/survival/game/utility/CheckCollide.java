@@ -1,10 +1,5 @@
 package com.survival.game.utility;
 
-import com.survival.game.model.GameObject;
-import com.survival.game.model.MovableObject;
-
-import java.util.List;
-
 public final class CheckCollide {
     /*
     private static final Vector2 myCacheVector = new Vector2();

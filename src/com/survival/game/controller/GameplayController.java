@@ -60,7 +60,6 @@ public class GameplayController {
                 }
                 go.update();
             }
-//            CheckCollide.checkForCollisions(gameWorld.getObjects(), myCache);
         }
     }
 
