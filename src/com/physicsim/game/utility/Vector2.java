@@ -144,6 +144,12 @@ public class Vector2 {
         return (float) Math.sqrt(myX * myX + myY * myY);
     }
 
+    public double getDistance(final Vector2 theOther) {
+        double dx = theOther.myX - myX;
+        double dy = theOther.myY - myY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
     // ============ getters ============
 
     /**

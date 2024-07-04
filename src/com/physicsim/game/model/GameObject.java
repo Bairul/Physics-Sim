@@ -19,11 +19,6 @@ public abstract class GameObject {
     public abstract void update();
 
     /**
-     * Updates the object at the very end. Useful to reset fields.
-     */
-    protected abstract void postUpdate();
-
-    /**
      * The act of accepting a visitor is to apply the underlying function specified in the visitor
      * to this entity. This allows common functionalities to be extracted into one class and
      * extensions (new methods) can be introduced without modifying all classes in the GameObject

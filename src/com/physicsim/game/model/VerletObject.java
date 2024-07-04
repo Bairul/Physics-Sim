@@ -4,7 +4,7 @@ import com.physicsim.game.utility.Vector2;
 
 public abstract class VerletObject extends GameObject {
     /** Constant for the sizing. */
-    private static final int SIZE_SCALE = 5;
+    private static final int SIZE_SCALE = 4;
     /** The position vector. */
     protected Vector2 myPosition;
     /** The radius of the object. */
@@ -40,7 +40,6 @@ public abstract class VerletObject extends GameObject {
     /**
      * Update after everything else.
      */
-    @Override
     protected void postUpdate() {
         myAcceleration.set(0, 0);
     }
@@ -65,6 +64,30 @@ public abstract class VerletObject extends GameObject {
         myAcceleration.add(theForce.divNew(myMass));
     }
 
+    /**
+     * Detects if the object is colliding with the edge of a rectangular boundary.
+     * Bounces the object off of the boundary if it hits it.
+     *
+     * @param theBoundary the boundary as a vector
+     */
+    public void bounceOffBoundary(final Vector2 theBoundary) {
+        myCache.set(myRadius, myRadius);
+        theBoundary.sub(myCache);
+        if (Math.abs(myPosition.getY()) > theBoundary.getY()) {
+            myPosition.setY(2 * Math.signum(myPosition.getY()) * theBoundary.getY() - myPosition.getY());
+            myOldPosition.setY(2 * Math.signum(myOldPosition.getY()) * theBoundary.getY() - myOldPosition.getY());
+        }
+        if (Math.abs(myPosition.getX()) > theBoundary.getX()) {
+            myPosition.setX(2 * Math.signum(myPosition.getX()) * theBoundary.getX() - myPosition.getX());
+            myOldPosition.setX(2 * Math.signum(myOldPosition.getX()) * theBoundary.getX() - myOldPosition.getX());
+        }
+        theBoundary.add(myCache);
+    }
+
+    /**
+     * Sets the velocity of the object.
+     * @param theVelocity the velocity vector
+     */
     public void setVelocity(final Vector2 theVelocity) {
         myCache.set(myPosition);
         myCache.sub(theVelocity);
