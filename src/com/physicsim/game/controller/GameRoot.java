@@ -17,7 +17,7 @@ public final class GameRoot implements Runnable {
     /** The default frames per second that the game runs on. */
     private static final int FPS = 60;
     /** The scale of the canvas. */
-    private static final int SCALE = 60;
+    private static final int SCALE = 80;
     /** Game canvas for graphics. */
     private final GameCanvas myGameCanvas;
     /** Buffer strategy for frames to render and display. */

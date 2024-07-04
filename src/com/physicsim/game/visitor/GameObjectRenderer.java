@@ -1,5 +1,6 @@
 package com.physicsim.game.visitor;
 
+import com.physicsim.game.model.Boundary;
 import com.physicsim.game.model.VerletPoint;
 import com.physicsim.game.model.VerletStick;
 import com.physicsim.game.model.mesh.VerletBox;
@@ -81,6 +82,35 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         for (VerletPoint p : theEntity.getVertices()) {
             p.accept(this);
         }
+        return null;
+    }
+
+    @Override
+    public Void visit(final Boundary theEntity) {
+        if (theEntity.getFirstPoint() != null) {
+            int x = myOrigin.intX() + theEntity.getOrigin().intX();
+            int y = myOrigin.intY() + theEntity.getOrigin().intY();
+            int x2 = myOrigin.intX() + theEntity.getFirstPoint().intX();
+            int y2 = myOrigin.intY() + theEntity.getFirstPoint().intY();
+            myGraphics.setColor(Color.black);
+            myGraphics.drawLine(x, y, x2, y2);
+
+            for (int i = 2; i < theEntity.getBounds().length; i++) {
+                x = myOrigin.intX() + theEntity.getBounds()[i - 1].intX();
+                y = myOrigin.intY() + theEntity.getBounds()[i - 1].intY();
+                x2 = myOrigin.intX() + theEntity.getBounds()[i].intX();
+                y2 = myOrigin.intY() + theEntity.getBounds()[i].intY();
+
+                myGraphics.drawLine(x, y, x2, y2);
+            }
+
+            x = myOrigin.intX() + theEntity.getLastPoint().intX();
+            y = myOrigin.intY() + theEntity.getLastPoint().intY();
+            x2 = myOrigin.intX() + theEntity.getOrigin().intX();
+            y2 = myOrigin.intY() + theEntity.getOrigin().intY();
+            myGraphics.drawLine(x, y, x2, y2);
+        }
+
         return null;
     }
 }

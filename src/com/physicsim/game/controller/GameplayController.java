@@ -18,7 +18,7 @@ public class GameplayController {
     /** The user inputs. */
     private final InputController myInputs;
     /** World that holds entities and other stuff. */
-    private final GameWorld gameWorld;
+    private final GameWorld myGameWorld;
     /** A reusable vector to save some memory. */
     private final Vector2 myCache;
 
@@ -28,11 +28,19 @@ public class GameplayController {
      */
     public GameplayController(final InputController theInput) {
         myInputs = theInput;
-        gameWorld = new GameWorld();
+        myGameWorld = new GameWorld();
         myCache = new Vector2();
         // boundary will be at the center of the game screen
-        GameWorld.BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
+        GameWorld.SCREEN_BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         GameWorld.GRAVITY.set(0, 0.25);
+
+        // create test boundary
+        Boundary bound = new Boundary(0, 100,
+                new Vector2(GameWorld.SCREEN_BOUNDARY.getX(), 0),
+                new Vector2(0, 50),
+                new Vector2(-GameWorld.SCREEN_BOUNDARY.getX(), 0));
+
+        myGameWorld.addBoundary(bound);
     }
 
     /**
@@ -43,16 +51,18 @@ public class GameplayController {
         // add object with mouse click
         if (myInputs.getMouse().isLeftLifted()) {
             myCache.set(myInputs.getMousePos());
+            VerletPoint p = new VerletPoint(myCache, 1, true);
             VerletBox box = new VerletBox(myCache.getX(), myCache.getY(), 120, 2);
-            gameWorld.addGameObject(box);
+            VerletStick s = new VerletStick(p, box.getVertices()[3]);
+
+            myGameWorld.addGameObject(p);
+            myGameWorld.addGameObject(box);
+            myGameWorld.addGameObject(s);
             myInputs.getMouse().offLeftLifted();
         }
 
-        if (gameWorld.getObjects() != null) {
-            for (GameObject go : gameWorld.getObjects()) {
-                go.update();
-            }
-        }
+        if (myGameWorld.getObjects() != null) myGameWorld.getObjects().forEach(GameObject::update);
+        if (myGameWorld.getBoundaries() != null) myGameWorld.getBoundaries().forEach(Boundary::update);
     }
 
     /**
@@ -60,7 +70,9 @@ public class GameplayController {
      *
      * @return list of game objects
      */
-    public List<GameObject> getObjects() {
-        return gameWorld.getObjects();
+    public GameWorld getGameWorld() {
+        return myGameWorld;
     }
+
+
 }

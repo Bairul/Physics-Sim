@@ -8,6 +8,8 @@ import java.awt.event.MouseMotionListener;
 
 /**
  * Class for mouse input.
+ *
+ * @author Bairu Li
  */
 public class Mouse implements MouseListener, MouseMotionListener {
     private final Vector2 myOrigin;
@@ -49,13 +51,16 @@ public class Mouse implements MouseListener, MouseMotionListener {
     }
 
     /**
-     * Determines whether the left click is lifted, signifying that the left click has ended.
+     * Determines whether the left click is lifted, signifying that the end of a left click has started.
      * @return true if left click is lifted, and false otherwise
      */
     public boolean isLeftLifted() {
         return isLeftLifted;
     }
 
+    /**
+     * Turns off the left click, signifying that the end of a left click has ended.
+     */
     public void offLeftLifted() {
         isLeftLifted = false;
     }
@@ -103,16 +108,13 @@ public class Mouse implements MouseListener, MouseMotionListener {
     // unused implemented methods
     @Override
     public void mouseClicked(final MouseEvent theE) {
-
     }
 
     @Override
     public void mouseEntered(final MouseEvent theE) {
-
     }
 
     @Override
     public void mouseExited(final MouseEvent theE) {
-
     }
 }

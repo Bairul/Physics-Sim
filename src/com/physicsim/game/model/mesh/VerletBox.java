@@ -45,7 +45,7 @@ public class VerletBox extends GameObject {
         myEdges[5] = new VerletStick(myVertices[2], myVertices[0]);
 
         // apply rotation for testing
-        cache.set(30, -30);
+        cache.set(5, -5);
         myVertices[0].applyForce(cache);
     }
 
@@ -72,7 +72,7 @@ public class VerletBox extends GameObject {
     public void update() {
         for (final VerletPoint p : myVertices) {
             p.applyForce(GameWorld.GRAVITY);
-            p.bounceOffBoundary(GameWorld.BOUNDARY);
+            p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
             p.update();
         }
         for (final VerletStick s : myEdges) {

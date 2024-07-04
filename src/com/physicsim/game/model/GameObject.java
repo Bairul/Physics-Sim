@@ -3,7 +3,7 @@ package com.physicsim.game.model;
 import com.physicsim.game.visitor.GameObjectVisitor;
 
 /**
- * Abstract class for all game objects.
+ * Abstract class for all game objects. Everything in the game world must be a Game Object.
  *
  * @author Bairu Li
  */

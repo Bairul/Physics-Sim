@@ -2,6 +2,7 @@ package com.physicsim.game.view;
 
 import com.physicsim.game.controller.GameplayController;
 import com.physicsim.game.controller.input.InputController;
+import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.visitor.GameObjectRenderer;
 
 import java.awt.Graphics;
@@ -45,7 +46,9 @@ public class GameplayScreen extends GameScreen {
     public void render(final Graphics theG) {
         // must have update graphics
         myRenderer.updateGraphics(theG);
+        GameWorld gw = myGameplayController.getGameWorld();
 
-        if (myGameplayController.getObjects() != null) myGameplayController.getObjects().forEach(go -> go.accept(myRenderer));
+        if (gw.getObjects() != null) gw.getObjects().forEach(go -> go.accept(myRenderer));
+        if (gw.getBoundaries() != null) gw.getBoundaries().forEach(b -> b.accept(myRenderer));
     }
 }

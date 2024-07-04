@@ -5,6 +5,8 @@ import com.physicsim.game.view.GameCanvas;
 
 /**
  * Class for all the inputs like mouse and keyboard.
+ *
+ * @author Bairu Li
  */
 public class InputController {
     /** Input for the mouse. */

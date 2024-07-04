@@ -1,5 +1,6 @@
 package com.physicsim.game.visitor;
 
+import com.physicsim.game.model.Boundary;
 import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.VerletPoint;
 import com.physicsim.game.model.VerletStick;
@@ -32,6 +33,9 @@ public abstract class GameObjectVisitor<V> {
         return visit((GameObject) theEntity);
     }
     public V visit(final VerletBox theEntity) {
+        return visit((GameObject) theEntity);
+    }
+    public V visit(final Boundary theEntity) {
         return visit((GameObject) theEntity);
     }
 }
