@@ -24,7 +24,7 @@ public class GameplayController {
 
     /**
      * Constructs the gameplay controller.
-     * @param theInput
+     * @param theInput the input controller
      */
     public GameplayController(final InputController theInput) {
         myInputs = theInput;
@@ -34,13 +34,9 @@ public class GameplayController {
         GameWorld.SCREEN_BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         GameWorld.GRAVITY.set(0, 0.25);
 
-        // create test boundary
-        Boundary bound = new Boundary(0, 100,
-                new Vector2(GameWorld.SCREEN_BOUNDARY.getX(), 0),
-                new Vector2(0, 50),
-                new Vector2(-GameWorld.SCREEN_BOUNDARY.getX(), 0));
-
-        myGameWorld.addBoundary(bound);
+        VerletBox box = new VerletBox(-300, -100, 100, 1);
+        box.addInputListener(myInputs);
+        myGameWorld.addGameObject(box);
     }
 
     /**
@@ -49,17 +45,17 @@ public class GameplayController {
      */
     public void update() {
         // add object with mouse click
-        if (myInputs.getMouse().isLeftLifted()) {
-            myCache.set(myInputs.getMousePos());
-            VerletPoint p = new VerletPoint(myCache, 1, true);
-            VerletBox box = new VerletBox(myCache.getX(), myCache.getY(), 120, 2);
-            VerletStick s = new VerletStick(p, box.getVertices()[3]);
-
-            myGameWorld.addGameObject(p);
-            myGameWorld.addGameObject(box);
-            myGameWorld.addGameObject(s);
-            myInputs.getMouse().offLeftLifted();
-        }
+//        if (myInputs.getMouse().isLeftLifted()) {
+//            myCache.set(myInputs.getMousePos());
+//            VerletPoint p = new VerletPoint(myCache, 1, true);
+//            VerletBox box = new VerletBox(myCache.getX(), myCache.getY(), 120, 2);
+//            VerletStick s = new VerletStick(p, box.getVertices()[3]);
+//
+//            myGameWorld.addGameObject(p);
+//            myGameWorld.addGameObject(box);
+//            myGameWorld.addGameObject(s);
+//            myInputs.getMouse().offLeftLifted();
+//        }
 
         if (myGameWorld.getObjects() != null) myGameWorld.getObjects().forEach(GameObject::update);
         if (myGameWorld.getBoundaries() != null) myGameWorld.getBoundaries().forEach(Boundary::update);
@@ -73,6 +69,5 @@ public class GameplayController {
     public GameWorld getGameWorld() {
         return myGameWorld;
     }
-
 
 }

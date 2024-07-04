@@ -1,5 +1,7 @@
 package com.physicsim.game.model.mesh;
 
+import com.physicsim.game.controller.input.ClickType;
+import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.model.*;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.visitor.GameObjectVisitor;
@@ -10,10 +12,20 @@ import com.physicsim.game.visitor.GameObjectVisitor;
  * @author Bairu Li
  */
 public class VerletBox extends GameObject {
+    /** The center of gravity. */
+    private final VerletPoint myCenter;
     /** The array of vertices of the box. */
     private final VerletPoint[] myVertices;
-    /** The array of edges of the box. */
-    private final VerletStick[] myEdges;
+    /** The array of edges of the perimeter of the box. */
+    private final VerletStick[] myOuterEdges;
+    /** The array of edges of inside the box. */
+    private final VerletStick[] myInnerEdges;
+    /** The point used to anchor the box. */
+    private VerletPoint myAnchor;
+    /** The stick used to anchor to the center. */
+    private VerletStick myAnchorStick;
+    /** The user inputs. */
+    private InputController myInputs;
 
     /**
      * Constructs a box give the x and y and the side length of the box with its mass.
@@ -24,29 +36,58 @@ public class VerletBox extends GameObject {
      * @param theMass   the mass
      */
     public VerletBox(final double theX, final double theY, final double theLength, final double theMass) {
-        myVertices = new VerletPoint[4];
-        myEdges = new VerletStick[6];
-
         final Vector2 cache = new Vector2();
-        cache.set(theX, theY);
-        myVertices[0] = new VerletPoint(cache, theMass);
-        cache.set(theX + theLength, theY);
-        myVertices[1] = new VerletPoint(cache, theMass);
-        cache.set(theX + theLength, theY + theLength);
-        myVertices[2] = new VerletPoint(cache, theMass);
-        cache.set(theX, theY + theLength);
-        myVertices[3] = new VerletPoint(cache, theMass);
+        myVertices = new VerletPoint[4];
+        myOuterEdges = new VerletStick[4];
+        myInnerEdges = new VerletStick[6];
 
-        myEdges[0] = new VerletStick(myVertices[0], myVertices[1]);
-        myEdges[1] = new VerletStick(myVertices[1], myVertices[2]);
-        myEdges[2] = new VerletStick(myVertices[2], myVertices[3]);
-        myEdges[3] = new VerletStick(myVertices[3], myVertices[0]);
-        myEdges[4] = new VerletStick(myVertices[3], myVertices[1]);
-        myEdges[5] = new VerletStick(myVertices[2], myVertices[0]);
+        for (int i = 0; i < 4; i++) {
+            cache.set(theX + theLength * ((i >> 1) ^ (i % 2)), theY + theLength * (i >> 1));
+            myVertices[i] = new VerletPoint(cache, theMass);
+        }
+        for (int i = 0; i < 4; i++) {
+            myOuterEdges[i] = new VerletStick(myVertices[i % 4], myVertices[(i + 1) % 4]);
+        }
+        myInnerEdges[0] = new VerletStick(myVertices[0], myVertices[2]);
+        myInnerEdges[1] = new VerletStick(myVertices[1], myVertices[3]);
+
+        // center
+        cache.set(theX + theLength / 2, theY + theLength / 2);
+        myCenter = new VerletPoint(cache, theMass);
+        myInnerEdges[2] = new VerletStick(myCenter, myVertices[0]);
+        myInnerEdges[3] = new VerletStick(myCenter, myVertices[1]);
+        myInnerEdges[4] = new VerletStick(myCenter, myVertices[2]);
+        myInnerEdges[5] = new VerletStick(myCenter, myVertices[3]);
 
         // apply rotation for testing
-        cache.set(5, -5);
+        cache.set(15, -50);
         myVertices[0].applyForce(cache);
+    }
+
+    /**
+     * Checks if a vector point is within the box. Uses linear interpolation for ray tracing.
+     * @param thePoint the point vector
+     * @return if the box contains the point
+     */
+    public boolean overlaps(final Vector2 thePoint) {
+        int count = 0;
+        for (final VerletStick e : myOuterEdges) {
+            double x = e.getStartPoint().getPosition().getX();
+            double y = e.getStartPoint().getPosition().getY();
+            if (thePoint.getX() < x != thePoint.getX() < e.getEndPoint().getPosition().getX()
+                    && thePoint.getY() < y + (thePoint.getX() - x) * e.getStartPoint().getPosition().getSlope(e.getEndPoint().getPosition())) {
+                count++;
+            }
+        }
+        return count % 2 == 1;
+    }
+
+    /**
+     * Adds a input listener/controller to the box.
+     * @param theInput the input
+     */
+    public void addInputListener(final InputController theInput) {
+        myInputs = theInput;
     }
 
     /**
@@ -62,7 +103,34 @@ public class VerletBox extends GameObject {
      * @return the array of verlet sticks
      */
     public VerletStick[] getEdges() {
-        return myEdges;
+        return myOuterEdges;
+    }
+
+    private void handleMouseClick() {
+        if (myInputs == null) {
+            return;
+        }
+
+        if (myInputs.getMouse().getButton() != ClickType.LeftClick) {
+            myAnchor = null;
+            myAnchorStick = null;
+            return;
+        }
+
+        if (myAnchor == null) {
+            if (overlaps(myInputs.getMousePos())) {
+                myAnchor = new VerletPoint(myInputs.getMousePos(), 1, true);
+                myCenter.getPosition().set(myInputs.getMousePos());
+                for (int i = 2; i < myInnerEdges.length; i++) {
+                    myInnerEdges[i].updateDistance();
+                }
+                myAnchorStick = new VerletStick(myAnchor, myCenter, 2);
+            }
+        } else {
+            myAnchor.getPosition().set(myInputs.getMousePos());
+            myAnchor.update();
+            myAnchorStick.update();
+        }
     }
 
     /**
@@ -75,13 +143,24 @@ public class VerletBox extends GameObject {
             p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
             p.update();
         }
-        for (final VerletStick s : myEdges) {
+        myCenter.update();
+        for (final VerletStick s : myOuterEdges) {
             s.update();
         }
+        for (final VerletStick s : myInnerEdges) {
+            s.update();
+        }
+
+        handleMouseClick();
     }
 
     @Override
     public <V> V accept(GameObjectVisitor<V> v) {
+//        if (myAnchor != null) {
+//            v.visit(myAnchor);
+//            v.visit(myAnchorStick);
+//        }
+
         return v.visit(this);
     }
 }

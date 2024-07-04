@@ -13,8 +13,24 @@ public class VerletStick extends GameObject {
     private final VerletPoint myEnd;
     /** A reusable vector to save some memory. */
     private final Vector2 myCache;
+    /** The strength of the stick. */
+    private final double myStrength;
     /** The fixed distance between the start and end endpoints. */
-    private final double myLength;
+    private double myLength;
+
+    /**
+     * Constructs the stick between 2 Verlet points with strength of the stick (lower is stronger).
+     * @param thePointStart the reference to the start point
+     * @param thePointEnd   the reference to the end point
+     * @param theStrength   the strength of the binding (has to be >= 1)
+     */
+    public VerletStick(final VerletPoint thePointStart, final VerletPoint thePointEnd, final double theStrength) {
+        myStart = thePointStart;
+        myEnd = thePointEnd;
+        myLength = thePointStart.getPosition().getDistance(thePointEnd.getPosition());
+        myCache = new Vector2();
+        myStrength = theStrength;
+    }
 
     /**
      * Constructs the stick between 2 Verlet points.
@@ -26,6 +42,7 @@ public class VerletStick extends GameObject {
         myEnd = thePointEnd;
         myLength = thePointStart.getPosition().getDistance(thePointEnd.getPosition());
         myCache = new Vector2();
+        myStrength = 1;
     }
 
     /**
@@ -45,13 +62,20 @@ public class VerletStick extends GameObject {
     }
 
     /**
+     * Re-updates the distance between the 2 points. Useful to deform the stick.
+     */
+    public void updateDistance() {
+        myLength = myStart.getPosition().getDistance(myEnd.getPosition());
+    }
+
+    /**
      * Maintains the distance between the 2 points.
      */
     @Override
     public void update() {
         double dist = myStart.getPosition().getDistance(myEnd.getPosition());
         double diff = myLength - dist;
-        double percent = diff / dist / 2;
+        double percent = diff / dist / (2 * myStrength);
 
         myCache.set(myStart.getPosition());
         myCache.sub(myEnd.getPosition());
