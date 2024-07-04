@@ -19,6 +19,7 @@ import com.physicsim.game.model.mesh.VerletBox;
  * methods named {@link #visit} which is the universal name for generic F.
  *
  * @param <V> the return type of the extension
+ *
  */
 public abstract class GameObjectVisitor<V> {
     public V visit(final GameObject theDefault) {

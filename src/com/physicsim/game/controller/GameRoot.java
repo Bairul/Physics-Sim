@@ -9,12 +9,13 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
 /**
- * Main class that runs the program.
+ * Main class that starts a thread and runs the program.
  *
+ * @author Bairu Li
  */
-public final class GameRoot implements  Runnable {
+public final class GameRoot implements Runnable {
     /** The default frames per second that the game runs on. */
-    private static final int FPS = 30;
+    private static final int FPS = 60;
     /** The scale of the canvas. */
     private static final int SCALE = 60;
     /** Game canvas for graphics. */
@@ -25,34 +26,27 @@ public final class GameRoot implements  Runnable {
     private Thread myThread;
     /** State of the game whether it is running or not. */
     private boolean isRunning;
-    /** The game's gameplay screen. */
-    private GameScreen myGameplayScreen;
-    /** A reusable vector to attempt to save some memory. */
-    private final Vector2 myCache;
 
     /**
      * Constructor that initializes the game's rendering.
      */
     public GameRoot() {
-        // the aspect ratio, default is 16:9
-        myCache = new Vector2(16, 9);
-        myGameCanvas = new GameCanvas(myCache, SCALE, "This Game");
-        // triple buffering
+        // creates the game canvas and set the aspect ratio, default is 16:9
+        final Vector2 vector = new Vector2(16, 9);
+        myGameCanvas = new GameCanvas(vector, SCALE, "Physics Simulator");
+
+        // triple buffering to the canvas
         myGameCanvas.getCanvas().createBufferStrategy(3);
         myBufferStrategy = myGameCanvas.getCanvas().getBufferStrategy();
-    }
 
-    /**
-     * Sets up the current state of the game.
-     */
-    private void setUp() {
-        // Set Game Origin
-        myCache.set(myGameCanvas.getWidth(), myGameCanvas.getHeight());
-        myCache.mul(0.5F);
-        GameScreen.setOrigin(myCache);
+        // Set Game Origin at the center of the screen
+        vector.set(myGameCanvas.getWidth(), myGameCanvas.getHeight());
+        vector.mul(0.5F);
+        GameScreen.setOrigin(vector);
         GameScreen.setCanvas(myGameCanvas);
 
-        myGameplayScreen = new GameplayScreen("GameplayScreen");
+        // create and set the screen of the game
+        final GameScreen myGameplayScreen = new GameplayScreen("GameplayScreen");
         GameScreen.setCurrentScreen(myGameplayScreen);
     }
 
@@ -61,12 +55,12 @@ public final class GameRoot implements  Runnable {
      */
     @Override
     public void run() {
-        setUp();
         double framesPerNs = 1000000000D / FPS;
         double delta = 0;
         long now;
         long past = System.nanoTime();
 
+        // the game loop
         while (isRunning) {
             now = System.nanoTime();
             delta += (now - past) / framesPerNs;
@@ -94,7 +88,7 @@ public final class GameRoot implements  Runnable {
      * Renders the state of the game.
      */
     private void render() {
-        Graphics g = myBufferStrategy.getDrawGraphics();
+        final Graphics g = myBufferStrategy.getDrawGraphics();
         g.clearRect(0,0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
 
         if (GameScreen.getCurrentScreen() != null) {
@@ -117,7 +111,7 @@ public final class GameRoot implements  Runnable {
     }
 
     /**
-     * Ends the game.
+     * Ends the game and ensures thread safety and consistency.
      */
     public synchronized void stop() {
         if (!isRunning) return;

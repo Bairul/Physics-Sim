@@ -6,6 +6,8 @@ import java.awt.Graphics;
 
 /**
  * Functionality of GameScreen should be allowing the switching of screens, i.e. from loading screen to gameplay screen.
+ *
+ * @author Bairu Li
  */
 public abstract class GameScreen {
     // static fields

@@ -11,6 +11,7 @@ import java.awt.Graphics;
 /**
  * GameObjectRenderer provides functionality to render all kinds of Game objects. This is a
  * collection of draw functionality to keep models free from directly handling textures.
+ *
  */
 public class GameObjectRenderer extends GameObjectVisitor<Void> {
     /** The graphics for drawing. */
@@ -36,8 +37,8 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     }
 
     /**
-     * Draws the temporary entity for testing and development.
-     * @param theEntity the TempEntity
+     * Draws the verlet point for testing and development.
+     * @param theEntity the VerletPoint
      * @return null
      */
     @Override
@@ -51,17 +52,27 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         return null;
     }
 
+    /**
+     * Drawss the verlet stick for testing and development.
+     * @param theEntity the VerletStick
+     * @return
+     */
     @Override
     public Void visit(final VerletStick theEntity) {
-        int x = myOrigin.intX() + theEntity.getPoint1().getPosition().intX();
-        int y = myOrigin.intY() + theEntity.getPoint1().getPosition().intY();
-        int x2 = myOrigin.intX() + theEntity.getPoint2().getPosition().intX();
-        int y2 = myOrigin.intY() + theEntity.getPoint2().getPosition().intY();
+        int x = myOrigin.intX() + theEntity.getStartPoint().getPosition().intX();
+        int y = myOrigin.intY() + theEntity.getStartPoint().getPosition().intY();
+        int x2 = myOrigin.intX() + theEntity.getEndPoint().getPosition().intX();
+        int y2 = myOrigin.intY() + theEntity.getEndPoint().getPosition().intY();
         myGraphics.setColor(Color.black);
         myGraphics.drawLine(x, y, x2, y2);
         return null;
     }
 
+    /**
+     * Draws the box
+     * @param theEntity the VerletBox
+     * @return
+     */
     @Override
     public Void visit(final VerletBox theEntity) {
         for (VerletStick s : theEntity.getEdges()) {

@@ -3,15 +3,15 @@ package com.physicsim.game.model;
 import com.physicsim.game.visitor.GameObjectVisitor;
 
 /**
- * Abstract class for all game objects such as dynamic or static.
+ * Abstract class for all game objects.
+ *
+ * @author Bairu Li
  */
 public abstract class GameObject {
     /**
      * Creates a game object.
      */
-    public GameObject() {
-
-    }
+    public GameObject() {}
 
     /**
      * Updates the object.
@@ -28,5 +28,5 @@ public abstract class GameObject {
      * @param <V> abstract return type of visitor
      * @return output data from application of visitor
      */
-    public abstract <V> V accept(GameObjectVisitor<V> v);
+    public abstract <V> V accept(final GameObjectVisitor<V> v);
 }

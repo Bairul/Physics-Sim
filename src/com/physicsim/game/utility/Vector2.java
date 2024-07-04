@@ -2,6 +2,8 @@ package com.physicsim.game.utility;
 
 /**
  * My own vector class.
+ *
+ * @author Bairu Li
  */
 public class Vector2 {
     /** The x component. */
@@ -10,7 +12,7 @@ public class Vector2 {
     private double myY;
 
     /**
-     * Constructs a vector given the x and y component as a double.
+     * Constructs a vector given the x and y component
      * @param theX the x (double)
      * @param theY the y (double)
      */
@@ -30,7 +32,7 @@ public class Vector2 {
     }
 
     /**
-     * Default constructor when no parameter is given.
+     * Default constructor when no parameters are given. (0, 0)
      */
     public Vector2() {
         this(0, 0);
@@ -75,7 +77,7 @@ public class Vector2 {
     }
 
     /**
-     * Converts this vector to a unit vector.
+     * Converts this vector to a unit vector by normalizing it.
      */
     public void norm() {
         div(getMagnitude());
@@ -84,7 +86,7 @@ public class Vector2 {
     // === vector math with return ===
 
     /**
-     * Adds another vector to this vector. This vector remains unaffected.
+     * Adds another vector to this vector and return a new vector. This vector remains unaffected.
      * @param theV the other vector
      * @return the sum of the 2 vectors
      */
@@ -93,7 +95,7 @@ public class Vector2 {
     }
 
     /**
-     * Subtracts another vector to this vector. This vector remains unaffected.
+     * Subtracts another vector to this vector and return a new vector. This vector remains unaffected.
      * @param theV the other vector
      * @return the difference of the 2 vectors
      */
@@ -102,7 +104,7 @@ public class Vector2 {
     }
 
     /**
-     * Multiplies by a scalar to this vector. This vector remains unaffected.
+     * Multiplies by a scalar to this vector and return a new vector. This vector remains unaffected.
      * @param theScalar the scalar
      * @return the scalar product
      */
@@ -111,7 +113,7 @@ public class Vector2 {
     }
 
     /**
-     * Divides by a scalar to this vector. This vector remains unaffected.
+     * Divides by a scalar to this vector and return a new vector. This vector remains unaffected.
      * @param theScalar the scalar
      * @return the scalar quotient
      */
@@ -120,7 +122,7 @@ public class Vector2 {
     }
 
     /**
-     * Converts this vector to a unit vector. This vector remains unaffected.
+     * Converts this vector to a unit vector and return a new vector. This vector remains unaffected.
      * @return the unit vector
      */
     public Vector2 normNew() {
@@ -137,13 +139,18 @@ public class Vector2 {
     }
 
     /**
-     * Gets the magnitude (length to the origin: 0,0) of the vector.
-     * @return the magnitude as a float
+     * Computes the magnitude (length to the origin: 0,0) of the vector.
+     * @return the magnitude as a double
      */
     public double getMagnitude() {
-        return (float) Math.sqrt(myX * myX + myY * myY);
+        return Math.sqrt(myX * myX + myY * myY);
     }
 
+    /**
+     * Computes the distance to another vector.
+     * @param theOther the other vector
+     * @return the distance
+     */
     public double getDistance(final Vector2 theOther) {
         double dx = theOther.myX - myX;
         double dy = theOther.myY - myY;
@@ -153,14 +160,14 @@ public class Vector2 {
     // ============ getters ============
 
     /**
-     * Gets the x component as a float.
-     * @return the x (float)
+     * Gets the x component as a double.
+     * @return the x (double)
      */
     public double getX() { return myX; }
 
     /**
-     * Gets the y component as a float.
-     * @return the y (float)
+     * Gets the y component as a double.
+     * @return the y (double)
      */
     public double getY() {
         return myY;
@@ -186,25 +193,25 @@ public class Vector2 {
 
     // set floats
     /**
-     * Sets the x component when given a float.
-     * @param theX the new x (float)
+     * Sets the x component when given a double.
+     * @param theX the new x (double)
      */
     public void setX(final double theX) {
         myX = theX;
     }
 
     /**
-     * Sets the y component when given a float.
-     * @param theY the new y (float)
+     * Sets the y component when given a double.
+     * @param theY the new y (double)
      */
     public void setY(final double theY) {
         myY = theY;
     }
 
     /**
-     * Sets both the x and y components when given floats.
-     * @param theX the new x (float)
-     * @param theY the new y (float)
+     * Sets both the x and y components when given double.
+     * @param theX the new x (double)
+     * @param theY the new y (double)
      */
     public void set(final double theX, final double theY) {
         setX(theX);

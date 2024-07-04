@@ -2,21 +2,26 @@ package com.physicsim.game.model;
 
 import com.physicsim.game.utility.Vector2;
 
+/**
+ * This class uses verlet integration for the movement of game objects.
+ *
+ * @author Bairu Li
+ */
 public abstract class VerletObject extends GameObject {
     /** Constant for the sizing. */
     private static final int SIZE_SCALE = 4;
     /** The position vector. */
-    protected Vector2 myPosition;
+    protected final Vector2 myPosition;
+    /** The previous position vector. */
+    protected final Vector2 myOldPosition;
+    /** The acceleration vector. */
+    protected final Vector2 myAcceleration;
+    /** A reusable vector to save some memory. */
+    private final Vector2 myCache;
     /** The radius of the object. */
     protected float myRadius;
     /** The mass of the object. */
     protected double myMass;
-    /** The old position vector. */
-    protected Vector2 myOldPosition;
-    /** The acceleration vector. */
-    protected Vector2 myAcceleration;
-    /** A reusable vector to save some memory. */
-    private Vector2 myCache;
 
     /**
      * Creates a game object given the initial position and mass.
@@ -85,7 +90,8 @@ public abstract class VerletObject extends GameObject {
     }
 
     /**
-     * Sets the velocity of the object.
+     * Sets the velocity of the object. Velocity in verlet integration is done by using changing the old
+     * position vector.
      * @param theVelocity the velocity vector
      */
     public void setVelocity(final Vector2 theVelocity) {

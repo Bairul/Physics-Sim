@@ -6,20 +6,33 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GameWorld {
+    /** Constant field for setting the world gravity. */
     public static final Vector2 GRAVITY = new Vector2(0, 0);
-    /** The boundary of the screen. */
+    /** Constant field for setting the boundary of the world screen. */
     public static final Vector2 BOUNDARY = new Vector2(0, 0);
 
-    private LinkedList<GameObject> myObjects;
+    /** The list of game objects. */
+    private final List<GameObject> myObjects;
 
+    /**
+     * Constructs the game world with a list of game objects.
+     */
     public GameWorld() {
         myObjects = new LinkedList<>();
     }
 
+    /**
+     * Add a game object to the end of the list.
+     * @param theObject the new game object
+     */
     public void addGameObject(final GameObject theObject) {
         myObjects.add(theObject);
     }
 
+    /**
+     * Gets the list of game objects.
+     * @return the list of game objects
+     */
     public List<GameObject> getObjects() {
         return myObjects;
     }

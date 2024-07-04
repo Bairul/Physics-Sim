@@ -2,6 +2,8 @@ package com.physicsim.game.controller;
 
 /**
  * Class for launching the program.
+ *
+ * @author Bairu Li
  */
 public final class Launcher {
     private Launcher() {}

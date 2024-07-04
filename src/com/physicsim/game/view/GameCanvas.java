@@ -7,7 +7,9 @@ import  java.awt.Canvas;
 import java.awt.Dimension;
 
 /**
- * Class for the game's window screen.
+ * Class for the game's window screen containing the graphics.
+ *
+ * @author Bairu Li
  */
 public final class GameCanvas {
     /** The width of the window screen. */

@@ -8,23 +8,31 @@ import com.physicsim.game.view.GameScreen;
 
 import java.util.List;
 
+/**
+ * This class is used for handling and controlling objects in the game world. This includes updating
+ * and rendering them. In other words, this class connects the model and the view for the gameplay.
+ *
+ * @author Bairu Li
+ */
 public class GameplayController {
     /** The user inputs. */
     private final InputController myInputs;
     /** World that holds entities and other stuff. */
     private final GameWorld gameWorld;
+    /** A reusable vector to save some memory. */
     private final Vector2 myCache;
 
+    /**
+     * Constructs the gameplay controller.
+     * @param theInput
+     */
     public GameplayController(final InputController theInput) {
         myInputs = theInput;
         gameWorld = new GameWorld();
         myCache = new Vector2();
         // boundary will be at the center of the game screen
         GameWorld.BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
-        GameWorld.GRAVITY.set(0, 0.5);
-
-//        VerletBox box = new VerletBox(0, 0, 50, 1);
-//        gameWorld.addGameObject(box);
+        GameWorld.GRAVITY.set(0, 0.25);
     }
 
     /**
@@ -35,10 +43,7 @@ public class GameplayController {
         // add object with mouse click
         if (myInputs.getMouse().isLeftLifted()) {
             myCache.set(myInputs.getMousePos());
-            VerletBox box = new VerletBox(myCache.getX(), myCache.getY(), 120, 4);
-//            te.getVelocity().set(Math.random() * myInitialVelocity - (myInitialVelocity >> 1), Math.random() * myInitialVelocity - (myInitialVelocity >> 1));
-//            ve.getOldPosition().set(myCache.getX() - 5, myCache.getY() - 5);
-
+            VerletBox box = new VerletBox(myCache.getX(), myCache.getY(), 120, 2);
             gameWorld.addGameObject(box);
             myInputs.getMouse().offLeftLifted();
         }

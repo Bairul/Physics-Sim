@@ -8,6 +8,8 @@ import java.awt.Graphics;
 
 /**
  * The gameplay screen where the user plays on.
+ *
+ * @author Bairu Li
  */
 public class GameplayScreen extends GameScreen {
     /** Gameplay Controller. */
