@@ -41,8 +41,8 @@ public class VerletBox extends GameObject {
         myEdges[4] = new VerletStick(myVertices[3], myVertices[1]);
         myEdges[5] = new VerletStick(myVertices[2], myVertices[0]);
 
-        cache.set(50,-30);
-        myVertices[1].applyForce(cache);
+        cache.set(30,-30);
+        myVertices[0].applyForce(cache);
     }
 
     public VerletPoint[] getVertices() {

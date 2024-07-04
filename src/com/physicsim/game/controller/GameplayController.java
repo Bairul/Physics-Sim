@@ -35,7 +35,7 @@ public class GameplayController {
         // add object with mouse click
         if (myInputs.getMouse().isLeftLifted()) {
             myCache.set(myInputs.getMousePos());
-            VerletBox box = new VerletBox(myCache.getX(), myCache.getY(), 100, 2);
+            VerletBox box = new VerletBox(myCache.getX(), myCache.getY(), 120, 4);
 //            te.getVelocity().set(Math.random() * myInitialVelocity - (myInitialVelocity >> 1), Math.random() * myInitialVelocity - (myInitialVelocity >> 1));
 //            ve.getOldPosition().set(myCache.getX() - 5, myCache.getY() - 5);
 
