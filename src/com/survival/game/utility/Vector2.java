@@ -77,7 +77,7 @@ public class Vector2 {
     /**
      * Converts this vector to a unit vector.
      */
-    public void unit() {
+    public void norm() {
         div(getMagnitude());
     }
 
@@ -123,7 +123,7 @@ public class Vector2 {
      * Converts this vector to a unit vector. This vector remains unaffected.
      * @return the unit vector
      */
-    public Vector2 unitNew() {
+    public Vector2 normNew() {
         return divNew(getMagnitude());
     }
 

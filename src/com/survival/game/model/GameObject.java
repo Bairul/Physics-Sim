@@ -8,7 +8,7 @@ import com.survival.game.visitor.GameObjectVisitor;
  */
 public abstract class GameObject {
     /** Constant for the sizing. */
-    private static final int SIZE_SCALE = 4;
+    private static final int SIZE_SCALE = 5;
     /** The position vector. */
     protected Vector2 myPosition;
     /** The radius of the object. */
@@ -68,7 +68,7 @@ public abstract class GameObject {
     /**
      * Updates the object at the very end. Useful to reset fields.
      */
-    public abstract void postUpdate();
+    protected abstract void postUpdate();
 
     /**
      * The act of accepting a visitor is to apply the underlying function specified in the visitor

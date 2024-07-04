@@ -1,6 +1,7 @@
 package com.survival.game.visitor;
 
 import com.survival.game.model.TempEntity;
+import com.survival.game.model.VerletEntity;
 import com.survival.game.utility.Vector2;
 
 import java.awt.Color;
@@ -39,7 +40,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      * @return null
      */
     @Override
-    public Void visit(TempEntity theEntity) {
+    public Void visit(VerletEntity theEntity) {
         int x = myOrigin.intX() + theEntity.getPosition().intX();
         int y = myOrigin.intY() + theEntity.getPosition().intY();
         myGraphics.setColor(Color.black);

@@ -2,10 +2,7 @@ package com.survival.game.controller;
 
 import com.survival.game.controller.input.ClickType;
 import com.survival.game.controller.input.InputController;
-import com.survival.game.model.GameObject;
-import com.survival.game.model.GameWorld;
-import com.survival.game.model.MovableObject;
-import com.survival.game.model.TempEntity;
+import com.survival.game.model.*;
 import com.survival.game.utility.CheckCollide;
 import com.survival.game.utility.Vector2;
 import com.survival.game.view.GameScreen;
@@ -39,21 +36,27 @@ public class GameplayController {
         // add object with mouse click
         if (myInputs.getMouse().isLeftLifted()) {
             myCache.set(myInputs.getMousePos());
-            TempEntity te = new TempEntity(myCache, 20);
+            VerletEntity te = new VerletEntity(myCache, 20);
 //            te.getVelocity().set(2, 0);
 //            te.getVelocity().set(Math.random() * myInitialVelocity - (myInitialVelocity >> 1), Math.random() * myInitialVelocity - (myInitialVelocity >> 1));
+//            te.getOldPosition().set(myCache.getX() - 5, myCache.getY() - 5);
             gameWorld.addGameObject(te);
             myInputs.getMouse().offLeftLifted();
         }
 
         if (gameWorld.getObjects() != null) {
             for (GameObject go : gameWorld.getObjects()) {
-                if (go instanceof MovableObject) {
-                    MovableObject mo = (MovableObject) go;
+//                if (go instanceof MovableObject) {
+//                    MovableObject mo = (MovableObject) go;
+//                    myCache.set(0, 1);
+//                    // gravity
+//                    mo.applyImpulse(myCache, 1);
+//                    bounceOfWall(mo);
+//                }
+                if (go instanceof VerletObject vo) {
                     myCache.set(0, 1);
-                    // gravity
-                    mo.applyImpulse(myCache, 1);
-                    bounceOfWall(mo);
+                    vo.applyForce(myCache);
+                    bounceOfWallVerlet(vo);
                 }
                 go.update();
             }
@@ -78,6 +81,19 @@ public class GameplayController {
             theMO.getVelocity().setY(theMO.getVelocity().getY() * -1);
         }
         myBoundary.set(myBoundary.getX() + theMO.getRadius(), myBoundary.getY() + theMO.getRadius());
+    }
+
+    private void bounceOfWallVerlet(final VerletObject theVO) {
+        myBoundary.set(myBoundary.getX() - theVO.getRadius(), myBoundary.getY() - theVO.getRadius());
+        if (Math.abs(theVO.getPosition().getY()) > myBoundary.getY()) {
+            theVO.getPosition().setY(2 * Math.signum(theVO.getPosition().getY()) * myBoundary.getY() - theVO.getPosition().getY());
+            theVO.getOldPosition().setY(2 * Math.signum(theVO.getOldPosition().getY()) * myBoundary.getY() - theVO.getOldPosition().getY());
+        }
+        if (Math.abs(theVO.getPosition().getX()) > myBoundary.getX()) {
+            theVO.getPosition().setX(2 * Math.signum(theVO.getPosition().getX()) * myBoundary.getX() - theVO.getPosition().getX());
+            theVO.getOldPosition().setX(2 * Math.signum(theVO.getOldPosition().getX()) * myBoundary.getX() - theVO.getOldPosition().getX());
+        }
+        myBoundary.set(myBoundary.getX() + theVO.getRadius(), myBoundary.getY() + theVO.getRadius());
     }
 
     /**

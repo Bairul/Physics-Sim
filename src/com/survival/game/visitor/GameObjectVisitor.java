@@ -2,6 +2,7 @@ package com.survival.game.visitor;
 
 import com.survival.game.model.GameObject;
 import com.survival.game.model.TempEntity;
+import com.survival.game.model.VerletEntity;
 
 /**
  * A (GameObject) visitor implements a function F for which objects belonging to the GameObject
@@ -24,6 +25,9 @@ public abstract class GameObjectVisitor<V> {
     }
 
     public V visit(final TempEntity theEntity) {
+        return visit((GameObject) theEntity);
+    }
+    public V visit(final VerletEntity theEntity) {
         return visit((GameObject) theEntity);
     }
 }

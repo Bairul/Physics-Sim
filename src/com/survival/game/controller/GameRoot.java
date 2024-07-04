@@ -14,7 +14,7 @@ import java.awt.image.BufferStrategy;
  */
 public final class GameRoot implements  Runnable {
     /** The default frames per second that the game runs on. */
-    private static final int FPS = 30;
+    private static final int FPS = 60;
     /** The scale of the canvas. */
     private static final int SCALE = 60;
     /** Game canvas for graphics. */

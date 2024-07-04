@@ -54,7 +54,7 @@ public abstract class MovableObject extends GameObject {
      * Update after everything else.
      */
     @Override
-    public void postUpdate() {
+    protected void postUpdate() {
         myAcceleration.set(0, 0);
     }
 
