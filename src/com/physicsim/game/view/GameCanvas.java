@@ -1,6 +1,6 @@
-package com.survival.game.view;
+package com.physicsim.game.view;
 
-import com.survival.game.utility.Vector2;
+import com.physicsim.game.utility.Vector2;
 
 import javax.swing.JFrame;
 import  java.awt.Canvas;

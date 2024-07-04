@@ -1,4 +1,4 @@
-package com.survival.game.controller.input;
+package com.physicsim.game.controller.input;
 
 public enum ClickType {
     Unknown,

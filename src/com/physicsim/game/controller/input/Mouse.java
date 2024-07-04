@@ -1,6 +1,6 @@
-package com.survival.game.controller.input;
+package com.physicsim.game.controller.input;
 
-import com.survival.game.utility.Vector2;
+import com.physicsim.game.utility.Vector2;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

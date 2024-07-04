@@ -1,9 +1,9 @@
-package com.survival.game.controller;
+package com.physicsim.game.controller;
 
-import com.survival.game.utility.Vector2;
-import com.survival.game.view.GameCanvas;
-import com.survival.game.view.GameScreen;
-import com.survival.game.view.GameplayScreen;
+import com.physicsim.game.utility.Vector2;
+import com.physicsim.game.view.GameCanvas;
+import com.physicsim.game.view.GameScreen;
+import com.physicsim.game.view.GameplayScreen;
 
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;

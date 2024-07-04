@@ -1,31 +1,32 @@
-package com.survival.game.controller;
+package com.physicsim.game.controller;
 
-import com.survival.game.controller.input.ClickType;
-import com.survival.game.controller.input.InputController;
-import com.survival.game.model.*;
-import com.survival.game.utility.CheckCollide;
-import com.survival.game.utility.Vector2;
-import com.survival.game.view.GameScreen;
+import com.physicsim.game.model.GameObject;
+import com.physicsim.game.model.GameWorld;
+import com.physicsim.game.model.VerletEntity;
+import com.physicsim.game.model.VerletObject;
+import com.physicsim.game.utility.Vector2;
+import com.physicsim.game.controller.input.InputController;
+import com.physicsim.game.view.GameScreen;
 
 import java.util.List;
 
 public class GameplayController {
     private static final int myInitialVelocity = 30;
+    /** The boundary of the screen. */
+    private final Vector2 myBoundary;
+    /** The user inputs. */
+    private final InputController myInputs;
     /** World that holds entities and other stuff. */
     private GameWorld gameWorld;
     /** A reusable vector to save some memory. */
     private Vector2 myCache;
-    /** The boundary of the screen. */
-    private final InputController myInputs;
-    private final Vector2 myBoundary;
+
     public GameplayController(final InputController theInput) {
         myInputs = theInput;
         gameWorld = new GameWorld();
+        // boundary will be at the center of the game screen
         myBoundary = new Vector2(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
-        // origin of entity
         myCache = new Vector2();
-
-        // System.out.println("Initial Velocity Conditions:\nLeft: " + te.getVelocity() + "\nRight: " + te2.getVelocity() + "\nTop: " + te3.getVelocity());
     }
 
     /**
@@ -36,25 +37,20 @@ public class GameplayController {
         // add object with mouse click
         if (myInputs.getMouse().isLeftLifted()) {
             myCache.set(myInputs.getMousePos());
-            VerletEntity te = new VerletEntity(myCache, 20);
-//            te.getVelocity().set(2, 0);
+            VerletEntity ve = new VerletEntity(myCache, 20);
 //            te.getVelocity().set(Math.random() * myInitialVelocity - (myInitialVelocity >> 1), Math.random() * myInitialVelocity - (myInitialVelocity >> 1));
-//            te.getOldPosition().set(myCache.getX() - 5, myCache.getY() - 5);
-            gameWorld.addGameObject(te);
+//            ve.getOldPosition().set(myCache.getX() - 5, myCache.getY() - 5);
+            myCache.set(5, 0);
+            ve.setVelocity(myCache);
+
+            gameWorld.addGameObject(ve);
             myInputs.getMouse().offLeftLifted();
         }
 
         if (gameWorld.getObjects() != null) {
             for (GameObject go : gameWorld.getObjects()) {
-//                if (go instanceof MovableObject) {
-//                    MovableObject mo = (MovableObject) go;
-//                    myCache.set(0, 1);
-//                    // gravity
-//                    mo.applyImpulse(myCache, 1);
-//                    bounceOfWall(mo);
-//                }
                 if (go instanceof VerletObject vo) {
-                    myCache.set(0, 1);
+                    myCache.set(0, 2);
                     vo.applyForce(myCache);
                     bounceOfWallVerlet(vo);
                 }
@@ -67,21 +63,8 @@ public class GameplayController {
      * Detects if a movable object is colliding with the edge of the screen.
      * Bounces the object off of the screen if it hits it.
      *
-     * @param theMO the moving obejct
+     * @param theVO the moving obejct
      */
-    private void bounceOfWall(final MovableObject theMO) {
-        myBoundary.set(myBoundary.getX() - theMO.getRadius(), myBoundary.getY() - theMO.getRadius());
-        if (Math.abs(theMO.getPosition().getX()) > myBoundary.getX()) {
-            theMO.getPosition().setX(myBoundary.getX() * Math.signum(theMO.getPosition().getX()));
-            theMO.getVelocity().setX(theMO.getVelocity().getX() * -1);
-        }
-        if (Math.abs(theMO.getPosition().getY()) > myBoundary.getY()) {
-            theMO.getPosition().setY(myBoundary.getY() * Math.signum(theMO.getPosition().getY()));
-            theMO.getVelocity().setY(theMO.getVelocity().getY() * -1);
-        }
-        myBoundary.set(myBoundary.getX() + theMO.getRadius(), myBoundary.getY() + theMO.getRadius());
-    }
-
     private void bounceOfWallVerlet(final VerletObject theVO) {
         myBoundary.set(myBoundary.getX() - theVO.getRadius(), myBoundary.getY() - theVO.getRadius());
         if (Math.abs(theVO.getPosition().getY()) > myBoundary.getY()) {

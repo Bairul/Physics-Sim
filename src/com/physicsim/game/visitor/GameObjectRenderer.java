@@ -1,7 +1,7 @@
-package com.survival.game.visitor;
+package com.physicsim.game.visitor;
 
-import com.survival.game.model.VerletEntity;
-import com.survival.game.utility.Vector2;
+import com.physicsim.game.model.VerletEntity;
+import com.physicsim.game.utility.Vector2;
 
 import java.awt.Color;
 import java.awt.Graphics;

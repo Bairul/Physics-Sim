@@ -1,4 +1,4 @@
-package com.survival.game.model;
+package com.physicsim.game.model;
 
 import java.util.LinkedList;
 import java.util.List;

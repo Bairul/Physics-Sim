@@ -1,9 +1,8 @@
-package com.survival.game.view;
+package com.physicsim.game.view;
 
-import com.survival.game.controller.GameplayController;
-import com.survival.game.controller.input.InputController;
-import com.survival.game.utility.Vector2;
-import com.survival.game.visitor.GameObjectRenderer;
+import com.physicsim.game.controller.GameplayController;
+import com.physicsim.game.controller.input.InputController;
+import com.physicsim.game.visitor.GameObjectRenderer;
 
 import java.awt.Graphics;
 

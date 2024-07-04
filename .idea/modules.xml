@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/survival.iml" filepath="$PROJECT_DIR$/survival.iml" />
+      <module fileurl="file://$PROJECT_DIR$/physicsim.iml" filepath="$PROJECT_DIR$/physicsim.iml" />
     </modules>
   </component>
 </project>

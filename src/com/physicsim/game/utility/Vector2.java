@@ -1,4 +1,4 @@
-package com.survival.game.utility;
+package com.physicsim.game.utility;
 
 /**
  * My own vector class.

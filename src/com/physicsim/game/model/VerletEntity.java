@@ -1,7 +1,7 @@
-package com.survival.game.model;
+package com.physicsim.game.model;
 
-import com.survival.game.utility.Vector2;
-import com.survival.game.visitor.GameObjectVisitor;
+import com.physicsim.game.utility.Vector2;
+import com.physicsim.game.visitor.GameObjectVisitor;
 
 public class VerletEntity extends VerletObject {
     /**

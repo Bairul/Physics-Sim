@@ -1,7 +1,7 @@
-package com.survival.game.visitor;
+package com.physicsim.game.visitor;
 
-import com.survival.game.model.GameObject;
-import com.survival.game.model.VerletEntity;
+import com.physicsim.game.model.GameObject;
+import com.physicsim.game.model.VerletEntity;
 
 /**
  * A (GameObject) visitor implements a function F for which objects belonging to the GameObject

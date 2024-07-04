@@ -1,4 +1,4 @@
-package com.survival.game.controller;
+package com.physicsim.game.controller;
 
 /**
  * Class for launching the program.

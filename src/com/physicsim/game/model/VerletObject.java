@@ -1,6 +1,6 @@
-package com.survival.game.model;
+package com.physicsim.game.model;
 
-import com.survival.game.utility.Vector2;
+import com.physicsim.game.utility.Vector2;
 
 public abstract class VerletObject extends GameObject {
 
@@ -48,5 +48,15 @@ public abstract class VerletObject extends GameObject {
 
     public Vector2 getOldPosition() {
         return myOldPosition;
+    }
+
+    public void setVelocity(final Vector2 theVelocity) {
+        myCache.set(myPosition);
+        myCache.sub(theVelocity);
+        myOldPosition.set(myCache);
+    }
+
+    public Vector2 getVelocity() {
+        return myPosition.subNew(myOldPosition);
     }
 }
