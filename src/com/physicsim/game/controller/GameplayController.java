@@ -33,9 +33,16 @@ public class GameplayController {
         GameWorld.SCREEN_BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         GameWorld.GRAVITY.set(0, 0.25);
 
-        VerletBox box = new VerletBox(-300, -100, 100, 1);
+        VerletBox box = new VerletBox(-300, -100, 100, 10);
         box.addInputListener(myInputs);
         myGameWorld.addGameObject(box);
+
+        // testing boundary
+        Boundary boundary = new Boundary(0, 0,
+                new Vector2(500, 0),
+                new Vector2(0, 50),
+                new Vector2(-500, 0));
+        myGameWorld.addBoundary(boundary);
     }
 
     /**
@@ -43,19 +50,6 @@ public class GameplayController {
      *
      */
     public void update() {
-        // add object with mouse click
-//        if (myInputs.getMouse().isLeftLifted()) {
-//            myCache.set(myInputs.getMousePos());
-//            VerletPoint p = new VerletPoint(myCache, 1, true);
-//            VerletBox box = new VerletBox(myCache.getX(), myCache.getY(), 120, 2);
-//            VerletStick s = new VerletStick(p, box.getVertices()[3]);
-//
-//            myGameWorld.addGameObject(p);
-//            myGameWorld.addGameObject(box);
-//            myGameWorld.addGameObject(s);
-//            myInputs.getMouse().offLeftLifted();
-//        }
-
         if (myGameWorld.getObjects() != null) myGameWorld.getObjects().forEach(gameObject -> {
             if (gameObject instanceof VerletBox box) {
                 if (myInputs.getKeyboard().isKeyHeld(KeyType.D)) {

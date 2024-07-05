@@ -35,10 +35,6 @@ public class Boundary extends GameObject {
         return myBounds[1];
     }
 
-    public Vector2 getLastPoint() {
-        return myBounds[myBounds.length - 1];
-    }
-
     public Vector2[] getBounds() {
         return myBounds;
     }

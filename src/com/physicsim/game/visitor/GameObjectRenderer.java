@@ -54,9 +54,9 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     }
 
     /**
-     * Drawss the verlet stick for testing and development.
+     * Draws the verlet stick for testing and development.
      * @param theEntity the VerletStick
-     * @return
+     * @return null
      */
     @Override
     public Void visit(final VerletStick theEntity) {
@@ -70,9 +70,9 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     }
 
     /**
-     * Draws the box
+     * Draws a box.
      * @param theEntity the VerletBox
-     * @return
+     * @return null
      */
     @Override
     public Void visit(final VerletBox theEntity) {
@@ -85,30 +85,25 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         return null;
     }
 
+    /**
+     * Draws a boundary.
+     * @param theEntity the Boundary
+     * @return null
+     */
     @Override
     public Void visit(final Boundary theEntity) {
         if (theEntity.getFirstPoint() != null) {
-            int x = myOrigin.intX() + theEntity.getOrigin().intX();
-            int y = myOrigin.intY() + theEntity.getOrigin().intY();
-            int x2 = myOrigin.intX() + theEntity.getFirstPoint().intX();
-            int y2 = myOrigin.intY() + theEntity.getFirstPoint().intY();
+            int x, y, x2, y2;
             myGraphics.setColor(Color.black);
-            myGraphics.drawLine(x, y, x2, y2);
 
-            for (int i = 2; i < theEntity.getBounds().length; i++) {
+            for (int i = 1; i <= theEntity.getBounds().length; i++) {
                 x = myOrigin.intX() + theEntity.getBounds()[i - 1].intX();
                 y = myOrigin.intY() + theEntity.getBounds()[i - 1].intY();
-                x2 = myOrigin.intX() + theEntity.getBounds()[i].intX();
-                y2 = myOrigin.intY() + theEntity.getBounds()[i].intY();
+                x2 = myOrigin.intX() + theEntity.getBounds()[i % 4].intX();
+                y2 = myOrigin.intY() + theEntity.getBounds()[i % 4].intY();
 
                 myGraphics.drawLine(x, y, x2, y2);
             }
-
-            x = myOrigin.intX() + theEntity.getLastPoint().intX();
-            y = myOrigin.intY() + theEntity.getLastPoint().intY();
-            x2 = myOrigin.intX() + theEntity.getOrigin().intX();
-            y2 = myOrigin.intY() + theEntity.getOrigin().intY();
-            myGraphics.drawLine(x, y, x2, y2);
         }
 
         return null;

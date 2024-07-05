@@ -41,7 +41,7 @@ public class Mouse extends MouseAdapter {
      * Returns what mouse button is being used.
      * @return whether the mouse click type is pressed down
      */
-    public boolean isButtonDown(final ClickType theType) {
+    public boolean isButtonHeld(final ClickType theType) {
         return switch (theType) {
             case LeftClick -> myButtonDown == MouseEvent.BUTTON1;
             case RightClick -> myButtonDown == MouseEvent.BUTTON2;

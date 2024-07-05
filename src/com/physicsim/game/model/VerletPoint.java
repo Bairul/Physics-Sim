@@ -16,21 +16,33 @@ public class VerletPoint extends VerletObject {
      * Creates a point given the initial position and mass. To change this to be static, put true for pinned.
      * @param thePosition position vector
      * @param theMass     mass
+     * @param theRadius   radius of the object (set to 0 to scale with mass)
      * @param thePinned   pinned
      */
-    public VerletPoint(final Vector2 thePosition, final double theMass, final boolean thePinned) {
-        super(thePosition, theMass);
+    public VerletPoint(final Vector2 thePosition, final double theMass, final double theRadius, final boolean thePinned) {
+        super(thePosition, theMass, theRadius);
         isPinned = thePinned;
     }
 
     /**
-     * Creates a dynamic point given the initial position and mass.
-     * @param thePosition position vector
-     * @param theMass     mass
+     * @see #VerletPoint(Vector2, double, double, boolean)
+     */
+    public VerletPoint(final Vector2 thePosition, final double theMass, final double theRadius) {
+        this(thePosition, theMass, theRadius, false);
+    }
+
+    /**
+     * @see #VerletPoint(Vector2, double, double, boolean)
+     */
+    public VerletPoint(final Vector2 thePosition, final double theMass, final boolean thePinned) {
+        this(thePosition, theMass, 1, thePinned);
+    }
+
+    /**
+     * @see #VerletPoint(Vector2, double, double, boolean)
      */
     public VerletPoint(final Vector2 thePosition, final double theMass) {
-        super(thePosition, theMass);
-        isPinned = false;
+        this(thePosition, theMass, 1, false);
     }
 
     /**

@@ -19,17 +19,18 @@ public abstract class VerletObject extends GameObject {
     /** A reusable vector to save some memory. */
     private final Vector2 myCache;
     /** The radius of the object. */
-    protected float myRadius;
+    protected double myRadius;
     /** The mass of the object. */
     protected double myMass;
 
     /**
-     * Creates a game object given the initial position and mass.
+     * Creates a game object given the initial position and mass and radius.
      *
      * @param thePosition position vector
      * @param theMass     mass
+     * @param theRadius   radius of the object (set to 0 to scale with mass)
      */
-    public VerletObject(final Vector2 thePosition, final double theMass) {
+    public VerletObject(final Vector2 thePosition, final double theMass, final double theRadius) {
         super();
         // vectors
         myPosition = new Vector2(thePosition);
@@ -38,8 +39,8 @@ public abstract class VerletObject extends GameObject {
         myCache = new Vector2();
 
         myMass = theMass;
-        // sets radius to be the root of the mass because of the area of a circle
-        myRadius = (float) Math.sqrt(theMass) * SIZE_SCALE;
+        // sets radius to be the root of the mass because of the area of a circle if it's less than 1
+        myRadius = theRadius < 1 ? Math.sqrt(theMass) * SIZE_SCALE : theRadius;
     }
 
     /**

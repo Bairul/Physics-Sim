@@ -48,6 +48,7 @@ public class VerletBox extends GameObject {
         for (int i = 0; i < 4; i++) {
             myOuterEdges[i] = new VerletStick(myVertices[i % 4], myVertices[(i + 1) % 4]);
         }
+        // cross edges for stability and rigidity
         myInnerEdges[0] = new VerletStick(myVertices[0], myVertices[2]);
         myInnerEdges[1] = new VerletStick(myVertices[1], myVertices[3]);
 
@@ -102,20 +103,26 @@ public class VerletBox extends GameObject {
         return myOuterEdges;
     }
 
+    /**
+     * Handles when the mouse clicks and drags on this box.
+     */
     private void handleMouseClick() {
-        if (myInputs == null) {
-            return;
-        }
+        if (myInputs == null) return;
 
-        if (!myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
+        // let go of the anchor when the mouse is not being held down
+        if (!myInputs.getMouse().isButtonHeld(ClickType.LeftClick)) {
             myAnchor = null;
             myAnchorStick = null;
             return;
         }
 
+        // this is reached when the mouse is currently held down
         if (myAnchor == null) {
+            // create and put an anchor on the box if the mouse is within the box
             if (overlaps(myInputs.getMousePos())) {
                 myAnchor = new VerletPoint(myInputs.getMousePos(), 1, true);
+
+                // change the center point and the center to corner sticks of the box to the mouse
                 myCenter.getPosition().set(myInputs.getMousePos());
                 for (int i = 2; i < myInnerEdges.length; i++) {
                     myInnerEdges[i].updateDistance();
@@ -123,12 +130,17 @@ public class VerletBox extends GameObject {
                 myAnchorStick = new VerletStick(myAnchor, myCenter, 2);
             }
         } else {
+            // if an anchor already exists, just update its position to the mouse
             myAnchor.getPosition().set(myInputs.getMousePos());
             myAnchor.update();
             myAnchorStick.update();
         }
     }
 
+    /**
+     * Apply a force to each of the vertices of the box.
+     * @param theForce the force to apply
+     */
     public void applyUniformForce(final Vector2 theForce) {
         for (final  VerletPoint p : myVertices) {
             p.applyForce(theForce);
@@ -158,11 +170,6 @@ public class VerletBox extends GameObject {
 
     @Override
     public <V> V accept(GameObjectVisitor<V> v) {
-//        if (myAnchor != null) {
-//            v.visit(myAnchor);
-//            v.visit(myAnchorStick);
-//        }
-
         return v.visit(this);
     }
 }
