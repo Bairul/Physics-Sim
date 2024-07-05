@@ -1,7 +1,7 @@
 package com.physicsim.game.controller.input;
 
 public enum ClickType {
-    Unknown,
+    MiddleClick,
     LeftClick,
     RightClick
 }

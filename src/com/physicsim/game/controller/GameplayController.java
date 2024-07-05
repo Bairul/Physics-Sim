@@ -1,12 +1,11 @@
 package com.physicsim.game.controller;
 
+import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
 import com.physicsim.game.model.mesh.VerletBox;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.view.GameScreen;
-
-import java.util.List;
 
 /**
  * This class is used for handling and controlling objects in the game world. This includes updating
@@ -57,7 +56,23 @@ public class GameplayController {
 //            myInputs.getMouse().offLeftLifted();
 //        }
 
-        if (myGameWorld.getObjects() != null) myGameWorld.getObjects().forEach(GameObject::update);
+        if (myGameWorld.getObjects() != null) myGameWorld.getObjects().forEach(gameObject -> {
+            if (gameObject instanceof VerletBox box) {
+                if (myInputs.getKeyboard().isKeyHeld(KeyType.D)) {
+                    myCache.set(0.5, 0);
+                    box.applyUniformForce(myCache);
+                }
+                if (myInputs.getKeyboard().isKeyHeld(KeyType.A)) {
+                    myCache.set(-0.5, 0);
+                    box.applyUniformForce(myCache);
+                }
+                if (myInputs.getKeyboard().isKeyHeld(KeyType.W)) {
+                    myCache.set(0, -0.5);
+                    box.applyUniformForce(myCache);
+                }
+            }
+            gameObject.update();
+        });
         if (myGameWorld.getBoundaries() != null) myGameWorld.getBoundaries().forEach(Boundary::update);
     }
 

@@ -9,8 +9,10 @@ import com.physicsim.game.view.GameCanvas;
  * @author Bairu Li
  */
 public class InputController {
-    /** Input for the mouse. */
+    /** Input from the mouse. */
     private Mouse myMouse;
+    /** Input from the keyboard. */
+    private Keyboard myKeyboard;
 
     /**
      * Creates the controller. Adds the mouse and keyboard to the Game Canvas to make it functional.
@@ -27,6 +29,10 @@ public class InputController {
         theCanvas.getCanvas().addMouseMotionListener(myMouse);
         theCanvas.getFrame().addMouseListener(myMouse);
         theCanvas.getFrame().addMouseMotionListener(myMouse);
+
+        myKeyboard = new Keyboard();
+        theCanvas.getCanvas().addKeyListener(myKeyboard);
+        theCanvas.getFrame().addKeyListener(myKeyboard);
     }
 
     /**
@@ -44,5 +50,13 @@ public class InputController {
      */
     public Vector2 getMousePos() {
         return  myMouse.getPos();
+    }
+
+    /**
+     * Gets the keyboard input.
+     * @return the keyboard
+     */
+    public Keyboard getKeyboard() {
+        return myKeyboard;
     }
 }

@@ -2,22 +2,21 @@ package com.physicsim.game.controller.input;
 
 import com.physicsim.game.utility.Vector2;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 /**
  * Class for mouse input.
  *
  * @author Bairu Li
  */
-public class Mouse implements MouseListener, MouseMotionListener {
+public class Mouse extends MouseAdapter {
     private final Vector2 myOrigin;
     /** The X and Y coordinate of the mouse. */
     private final Vector2 myPosition;
     /** The button on the mouse that was pressed. */
-    private int myButton;
-    /** Whether the left mouse button is lifted. */
+    private int myButtonDown;
+    /** Whether the left mouse button is lifted for manually getting mouse clicks. */
     private boolean isLeftLifted;
 
     /**
@@ -26,7 +25,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
     public Mouse(final Vector2 theOrigin) {
         myPosition = new Vector2();
         myOrigin = new Vector2(theOrigin);
-        myButton = -1;
+        myButtonDown = -1;
         isLeftLifted = false;
     }
 
@@ -40,13 +39,13 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
     /**
      * Returns what mouse button is being used.
-     * @return the click type
+     * @return whether the mouse click type is pressed down
      */
-    public ClickType getButton() {
-        return switch (myButton) {
-            case 1 -> ClickType.LeftClick;
-            case 3 -> ClickType.RightClick;
-            default -> ClickType.Unknown;
+    public boolean isButtonDown(final ClickType theType) {
+        return switch (theType) {
+            case LeftClick -> myButtonDown == MouseEvent.BUTTON1;
+            case RightClick -> myButtonDown == MouseEvent.BUTTON2;
+            case MiddleClick -> myButtonDown == MouseEvent.BUTTON3;
         };
     }
 
@@ -55,66 +54,30 @@ public class Mouse implements MouseListener, MouseMotionListener {
      * @return true if left click is lifted, and false otherwise
      */
     public boolean isLeftLifted() {
-        return isLeftLifted;
-    }
-
-    /**
-     * Turns off the left click, signifying that the end of a left click has ended.
-     */
-    public void offLeftLifted() {
+        boolean r = isLeftLifted;
         isLeftLifted = false;
+        return r;
     }
 
-    // mouse motion listener implemented methods
-    /**
-     * Sets the position of the mouse when the mouse button is held down and then moved.
-     * @param theE the event to be processed
-     */
     @Override
     public void mouseDragged(final MouseEvent theE) {
         myPosition.set(theE.getX() - myOrigin.getX(), theE.getY() - myOrigin.getY());
     }
 
-    /**
-     * Sets the position of the mouse when the mouse when no button is held down and is moving.
-     * @param theE the event to be processed
-     */
     @Override
     public void mouseMoved(final MouseEvent theE) {
         myPosition.set(theE.getX() - myOrigin.getX(), theE.getY() - myOrigin.getY());
     }
 
-    // mouse listener implemented methods
-    /**
-     * Determines what mouse button was held down.
-     * @param theE the event to be processed
-     */
     @Override
     public void mousePressed(final MouseEvent theE) {
-        myButton = theE.getButton();
+        myButtonDown = theE.getButton();
     }
 
-    /**
-     * Determines what mouse button was lifted.
-     * @param theE the event to be processed
-     */
     @Override
     public void mouseReleased(final MouseEvent theE) {
-        myButton = -1;
+        myButtonDown = -1;
         if (theE.getButton() == MouseEvent.BUTTON1)
             isLeftLifted = true;
-    }
-
-    // unused implemented methods
-    @Override
-    public void mouseClicked(final MouseEvent theE) {
-    }
-
-    @Override
-    public void mouseEntered(final MouseEvent theE) {
-    }
-
-    @Override
-    public void mouseExited(final MouseEvent theE) {
     }
 }

@@ -58,10 +58,6 @@ public class VerletBox extends GameObject {
         myInnerEdges[3] = new VerletStick(myCenter, myVertices[1]);
         myInnerEdges[4] = new VerletStick(myCenter, myVertices[2]);
         myInnerEdges[5] = new VerletStick(myCenter, myVertices[3]);
-
-        // apply rotation for testing
-        cache.set(15, -50);
-        myVertices[0].applyForce(cache);
     }
 
     /**
@@ -111,7 +107,7 @@ public class VerletBox extends GameObject {
             return;
         }
 
-        if (myInputs.getMouse().getButton() != ClickType.LeftClick) {
+        if (!myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
             myAnchor = null;
             myAnchorStick = null;
             return;
@@ -133,13 +129,19 @@ public class VerletBox extends GameObject {
         }
     }
 
+    public void applyUniformForce(final Vector2 theForce) {
+        for (final  VerletPoint p : myVertices) {
+            p.applyForce(theForce);
+        }
+    }
+
     /**
      * Updates the mesh by updating the vertices first then edges.
      */
     @Override
     public void update() {
         for (final VerletPoint p : myVertices) {
-            p.applyForce(GameWorld.GRAVITY);
+            p.applyForce(GameWorld.GRAVITY.mulNew(p.getMass()));
             p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
             p.update();
         }
