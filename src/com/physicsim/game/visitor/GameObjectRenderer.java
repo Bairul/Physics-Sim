@@ -96,11 +96,12 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
             int x, y, x2, y2;
             myGraphics.setColor(Color.black);
 
-            for (int i = 1; i <= theEntity.getBounds().length; i++) {
+            int len = theEntity.getBounds().length;
+            for (int i = 1; i <= len; i++) {
                 x = myOrigin.intX() + theEntity.getBounds()[i - 1].intX();
                 y = myOrigin.intY() + theEntity.getBounds()[i - 1].intY();
-                x2 = myOrigin.intX() + theEntity.getBounds()[i % 4].intX();
-                y2 = myOrigin.intY() + theEntity.getBounds()[i % 4].intY();
+                x2 = myOrigin.intX() + theEntity.getBounds()[i % len].intX();
+                y2 = myOrigin.intY() + theEntity.getBounds()[i % len].intY();
 
                 myGraphics.drawLine(x, y, x2, y2);
             }

@@ -127,7 +127,7 @@ public class VerletBox extends GameObject {
                 for (int i = 2; i < myInnerEdges.length; i++) {
                     myInnerEdges[i].updateDistance();
                 }
-                myAnchorStick = new VerletStick(myAnchor, myCenter, 2);
+                myAnchorStick = new VerletStick(myAnchor, myCenter, 1);
             }
         } else {
             // if an anchor already exists, just update its position to the mouse

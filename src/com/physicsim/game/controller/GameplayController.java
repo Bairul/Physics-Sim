@@ -1,5 +1,6 @@
 package com.physicsim.game.controller;
 
+import com.physicsim.game.controller.input.ClickType;
 import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
 import com.physicsim.game.model.mesh.VerletBox;
@@ -33,16 +34,22 @@ public class GameplayController {
         GameWorld.SCREEN_BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         GameWorld.GRAVITY.set(0, 0.25);
 
-        VerletBox box = new VerletBox(-300, -100, 100, 10);
-        box.addInputListener(myInputs);
-        myGameWorld.addGameObject(box);
+//        VerletBox box = new VerletBox(-300, -100, 100, 10);
+//        box.addInputListener(myInputs);
+//        myGameWorld.addGameObject(box);
 
         // testing boundary
-        Boundary boundary = new Boundary(0, 0,
+        Boundary rectangle = new Boundary(0, 0,
                 new Vector2(500, 0),
                 new Vector2(0, 50),
                 new Vector2(-500, 0));
-        myGameWorld.addBoundary(boundary);
+
+        Boundary triangle = new Boundary(-400, 0,
+                new Vector2(200, 0),
+                new Vector2(0, -200));
+
+        myGameWorld.addBoundary(rectangle);
+        myGameWorld.addBoundary(triangle);
     }
 
     /**
@@ -50,19 +57,43 @@ public class GameplayController {
      *
      */
     public void update() {
+
+        if (myInputs.getKeyboard().isKeyHeld(KeyType.S)) {
+            System.out.println(myInputs.getMousePos());
+        }
+
+        if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
+            myGameWorld.addGameObject(new VerletPoint(myInputs.getMousePos(), 1, 4));
+        }
+
+        if (myInputs.getKeyboard().isKeyDown(KeyType.Space)) {
+            myGameWorld.clearGameObjects();
+        }
+
         if (myGameWorld.getObjects() != null) myGameWorld.getObjects().forEach(gameObject -> {
-            if (gameObject instanceof VerletBox box) {
-                if (myInputs.getKeyboard().isKeyHeld(KeyType.D)) {
-                    myCache.set(0.5, 0);
-                    box.applyUniformForce(myCache);
-                }
-                if (myInputs.getKeyboard().isKeyHeld(KeyType.A)) {
-                    myCache.set(-0.5, 0);
-                    box.applyUniformForce(myCache);
-                }
-                if (myInputs.getKeyboard().isKeyHeld(KeyType.W)) {
-                    myCache.set(0, -0.5);
-                    box.applyUniformForce(myCache);
+            if (gameObject instanceof VerletPoint p) {
+//                if (myInputs.getKeyboard().isKeyHeld(KeyType.D)) {
+//                    myCache.set(0.5, 0);
+//                    p.applyForce(myCache);
+//                }
+//                if (myInputs.getKeyboard().isKeyHeld(KeyType.A)) {
+//                    myCache.set(-0.5, 0);
+//                    p.applyForce(myCache);
+//                }
+//                if (myInputs.getKeyboard().isKeyHeld(KeyType.W)) {
+//                    myCache.set(0, -0.5);
+//                    p.applyForce(myCache);
+//                }
+
+                myCache.set(GameWorld.GRAVITY);
+                myCache.mul(p.getMass());
+                p.applyForce(myCache);
+                p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
+
+                for (final Boundary b : myGameWorld.getBoundaries()) {
+                    if (b.overlaps(p.getPosition())) {
+                        System.out.println(true);
+                    }
                 }
             }
             gameObject.update();

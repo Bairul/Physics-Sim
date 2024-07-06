@@ -9,7 +9,7 @@ import com.physicsim.game.utility.Vector2;
  */
 public abstract class VerletObject extends GameObject {
     /** Constant for the sizing. */
-    private static final int SIZE_SCALE = 4;
+    private static final int SIZE_SCALE = 10;
     /** The position vector. */
     protected final Vector2 myPosition;
     /** The previous position vector. */

@@ -23,6 +23,25 @@ public class Boundary extends GameObject {
         }
     }
 
+    /**
+     * Checks if a vector point is within the boundary. Uses linear interpolation for ray tracing.
+     * @param thePoint the point vector
+     * @return if the box contains the point
+     */
+    public boolean overlaps(final Vector2 thePoint) {
+        int count = 0;
+        for (int i = 1; i <= myBounds.length; i++) {
+            final Vector2 start = myBounds[i - 1];
+            final Vector2 end = myBounds[i % myBounds.length];
+
+            if (thePoint.getX() < start.getX() != thePoint.getX() < end.getX()
+                    && thePoint.getY() < start.getY() + (thePoint.getX() - start.getX()) * start.getSlope(end)) {
+                count++;
+            }
+        }
+        return count % 2 == 1;
+    }
+
     @Override
     public void update() {
     }

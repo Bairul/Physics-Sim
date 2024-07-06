@@ -29,20 +29,28 @@ public class Keyboard extends KeyAdapter {
     }
 
     /**
-     * Determines if a KeyType is currently being held down.
-     *
-     * @param theKey the key in question
-     * @return whether that key is being pressed
+     * Converts the ClickType enum to integers.
+     * @param theKey the click type
+     * @return the respective integer
      */
-    public boolean isKeyHeld(final KeyType theKey) {
-        int keyCode = switch (theKey) {
+    private int enumToInt(final KeyType theKey) {
+        return switch (theKey) {
             case W -> KeyEvent.VK_W;
             case A -> KeyEvent.VK_A;
             case S -> KeyEvent.VK_S;
             case D -> KeyEvent.VK_D;
             case Space -> KeyEvent.VK_SPACE;
         };
-        return myKeyHelds.contains(keyCode);
+    }
+
+    /**
+     * Determines if a KeyType is currently being held down.
+     *
+     * @param theKey the key in question
+     * @return whether that key is being pressed
+     */
+    public boolean isKeyHeld(final KeyType theKey) {
+        return myKeyHelds.contains(enumToInt(theKey));
     }
 
     /**
@@ -54,13 +62,7 @@ public class Keyboard extends KeyAdapter {
      * @return whether the key has been released
      */
     public boolean isKeyUp(final KeyType theKey) {
-        int keyCode = switch (theKey) {
-            case W -> KeyEvent.VK_W;
-            case A -> KeyEvent.VK_A;
-            case S -> KeyEvent.VK_S;
-            case D -> KeyEvent.VK_D;
-            case Space -> KeyEvent.VK_SPACE;
-        };
+        int keyCode = enumToInt(theKey);
 
         boolean r = myKeyUps[keyCode];
         myKeyUps[keyCode] = false;
@@ -76,13 +78,7 @@ public class Keyboard extends KeyAdapter {
      * @return whether the key has been pressed
      */
     public boolean isKeyDown(final KeyType theKey) {
-        int keyCode = switch (theKey) {
-            case W -> KeyEvent.VK_W;
-            case A -> KeyEvent.VK_A;
-            case S -> KeyEvent.VK_S;
-            case D -> KeyEvent.VK_D;
-            case Space -> KeyEvent.VK_SPACE;
-        };
+        int keyCode = enumToInt(theKey);
 
         if (myKeyDowns[keyCode]) return false;
 

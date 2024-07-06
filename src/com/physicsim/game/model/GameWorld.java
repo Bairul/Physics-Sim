@@ -42,6 +42,13 @@ public class GameWorld {
     }
 
     /**
+     * Clears all game objects.
+     */
+    public void clearGameObjects() {
+        myObjects.clear();
+    }
+
+    /**
      * Gets the list of game objects.
      * @return the list of game objects
      */

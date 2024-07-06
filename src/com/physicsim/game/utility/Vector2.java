@@ -139,6 +139,15 @@ public class Vector2 {
     }
 
     /**
+     * Computes the cross product between 2 2D vectors. This is also the determinant.
+     * @param theOther the other vector
+     * @return the cross product
+     */
+    public double crossProduct(final Vector2 theOther) {
+        return myX * theOther.myY - myY * theOther.myX;
+    }
+
+    /**
      * Computes the magnitude (length to the origin: 0,0) of the vector.
      * @return the magnitude as a double
      */
