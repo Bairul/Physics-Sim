@@ -67,16 +67,17 @@ public class VerletBox extends GameObject {
      * @return if the box contains the point
      */
     public boolean overlaps(final Vector2 thePoint) {
-        int count = 0;
-        for (final VerletStick e : myOuterEdges) {
-            double x = e.getStartPoint().getPosition().getX();
-            double y = e.getStartPoint().getPosition().getY();
-            if (thePoint.getX() < x != thePoint.getX() < e.getEndPoint().getPosition().getX()
-                    && thePoint.getY() < y + (thePoint.getX() - x) * e.getStartPoint().getPosition().getSlope(e.getEndPoint().getPosition())) {
-                count++;
-            }
-        }
-        return count % 2 == 1;
+//        int count = 0;
+//        for (final VerletStick e : myOuterEdges) {
+//            double x = e.getStartPoint().getPosition().getX();
+//            double y = e.getStartPoint().getPosition().getY();
+//            if (thePoint.getX() < x != thePoint.getX() < e.getEndPoint().getPosition().getX()
+//                    && thePoint.getY() < y + (thePoint.getX() - x) * e.getStartPoint().getPosition().getSlope(e.getEndPoint().getPosition())) {
+//                count++;
+//            }
+//        }
+//        return count % 2 == 1;
+        return false;
     }
 
     /**

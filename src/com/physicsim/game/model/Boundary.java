@@ -1,5 +1,6 @@
 package com.physicsim.game.model;
 
+import com.physicsim.game.utility.VMath;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.visitor.GameObjectVisitor;
 
@@ -29,17 +30,28 @@ public class Boundary extends GameObject {
      * @return if the box contains the point
      */
     public boolean overlaps(final Vector2 thePoint) {
-        int count = 0;
+        boolean count = false;
         for (int i = 1; i <= myBounds.length; i++) {
             final Vector2 start = myBounds[i - 1];
             final Vector2 end = myBounds[i % myBounds.length];
 
             if (thePoint.getX() < start.getX() != thePoint.getX() < end.getX()
-                    && thePoint.getY() < start.getY() + (thePoint.getX() - start.getX()) * start.getSlope(end)) {
-                count++;
+                    && thePoint.getY() < VMath.lerpY(start, end, thePoint.getX())) {
+                count = !count;
             }
         }
-        return count % 2 == 1;
+        return count;
+    }
+
+    public void handleCollision(final VerletPoint theVp) {
+        for (int i = 1; i <= myBounds.length; i++) {
+            final Vector2 start = myBounds[i - 1];
+            final Vector2 end = myBounds[i % myBounds.length];
+
+            if (VMath.intersect(start, end, theVp.getPosition(), theVp.getOldPosition()) != null) {
+                theVp.setPinned(true);
+            }
+        }
     }
 
     @Override

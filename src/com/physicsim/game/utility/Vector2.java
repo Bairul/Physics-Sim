@@ -166,10 +166,6 @@ public class Vector2 {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public double getSlope(final Vector2 theOther) {
-        return (theOther.myY - myY) / (theOther.myX - myX);
-    }
-
     // ============ getters ============
 
     /**

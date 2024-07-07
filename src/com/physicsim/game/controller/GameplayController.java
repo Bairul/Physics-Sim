@@ -85,14 +85,15 @@ public class GameplayController {
 //                    p.applyForce(myCache);
 //                }
 
-                myCache.set(GameWorld.GRAVITY);
+                myCache.set(0,-0.5);
                 myCache.mul(p.getMass());
                 p.applyForce(myCache);
                 p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
 
                 for (final Boundary b : myGameWorld.getBoundaries()) {
                     if (b.overlaps(p.getPosition())) {
-                        System.out.println(true);
+                        b.handleCollision(p);
+                        break;
                     }
                 }
             }
