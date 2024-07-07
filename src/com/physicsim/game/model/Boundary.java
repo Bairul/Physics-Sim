@@ -29,7 +29,7 @@ public class Boundary extends GameObject {
      * @param thePoint the point vector
      * @return if the box contains the point
      */
-    public boolean overlaps(final Vector2 thePoint) {
+    public boolean contains(final Vector2 thePoint) {
         boolean count = false;
         for (int i = 1; i <= myBounds.length; i++) {
             final Vector2 start = myBounds[i - 1];
@@ -48,9 +48,7 @@ public class Boundary extends GameObject {
             final Vector2 start = myBounds[i - 1];
             final Vector2 end = myBounds[i % myBounds.length];
 
-            final Vector2 inter = VMath.intersect(start, end, theVp.getPosition(), theVp.getOldPosition());
-
-            if (inter != null) {
+            if (VMath.intersect(start, end, theVp.getPosition(), theVp.getOldPosition()) != null) {
                 theVp.getPosition().set(VMath.reflect(start, end, theVp.getPosition()));
                 theVp.getOldPosition().set(VMath.reflect(start, end, theVp.getOldPosition()));
                 return;

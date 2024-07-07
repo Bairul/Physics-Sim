@@ -98,7 +98,7 @@ public class GameplayController {
                     p.update();
 
                     for (final Boundary b : myGameWorld.getBoundaries()) {
-                        if (b.overlaps(p.getPosition())) {
+                        if (b.contains(p.getPosition())) {
                             b.handleCollision(p);
                             break;
                         }
