@@ -63,15 +63,21 @@ public class GameplayController {
         }
 
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
-            myGameWorld.addGameObject(new VerletPoint(myInputs.getMousePos(), 1, 4));
+            VerletPoint p1 = new VerletPoint(myInputs.getMousePos(), 1, 4);
+//            VerletPoint p2 = new VerletPoint(myInputs.getMousePos().addNew(new Vector2(100, 0)), 1, 4);
+//            VerletStick s = new VerletStick(p1, p2);
+            myGameWorld.addGameObject(p1);
+//            myGameWorld.addGameObject(p2);
+//            myGameWorld.addGameObject(s);
         }
 
         if (myInputs.getKeyboard().isKeyDown(KeyType.Space)) {
             myGameWorld.clearGameObjects();
         }
 
-        if (myGameWorld.getObjects() != null) myGameWorld.getObjects().forEach(gameObject -> {
-            if (gameObject instanceof VerletPoint p) {
+        if (myGameWorld.getObjects() != null) {
+            for (final GameObject gameObject : myGameWorld.getObjects())  {
+                if (gameObject instanceof VerletPoint p) {
 //                if (myInputs.getKeyboard().isKeyHeld(KeyType.D)) {
 //                    myCache.set(0.5, 0);
 //                    p.applyForce(myCache);
@@ -85,20 +91,23 @@ public class GameplayController {
 //                    p.applyForce(myCache);
 //                }
 
-                myCache.set(0,-0.5);
-                myCache.mul(p.getMass());
-                p.applyForce(myCache);
-                p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
+                    myCache.set(0,0.2);
+                    myCache.mul(p.getMass());
+                    p.applyForce(myCache);
+                    p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
+                    p.update();
 
-                for (final Boundary b : myGameWorld.getBoundaries()) {
-                    if (b.overlaps(p.getPosition())) {
-                        b.handleCollision(p);
-                        break;
+                    for (final Boundary b : myGameWorld.getBoundaries()) {
+                        if (b.overlaps(p.getPosition())) {
+                            b.handleCollision(p);
+                            break;
+                        }
                     }
+                    continue;
                 }
+                gameObject.update();
             }
-            gameObject.update();
-        });
+        }
         if (myGameWorld.getBoundaries() != null) myGameWorld.getBoundaries().forEach(Boundary::update);
     }
 

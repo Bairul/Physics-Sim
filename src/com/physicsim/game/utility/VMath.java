@@ -15,6 +15,7 @@ public final class VMath {
      * @return the slope
      */
     public static double slope(final Vector2 theStart, final Vector2 theEnd) {
+        if (theEnd.getX() == theStart.getX()) throw new ArithmeticException("Divide by 0");
         return (theEnd.getY() - theStart.getY()) / (theEnd.getX() - theStart.getX());
     }
 
@@ -73,7 +74,19 @@ public final class VMath {
      * @return the reflected point
      */
     public static Vector2 reflect(final Vector2 theStart, final Vector2 theEnd, final Vector2 thePoint) {
-        double m = slope(theStart, theEnd);
+        double m;
+
+        try {
+            m = slope(theStart, theEnd);
+        } catch (final ArithmeticException e) {
+            // reflect over a vertical slope
+            return new Vector2(2 * theStart.getX() - thePoint.getX(), thePoint.getY());
+        }
+        if (m == 0) {
+            // reflect over a horizontal slope
+            return new Vector2(thePoint.getX(), 2 * theStart.getY() - thePoint.getY());
+        }
+
         double m_p = -1 / m;
         double x = theStart.getX();
         double y = theStart.getY();
