@@ -10,5 +10,4 @@ public class VerletEdge extends VerletStick {
         super(thePointStart, thePointEnd);
     }
 
-
 }

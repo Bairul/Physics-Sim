@@ -7,9 +7,9 @@ package com.physicsim.game.utility;
  */
 public class Vector2 {
     /** The x component. */
-    private double myX;
+    protected double myX;
     /** The y component. */
-    private double myY;
+    protected double myY;
 
     /**
      * Constructs a vector given the x and y component

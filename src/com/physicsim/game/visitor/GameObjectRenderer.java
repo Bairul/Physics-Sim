@@ -44,8 +44,8 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      */
     @Override
     public Void visit(final VerletPoint theEntity) {
-        int x = myOrigin.intX() + theEntity.getPosition().intX();
-        int y = myOrigin.intY() + theEntity.getPosition().intY();
+        int x = myOrigin.intX() + theEntity.intX();
+        int y = myOrigin.intY() + theEntity.intY();
         myGraphics.setColor(Color.black);
         myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
         myGraphics.setColor(Color.yellow);
@@ -60,10 +60,10 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      */
     @Override
     public Void visit(final VerletStick theEntity) {
-        int x = myOrigin.intX() + theEntity.getStartPoint().getPosition().intX();
-        int y = myOrigin.intY() + theEntity.getStartPoint().getPosition().intY();
-        int x2 = myOrigin.intX() + theEntity.getEndPoint().getPosition().intX();
-        int y2 = myOrigin.intY() + theEntity.getEndPoint().getPosition().intY();
+        int x = myOrigin.intX() + theEntity.getStartPoint().intX();
+        int y = myOrigin.intY() + theEntity.getStartPoint().intY();
+        int x2 = myOrigin.intX() + theEntity.getEndPoint().intX();
+        int y2 = myOrigin.intY() + theEntity.getEndPoint().intY();
         myGraphics.setColor(Color.black);
         myGraphics.drawLine(x, y, x2, y2);
         return null;

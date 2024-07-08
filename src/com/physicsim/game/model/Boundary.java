@@ -48,9 +48,9 @@ public class Boundary extends GameObject {
             final Vector2 start = myBounds[i - 1];
             final Vector2 end = myBounds[i % myBounds.length];
 
-            if (VMath.intersect(start, end, theVp.getPosition(), theVp.getOldPosition()) != null) {
-                theVp.getPosition().set(VMath.reflect(start, end, theVp.getPosition()));
-                theVp.getOldPosition().set(VMath.reflect(start, end, theVp.getOldPosition()));
+            if (VMath.intersect(start, end, theVp, theVp.getOldPos()) != null) {
+                theVp.set(VMath.reflect(start, end, theVp));
+                theVp.getOldPos().set(VMath.reflect(start, end, theVp.getOldPos()));
                 return;
             }
         }

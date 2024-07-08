@@ -10,10 +10,8 @@ import com.physicsim.game.utility.Vector2;
 public abstract class VerletObject extends GameObject {
     /** Constant for the sizing. */
     private static final int SIZE_SCALE = 10;
-    /** The position vector. */
-    protected final Vector2 myPosition;
     /** The previous position vector. */
-    protected final Vector2 myOldPosition;
+    protected final Vector2 myOld;
     /** The acceleration vector. */
     protected final Vector2 myAcceleration;
     /** A reusable vector to save some memory. */
@@ -33,8 +31,8 @@ public abstract class VerletObject extends GameObject {
     public VerletObject(final Vector2 thePosition, final double theMass, final double theRadius) {
         super();
         // vectors
-        myPosition = new Vector2(thePosition);
-        myOldPosition = new Vector2(thePosition);
+        set(thePosition);
+        myOld = new Vector2(thePosition);
         myAcceleration = new Vector2();
         myCache = new Vector2();
 
@@ -54,9 +52,9 @@ public abstract class VerletObject extends GameObject {
      * Updates the object using verlet integration.
      */
     protected void move() {
-        myCache.set(myPosition);
-        myPosition.add(myPosition.subNew(myOldPosition).addNew(myAcceleration));
-        myOldPosition.set(myCache);
+        myCache.set(this);
+        add(subNew(myOld).addNew(myAcceleration));
+        myOld.set(myCache);
     }
 
     /**
@@ -79,13 +77,13 @@ public abstract class VerletObject extends GameObject {
     public void bounceOffBoundary(final Vector2 theBoundary) {
         myCache.set(myRadius, myRadius);
         theBoundary.sub(myCache);
-        if (Math.abs(myPosition.getY()) > theBoundary.getY()) {
-            myPosition.setY(2 * Math.signum(myPosition.getY()) * theBoundary.getY() - myPosition.getY());
-            myOldPosition.setY(2 * Math.signum(myOldPosition.getY()) * theBoundary.getY() - myOldPosition.getY());
+        if (Math.abs(myY) > theBoundary.getY()) {
+            myY = 2 * Math.signum(myY) * theBoundary.getY() - myY;
+            myOld.setY(2 * Math.signum(myOld.getY()) * theBoundary.getY() - myOld.getY());
         }
-        if (Math.abs(myPosition.getX()) > theBoundary.getX()) {
-            myPosition.setX(2 * Math.signum(myPosition.getX()) * theBoundary.getX() - myPosition.getX());
-            myOldPosition.setX(2 * Math.signum(myOldPosition.getX()) * theBoundary.getX() - myOldPosition.getX());
+        if (Math.abs(myX) > theBoundary.getX()) {
+            myX = 2 * Math.signum(myX) * theBoundary.getX() - myX;
+            myOld.setX(2 * Math.signum(myOld.getX()) * theBoundary.getX() - myOld.getX());
         }
         theBoundary.add(myCache);
     }
@@ -96,9 +94,9 @@ public abstract class VerletObject extends GameObject {
      * @param theVelocity the velocity vector
      */
     public void setVelocity(final Vector2 theVelocity) {
-        myCache.set(myPosition);
+        myCache.set(this);
         myCache.sub(theVelocity);
-        myOldPosition.set(myCache);
+        myOld.set(myCache);
     }
 
     /**
@@ -106,23 +104,15 @@ public abstract class VerletObject extends GameObject {
      * @return the velocity vector
      */
     public Vector2 getVelocity() {
-        return myPosition.subNew(myOldPosition);
-    }
-
-    /**
-     * Gets the position: the x and y coordinate of the object.
-     * @return the position vector
-     */
-    public Vector2 getPosition() {
-        return myPosition;
+        return subNew(myOld);
     }
 
     /**
      * Gets the old position: the x and y coordinate of the object previously.
      * @return the old position vector
      */
-    public Vector2 getOldPosition() {
-        return myOldPosition;
+    public Vector2 getOldPos() {
+        return myOld;
     }
 
     /**

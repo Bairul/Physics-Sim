@@ -124,7 +124,7 @@ public class VerletBox extends GameObject {
                 myAnchor = new VerletPoint(myInputs.getMousePos(), 1, true);
 
                 // change the center point and the center to corner sticks of the box to the mouse
-                myCenter.getPosition().set(myInputs.getMousePos());
+                myCenter.set(myInputs.getMousePos());
                 for (int i = 2; i < myInnerEdges.length; i++) {
                     myInnerEdges[i].updateDistance();
                 }
@@ -132,7 +132,7 @@ public class VerletBox extends GameObject {
             }
         } else {
             // if an anchor already exists, just update its position to the mouse
-            myAnchor.getPosition().set(myInputs.getMousePos());
+            myAnchor.set(myInputs.getMousePos());
             myAnchor.update();
             myAnchorStick.update();
         }
