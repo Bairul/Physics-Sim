@@ -3,7 +3,6 @@ package com.physicsim.game.controller;
 import com.physicsim.game.controller.input.ClickType;
 import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
-import com.physicsim.game.model.mesh.VerletBox;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.view.GameScreen;
@@ -39,17 +38,27 @@ public class GameplayController {
 //        myGameWorld.addGameObject(box);
 
         // testing boundary
-        Boundary rectangle = new Boundary(0, 0,
-                new Vector2(500, 0),
-                new Vector2(0, 50),
-                new Vector2(-500, 0));
+//        myCache.set(0, 0);
+//        Boundary rectangle = new Boundary(myCache,
+//                new Vector2(500, 0),
+//                new Vector2(0, 50),
+//                new Vector2(-500, 0));
+//
+//        myCache.set(-400, 0);
+//        Boundary triangle = new Boundary(myCache,
+//                new Vector2(200, 0),
+//                new Vector2(0, -200));
 
-        Boundary triangle = new Boundary(-400, 0,
-                new Vector2(200, 0),
-                new Vector2(0, -200));
+        myCache.set(0, 0);
+        VerletPoint p1 = new VerletPoint(myCache, 1, true);
+        myCache.set(100, 0);
+        VerletPoint p2 = new VerletPoint(myCache, 1, true);
 
-        myGameWorld.addBoundary(rectangle);
-        myGameWorld.addBoundary(triangle);
+        VerletEdge e = new VerletEdge(p1, p2);
+
+//        myGameWorld.addBoundary(rectangle);
+//        myGameWorld.addBoundary(triangle);
+        myGameWorld.addBinding(e);
     }
 
     /**
@@ -78,29 +87,17 @@ public class GameplayController {
         if (myGameWorld.getObjects() != null) {
             for (final GameObject gameObject : myGameWorld.getObjects())  {
                 if (gameObject instanceof VerletPoint p) {
-//                if (myInputs.getKeyboard().isKeyHeld(KeyType.D)) {
-//                    myCache.set(0.5, 0);
-//                    p.applyForce(myCache);
-//                }
-//                if (myInputs.getKeyboard().isKeyHeld(KeyType.A)) {
-//                    myCache.set(-0.5, 0);
-//                    p.applyForce(myCache);
-//                }
-//                if (myInputs.getKeyboard().isKeyHeld(KeyType.W)) {
-//                    myCache.set(0, -0.5);
-//                    p.applyForce(myCache);
-//                }
-
                     myCache.set(0,0.2);
                     myCache.mul(p.getMass());
                     p.applyForce(myCache);
                     p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
                     p.update();
 
-                    for (final Boundary b : myGameWorld.getBoundaries()) {
-                        if (b.contains(p)) {
-                            b.handleCollision(p);
-                            break;
+                    for (final VerletStick s : myGameWorld.getBindings()) {
+                        if (s instanceof VerletEdge e) {
+                            if (e.rayCast(p.getPosition())) {
+                                e.handleCollision(p);
+                            }
                         }
                     }
                     continue;
@@ -108,7 +105,7 @@ public class GameplayController {
                 gameObject.update();
             }
         }
-        if (myGameWorld.getBoundaries() != null) myGameWorld.getBoundaries().forEach(Boundary::update);
+        if (myGameWorld.getBindings() != null) myGameWorld.getBindings().forEach(VerletStick::update);
     }
 
     /**

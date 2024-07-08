@@ -27,7 +27,7 @@ public class VerletStick extends GameObject {
     public VerletStick(final VerletPoint thePointStart, final VerletPoint thePointEnd, final double theStrength) {
         myStart = thePointStart;
         myEnd = thePointEnd;
-        myLength = thePointStart.getDistance(thePointEnd);
+        myLength = thePointStart.getPosition().getDistance(thePointEnd.getPosition());
         myCache = new Vector2();
         myStrength = theStrength;
     }
@@ -40,7 +40,7 @@ public class VerletStick extends GameObject {
     public VerletStick(final VerletPoint thePointStart, final VerletPoint thePointEnd) {
         myStart = thePointStart;
         myEnd = thePointEnd;
-        myLength = thePointStart.getDistance(thePointEnd);
+        myLength = thePointStart.getPosition().getDistance(thePointEnd.getPosition());
         myCache = new Vector2();
         myStrength = 1;
     }
@@ -49,7 +49,7 @@ public class VerletStick extends GameObject {
      * Gets the starting point.
      * @return the start verlet point
      */
-    public VerletObject getStartPoint() {
+    public VerletPoint getStartPoint() {
         return myStart;
     }
 
@@ -57,7 +57,7 @@ public class VerletStick extends GameObject {
      * Gets the ending point.
      * @return the end verlet point
      */
-    public VerletObject getEndPoint() {
+    public VerletPoint getEndPoint() {
         return myEnd;
     }
 
@@ -65,7 +65,7 @@ public class VerletStick extends GameObject {
      * Re-updates the distance between the 2 points. Useful to deform the stick.
      */
     public void updateDistance() {
-        myLength = myStart.getDistance(myEnd);
+        myLength = myStart.getPosition().getDistance(myEnd.getPosition());
     }
 
     /**
@@ -73,16 +73,16 @@ public class VerletStick extends GameObject {
      */
     @Override
     public void update() {
-        double dist = myStart.getDistance(myEnd);
+        double dist = myStart.getPosition().getDistance(myEnd.getPosition());
         double diff = myLength - dist;
         double percent = diff / dist / (2 * myStrength);
 
-        myCache.set(myStart);
-        myCache.sub(myEnd);
+        myCache.set(myStart.getPosition());
+        myCache.sub(myEnd.getPosition());
         myCache.mul(percent);
 
-        if (!myStart.isPinned()) myStart.add(myCache);
-        if (!myEnd.isPinned()) myEnd.sub(myCache);
+        if (!myStart.isPinned()) myStart.getPosition().add(myCache);
+        if (!myEnd.isPinned()) myEnd.getPosition().sub(myCache);
     }
 
     @Override

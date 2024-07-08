@@ -1,6 +1,7 @@
 package com.physicsim.game.visitor;
 
 import com.physicsim.game.model.Boundary;
+import com.physicsim.game.model.VerletEdge;
 import com.physicsim.game.model.VerletPoint;
 import com.physicsim.game.model.VerletStick;
 import com.physicsim.game.model.mesh.VerletBox;
@@ -44,8 +45,8 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      */
     @Override
     public Void visit(final VerletPoint theEntity) {
-        int x = myOrigin.intX() + theEntity.intX();
-        int y = myOrigin.intY() + theEntity.intY();
+        int x = myOrigin.intX() + theEntity.getPosition().intX();
+        int y = myOrigin.intY() + theEntity.getPosition().intY();
         myGraphics.setColor(Color.black);
         myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
         myGraphics.setColor(Color.yellow);
@@ -60,10 +61,10 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      */
     @Override
     public Void visit(final VerletStick theEntity) {
-        int x = myOrigin.intX() + theEntity.getStartPoint().intX();
-        int y = myOrigin.intY() + theEntity.getStartPoint().intY();
-        int x2 = myOrigin.intX() + theEntity.getEndPoint().intX();
-        int y2 = myOrigin.intY() + theEntity.getEndPoint().intY();
+        int x = myOrigin.intX() + theEntity.getStartPoint().getPosition().intX();
+        int y = myOrigin.intY() + theEntity.getStartPoint().getPosition().intY();
+        int x2 = myOrigin.intX() + theEntity.getEndPoint().getPosition().intX();
+        int y2 = myOrigin.intY() + theEntity.getEndPoint().getPosition().intY();
         myGraphics.setColor(Color.black);
         myGraphics.drawLine(x, y, x2, y2);
         return null;
@@ -92,18 +93,15 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      */
     @Override
     public Void visit(final Boundary theEntity) {
-        if (theEntity.getFirstPoint() != null) {
-            int x, y, x2, y2;
+        if (theEntity.getEdges() != null) {
             myGraphics.setColor(Color.black);
 
-            int len = theEntity.getBounds().length;
-            for (int i = 1; i <= len; i++) {
-                x = myOrigin.intX() + theEntity.getBounds()[i - 1].intX();
-                y = myOrigin.intY() + theEntity.getBounds()[i - 1].intY();
-                x2 = myOrigin.intX() + theEntity.getBounds()[i % len].intX();
-                y2 = myOrigin.intY() + theEntity.getBounds()[i % len].intY();
-
-                myGraphics.drawLine(x, y, x2, y2);
+            for (final VerletEdge e : theEntity.getEdges()) {
+                myGraphics.drawLine(
+                        myOrigin.intX() + e.getStartPoint().getPosition().intX(),
+                        myOrigin.intY() + e.getStartPoint().getPosition().intY(),
+                        myOrigin.intX() + e.getEndPoint().getPosition().intX(),
+                        myOrigin.intY() + e.getEndPoint().getPosition().intY());
             }
         }
 

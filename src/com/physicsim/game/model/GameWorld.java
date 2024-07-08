@@ -15,14 +15,14 @@ public class GameWorld {
     /** The list of game objects. */
     private final List<GameObject> myObjects;
     /** The list of boundaries for the game. */
-    private final List<Boundary> myBoundaries;
+    private final List<VerletStick> myBindings;
 
     /**
      * Constructs the game world with a list of game objects.
      */
     public GameWorld() {
         myObjects = new LinkedList<>();
-        myBoundaries = new ArrayList<>();
+        myBindings = new ArrayList<>();
     }
 
     /**
@@ -34,11 +34,11 @@ public class GameWorld {
     }
 
     /**
-     * Add a boundary to the end of the list.
-     * @param theBoundary the new game object
+     * Add a binding (stick or edge) to the end of the list. These bind game objects together.
+     * @param theBinding the new game object
      */
-    public void addBoundary(final Boundary theBoundary) {
-        myBoundaries.add(theBoundary);
+    public void addBinding(final VerletStick theBinding) {
+        myBindings.add(theBinding);
     }
 
     /**
@@ -60,7 +60,7 @@ public class GameWorld {
      * Gets the list of game boundaries.
      * @return the list of game boundaries
      */
-    public List<Boundary> getBoundaries() {
-        return myBoundaries;
+    public List<VerletStick> getBindings() {
+        return myBindings;
     }
 }

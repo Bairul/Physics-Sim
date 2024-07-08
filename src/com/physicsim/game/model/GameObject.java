@@ -5,12 +5,10 @@ import com.physicsim.game.visitor.GameObjectVisitor;
 
 /**
  * Abstract class for all game objects. Everything in the game world must be a Game Object.
- * Therefore, for it to be in the game, it needs to have a position vector.
- * Inheriting from Vector2, allows all game objects to a vector themselves as their in-game position.
  *
  * @author Bairu Li
  */
-public abstract class GameObject extends Vector2 {
+public abstract class GameObject {
     /**
      * Creates a game object.
      */

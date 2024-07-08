@@ -6,22 +6,28 @@ import com.physicsim.game.visitor.GameObjectVisitor;
 
 public class Boundary extends GameObject {
 
-    final Vector2[] myBounds;
+    final VerletEdge[] myEdges;
 
     /**
      * Creates a boundary shape given an initial x and y. The following vectors will be the sides of the boundary
      * relative to the initial x and y. The last vector will connect with the initial vector to enclose the shape.
-     * @param theX      the starting x
-     * @param theY      the starting y
+     * @param theOrigin the origin
      * @param theBounds the boundaries
      */
-    public Boundary(final double theX, final double theY, final Vector2... theBounds) {
-        myBounds = new Vector2[theBounds.length + 1];
+    public Boundary(final Vector2 theOrigin, final Vector2... theBounds) {
+        if (theBounds.length < 1) throw new IllegalArgumentException("Empty bounds");
 
-        myBounds[0] = new Vector2(theX, theY);
-        for (int i = 1; i < myBounds.length; i++) {
-            myBounds[i] = myBounds[i - 1].addNew(theBounds[i - 1]);
+        myEdges = new VerletEdge[theBounds.length + 1];
+        myEdges[0] = new VerletEdge(
+                new VerletPoint(theOrigin, 1, true),
+                new VerletPoint(theOrigin.addNew(theBounds[0]), 1, true));
+
+        for (int i = 1; i < theBounds.length; i++) {
+            myEdges[i] = new VerletEdge(myEdges[i - 1].getEndPoint(),
+                    new VerletPoint(myEdges[i - 1].getEndPoint().getPosition().addNew(theBounds[i]), 1, true));
         }
+
+        myEdges[theBounds.length] = new VerletEdge(myEdges[theBounds.length - 1].getEndPoint(), myEdges[0].getStartPoint());
     }
 
     /**
@@ -31,12 +37,8 @@ public class Boundary extends GameObject {
      */
     public boolean contains(final Vector2 thePoint) {
         boolean count = false;
-        for (int i = 1; i <= myBounds.length; i++) {
-            final Vector2 start = myBounds[i - 1];
-            final Vector2 end = myBounds[i % myBounds.length];
-
-            if (thePoint.getX() < start.getX() != thePoint.getX() < end.getX()
-                    && thePoint.getY() < VMath.lerpY(start, end, thePoint.getX())) {
+        for (final VerletEdge myEdge : myEdges) {
+            if (myEdge.rayCast(thePoint)) {
                 count = !count;
             }
         }
@@ -44,32 +46,21 @@ public class Boundary extends GameObject {
     }
 
     public void handleCollision(final VerletPoint theVp) {
-        for (int i = 1; i <= myBounds.length; i++) {
-            final Vector2 start = myBounds[i - 1];
-            final Vector2 end = myBounds[i % myBounds.length];
-
-            if (VMath.intersect(start, end, theVp, theVp.getOldPos()) != null) {
-                theVp.set(VMath.reflect(start, end, theVp));
-                theVp.getOldPos().set(VMath.reflect(start, end, theVp.getOldPos()));
-                return;
-            }
-        }
+//        for (final VerletEdge edge : myEdges) {
+//            if (edge.getIntersect(theVp) != null) {
+//                theVp.getPosition().set(edge.reflectPoint(theVp.getPosition()));
+//                theVp.getOldPosition().set(edge.reflectPoint(theVp.getOldPosition()));
+//                return;
+//            }
+//        }
     }
 
     @Override
     public void update() {
     }
 
-    public Vector2 getOrigin() {
-        return myBounds[0];
-    }
-
-    public Vector2 getFirstPoint() {
-        return myBounds[1];
-    }
-
-    public Vector2[] getBounds() {
-        return myBounds;
+    public VerletEdge[] getEdges() {
+        return myEdges;
     }
 
     @Override
