@@ -3,6 +3,7 @@ package com.physicsim.game.controller;
 import com.physicsim.game.controller.input.ClickType;
 import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
+import com.physicsim.game.model.rigidbody.Box;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.view.GameScreen;
@@ -33,32 +34,9 @@ public class GameplayController {
         GameWorld.SCREEN_BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         GameWorld.GRAVITY.set(0, 0.25);
 
-//        VerletBox box = new VerletBox(-300, -100, 100, 10);
-//        box.addInputListener(myInputs);
-//        myGameWorld.addGameObject(box);
-
-        // testing boundary
-//        myCache.set(0, 0);
-//        Boundary rectangle = new Boundary(myCache,
-//                new Vector2(500, 0),
-//                new Vector2(0, 50),
-//                new Vector2(-500, 0));
-//
-//        myCache.set(-400, 0);
-//        Boundary triangle = new Boundary(myCache,
-//                new Vector2(200, 0),
-//                new Vector2(0, -200));
-
         myCache.set(0, 0);
-        VerletPoint p1 = new VerletPoint(myCache, 1, true);
-        myCache.set(100, 0);
-        VerletPoint p2 = new VerletPoint(myCache, 1, true);
-
-        VerletEdge e = new VerletEdge(p1, p2);
-
-//        myGameWorld.addBoundary(rectangle);
-//        myGameWorld.addBoundary(triangle);
-        myGameWorld.addBinding(e);
+        Box box = new Box(myCache, 100);
+        myGameWorld.addGameObject(box);
     }
 
     /**
@@ -67,23 +45,13 @@ public class GameplayController {
      */
     public void update() {
 
-        if (myInputs.getKeyboard().isKeyHeld(KeyType.S)) {
-            System.out.println(myInputs.getMousePos());
-        }
-
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
-            VerletPoint p1 = new VerletPoint(myInputs.getMousePos(), 1, 4);
-//            VerletPoint p2 = new VerletPoint(myInputs.getMousePos().addNew(new Vector2(100, 0)), 1, 4);
-//            VerletStick s = new VerletStick(p1, p2);
-            myGameWorld.addGameObject(p1);
-//            myGameWorld.addGameObject(p2);
-//            myGameWorld.addGameObject(s);
+            myGameWorld.addGameObject(new VerletPoint(myInputs.getMousePos(), 1, 4));
         }
 
         if (myInputs.getKeyboard().isKeyDown(KeyType.Space)) {
             myGameWorld.clearGameObjects();
         }
-
         if (myGameWorld.getObjects() != null) {
             for (final GameObject gameObject : myGameWorld.getObjects())  {
                 if (gameObject instanceof VerletPoint p) {
@@ -92,20 +60,13 @@ public class GameplayController {
                     p.applyForce(myCache);
                     p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
                     p.update();
-
-                    for (final VerletStick s : myGameWorld.getBindings()) {
-                        if (s instanceof VerletEdge e) {
-                            if (e.rayCast(p.getPosition())) {
-                                e.handleCollision(p);
-                            }
-                        }
-                    }
                     continue;
                 }
                 gameObject.update();
             }
         }
-        if (myGameWorld.getBindings() != null) myGameWorld.getBindings().forEach(VerletStick::update);
+
+        if (myGameWorld.getBoundaries() != null) myGameWorld.getBoundaries().forEach(GameObject::update);
     }
 
     /**

@@ -19,17 +19,11 @@ public class VerletEdge extends VerletStick {
     }
 
     private Vector2 getIntersect(final VerletPoint theVp) {
+//        System.out.printf("lineY1: %f, lineY2: %f, VpY: %f, VpOY: %f\n", myStart.getPosition().getY(), myEnd.getPosition().getY(), theVp.getPosition().getY(), theVp.getOldPosition().getY());
         return VMath.intersect(myStart.getPosition(), myEnd.getPosition(), theVp.getPosition(), theVp.getOldPosition());
     }
 
     private Vector2 reflectPoint(final Vector2 thePoint) {
         return VMath.reflect(myStart.getPosition(), myEnd.getPosition(), thePoint);
-    }
-
-    public void handleCollision(final VerletPoint theVp) {
-        if (getIntersect(theVp) != null) {
-            theVp.getPosition().set(reflectPoint(theVp.getPosition()));
-            theVp.getOldPosition().set(reflectPoint(theVp.getOldPosition()));
-        }
     }
 }

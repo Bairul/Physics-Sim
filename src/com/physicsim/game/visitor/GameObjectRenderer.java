@@ -1,10 +1,10 @@
 package com.physicsim.game.visitor;
 
-import com.physicsim.game.model.Boundary;
-import com.physicsim.game.model.VerletEdge;
 import com.physicsim.game.model.VerletPoint;
 import com.physicsim.game.model.VerletStick;
 import com.physicsim.game.model.mesh.VerletBox;
+import com.physicsim.game.model.rigidbody.RigidBody;
+import com.physicsim.game.model.rigidbody.RigidBodyEdge;
 import com.physicsim.game.utility.Vector2;
 
 import java.awt.Color;
@@ -76,35 +76,15 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      * @return null
      */
     @Override
-    public Void visit(final VerletBox theEntity) {
-        for (VerletStick s : theEntity.getEdges()) {
-            s.accept(this);
+    public Void visit(final RigidBody theEntity) {
+        myGraphics.setColor(Color.black);
+        for (final RigidBodyEdge edge : theEntity.getEdges()) {
+            myGraphics.drawLine(
+                    myOrigin.intX() + edge.getStart().intX(),
+                    myOrigin.intY() + edge.getStart().intY(),
+                    myOrigin.intX() + edge.getEnd().intX(),
+                    myOrigin.intY() + edge.getEnd().intY());
         }
-        for (VerletPoint p : theEntity.getVertices()) {
-            p.accept(this);
-        }
-        return null;
-    }
-
-    /**
-     * Draws a boundary.
-     * @param theEntity the Boundary
-     * @return null
-     */
-    @Override
-    public Void visit(final Boundary theEntity) {
-        if (theEntity.getEdges() != null) {
-            myGraphics.setColor(Color.black);
-
-            for (final VerletEdge e : theEntity.getEdges()) {
-                myGraphics.drawLine(
-                        myOrigin.intX() + e.getStartPoint().getPosition().intX(),
-                        myOrigin.intY() + e.getStartPoint().getPosition().intY(),
-                        myOrigin.intX() + e.getEndPoint().getPosition().intX(),
-                        myOrigin.intY() + e.getEndPoint().getPosition().intY());
-            }
-        }
-
         return null;
     }
 }

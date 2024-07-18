@@ -49,6 +49,6 @@ public class GameplayScreen extends GameScreen {
         GameWorld gw = myGameplayController.getGameWorld();
 
         if (gw.getObjects() != null) gw.getObjects().forEach(go -> go.accept(myRenderer));
-        if (gw.getBindings() != null) gw.getBindings().forEach(b -> b.accept(myRenderer));
+        if (gw.getBoundaries() != null) gw.getBoundaries().forEach(b -> b.accept(myRenderer));
     }
 }
