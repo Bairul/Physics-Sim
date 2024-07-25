@@ -1,5 +1,6 @@
-package com.physicsim.game.model;
+package com.physicsim.game.model.particle;
 
+import com.physicsim.game.model.GameObject;
 import com.physicsim.game.utility.Vector2;
 
 /**
@@ -8,8 +9,6 @@ import com.physicsim.game.utility.Vector2;
  * @author Bairu Li
  */
 public abstract class VerletObject extends GameObject {
-    /** Constant for the sizing. */
-    private static final int SIZE_SCALE = 10;
     /** The previous position vector. */
     protected final Vector2 myPosition;
     /** The previous position vector. */
@@ -25,13 +24,16 @@ public abstract class VerletObject extends GameObject {
 
     /**
      * Creates a game object given the initial position and mass and radius.
+     * The set radius does not contribute to any ball-like rigid body collisions, so
+     * it is only useful visually.
      *
      * @param thePosition position vector
      * @param theMass     mass
-     * @param theRadius   radius of the object (set to 0 to scale with mass)
+     * @param theRadius   radius of the object, can't be less than 1
      */
     public VerletObject(final Vector2 thePosition, final double theMass, final double theRadius) {
         super();
+        if (theRadius < 1) throw new IllegalArgumentException("Radius less than 1");
         // vectors
         myPosition = new Vector2(thePosition);
         myOldPosition = new Vector2(thePosition);
@@ -39,8 +41,7 @@ public abstract class VerletObject extends GameObject {
         myCache = new Vector2();
 
         myMass = theMass;
-        // sets radius to be the root of the mass because of the area of a circle if it's less than 1
-        myRadius = theRadius < 1 ? Math.sqrt(theMass) * SIZE_SCALE : theRadius;
+        myRadius = theRadius;
     }
 
     /**
@@ -51,7 +52,7 @@ public abstract class VerletObject extends GameObject {
     }
 
     /**
-     * Updates the object using verlet integration.
+     * Updates the object using verlet integration. Assumes dt = 1.
      */
     protected void move() {
         myCache.set(myPosition);
@@ -65,9 +66,10 @@ public abstract class VerletObject extends GameObject {
      * @param theForce the force as a vector to apply
      */
     public void applyForce(final Vector2 theForce) {
-        // F = MA
-        // A = F / M
-        myAcceleration.add(theForce.divNew(myMass));
+        // F = MA --> A = F / M
+        myCache.set(theForce);
+        myCache.div(myMass);
+        myAcceleration.add(myCache);
     }
 
     /**

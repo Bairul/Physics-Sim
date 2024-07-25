@@ -1,8 +1,7 @@
 package com.physicsim.game.visitor;
 
-import com.physicsim.game.model.VerletPoint;
-import com.physicsim.game.model.VerletStick;
-import com.physicsim.game.model.mesh.VerletBox;
+import com.physicsim.game.model.particle.Particle;
+import com.physicsim.game.model.particle.Binding;
 import com.physicsim.game.model.rigidbody.RigidBody;
 import com.physicsim.game.model.rigidbody.RigidBodyEdge;
 import com.physicsim.game.utility.Vector2;
@@ -44,13 +43,17 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      * @return null
      */
     @Override
-    public Void visit(final VerletPoint theEntity) {
+    public Void visit(final Particle theEntity) {
         int x = myOrigin.intX() + theEntity.getPosition().intX();
         int y = myOrigin.intY() + theEntity.getPosition().intY();
         myGraphics.setColor(Color.black);
         myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
         myGraphics.setColor(Color.yellow);
         myGraphics.fillOval(x - theEntity.getRadius() + 1,y - theEntity.getRadius() + 1, theEntity.getDiameter() - 2, theEntity.getDiameter() - 2);
+
+        // draw velocity tail
+//        myGraphics.setColor(Color.black);
+//        myGraphics.drawLine(x, y, myOrigin.intX() + theEntity.getOldPosition().intX(), myOrigin.intY() + theEntity.getOldPosition().intY());
         return null;
     }
 
@@ -60,7 +63,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      * @return null
      */
     @Override
-    public Void visit(final VerletStick theEntity) {
+    public Void visit(final Binding theEntity) {
         int x = myOrigin.intX() + theEntity.getStartPoint().getPosition().intX();
         int y = myOrigin.intY() + theEntity.getStartPoint().getPosition().intY();
         int x2 = myOrigin.intX() + theEntity.getEndPoint().getPosition().intX();

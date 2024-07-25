@@ -48,7 +48,7 @@ public class GameplayScreen extends GameScreen {
         myRenderer.updateGraphics(theG);
         GameWorld gw = myGameplayController.getGameWorld();
 
-        if (gw.getObjects() != null) gw.getObjects().forEach(go -> go.accept(myRenderer));
-        if (gw.getBoundaries() != null) gw.getBoundaries().forEach(b -> b.accept(myRenderer));
+        if (gw.getDynamicObjects() != null) gw.getDynamicObjects().forEach(go -> go.accept(myRenderer));
+        if (gw.getStaticObjects() != null) gw.getStaticObjects().forEach(b -> b.accept(myRenderer));
     }
 }

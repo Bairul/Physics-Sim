@@ -13,54 +13,54 @@ public class GameWorld {
     public static final Vector2 SCREEN_BOUNDARY = new Vector2(0, 0);
 
     /** The list of game objects. */
-    private final List<GameObject> myObjects;
+    private final List<GameObject> myDynamicObjects;
     /** The list of boundaries for the game. */
-    private final List<GameObject> myBoundaries;
+    private final List<GameObject> myStaticObjects;
 
     /**
      * Constructs the game world with a list of game objects.
      */
     public GameWorld() {
-        myObjects = new LinkedList<>();
-        myBoundaries = new ArrayList<>();
+        myDynamicObjects = new LinkedList<>();
+        myStaticObjects = new ArrayList<>();
     }
 
     /**
-     * Add a game object to the end of the list.
-     * @param theObject the new game object
+     * Add a dynamic game object to the end of the list. These should be game objects that can move.
+     * @param theObject the new dynamic game object
      */
-    public void addGameObject(final GameObject theObject) {
-        myObjects.add(theObject);
+    public void addDynamicObject(final GameObject theObject) {
+        myDynamicObjects.add(theObject);
     }
 
     /**
-     * Add a binding (stick or edge) to the end of the list. These bind game objects together.
-     * @param theObject the new game object
+     * Add a Static game object. These should be game objects that cannot move.
+     * @param theObject the new static game object
      */
-    public void addBoundary(final GameObject theObject) {
-        myBoundaries.add(theObject);
+    public void addStaticObject(final GameObject theObject) {
+        myStaticObjects.add(theObject);
     }
 
     /**
      * Clears all game objects.
      */
-    public void clearGameObjects() {
-        myObjects.clear();
+    public void clearDynamicObjects() {
+        myDynamicObjects.clear();
     }
 
     /**
-     * Gets the list of game objects.
+     * Gets the list of dynamic objects.
      * @return the list of game objects
      */
-    public List<GameObject> getObjects() {
-        return myObjects;
+    public List<GameObject> getDynamicObjects() {
+        return myDynamicObjects;
     }
 
     /**
-     * Gets the list of game boundaries.
+     * Gets the list of static boundaries.
      * @return the list of game boundaries
      */
-    public List<GameObject> getBoundaries() {
-        return myBoundaries;
+    public List<GameObject> getStaticObjects() {
+        return myStaticObjects;
     }
 }

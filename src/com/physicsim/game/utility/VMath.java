@@ -54,9 +54,7 @@ public final class VMath {
         double t1 = AB.crossProduct(B) / denom;
         double t2 = -1 * AB.crossProduct(A) / denom;
 
-        // if the |t| is > 1 then it is not intersecting
-//        System.out.println("T1: " + t1 + " T2: " + t2);
-        // if (Math.abs(t1) > 1 || Math.abs(t2) > 1) return null;
+        // not intersecting but not parallel
         if (t1 < 0 || t1 > 1 || t2 < -1 || t2 > 0) return null;
 
         // reuse vector

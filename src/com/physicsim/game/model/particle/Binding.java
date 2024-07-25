@@ -1,16 +1,17 @@
-package com.physicsim.game.model;
+package com.physicsim.game.model.particle;
 
+import com.physicsim.game.model.GameObject;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.visitor.GameObjectVisitor;
 
 /**
  * This class is a way to bind 2 VerletPoints to a fixed distance between them.
  */
-public class VerletStick extends GameObject {
+public class Binding extends GameObject {
     /** The start endpoint. */
-    protected final VerletPoint myStart;
+    protected final Particle myStart;
     /** The end endpoint. */
-    protected final VerletPoint myEnd;
+    protected final Particle myEnd;
     /** A reusable vector to save some memory. */
     protected final Vector2 myCache;
     /** The strength of the stick. */
@@ -24,7 +25,7 @@ public class VerletStick extends GameObject {
      * @param thePointEnd   the reference to the end point
      * @param theStrength   the strength of the binding (has to be >= 1)
      */
-    public VerletStick(final VerletPoint thePointStart, final VerletPoint thePointEnd, final double theStrength) {
+    public Binding(final Particle thePointStart, final Particle thePointEnd, final double theStrength) {
         myStart = thePointStart;
         myEnd = thePointEnd;
         myLength = thePointStart.getPosition().getDistance(thePointEnd.getPosition());
@@ -37,7 +38,7 @@ public class VerletStick extends GameObject {
      * @param thePointStart the reference to the start point
      * @param thePointEnd   the reference to the end point
      */
-    public VerletStick(final VerletPoint thePointStart, final VerletPoint thePointEnd) {
+    public Binding(final Particle thePointStart, final Particle thePointEnd) {
         myStart = thePointStart;
         myEnd = thePointEnd;
         myLength = thePointStart.getPosition().getDistance(thePointEnd.getPosition());
@@ -49,7 +50,7 @@ public class VerletStick extends GameObject {
      * Gets the starting point.
      * @return the start verlet point
      */
-    public VerletPoint getStartPoint() {
+    public Particle getStartPoint() {
         return myStart;
     }
 
@@ -57,7 +58,7 @@ public class VerletStick extends GameObject {
      * Gets the ending point.
      * @return the end verlet point
      */
-    public VerletPoint getEndPoint() {
+    public Particle getEndPoint() {
         return myEnd;
     }
 

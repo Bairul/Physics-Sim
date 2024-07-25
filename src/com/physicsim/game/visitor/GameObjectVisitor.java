@@ -1,9 +1,8 @@
 package com.physicsim.game.visitor;
 
 import com.physicsim.game.model.GameObject;
-import com.physicsim.game.model.VerletPoint;
-import com.physicsim.game.model.VerletStick;
-import com.physicsim.game.model.mesh.VerletBox;
+import com.physicsim.game.model.particle.Particle;
+import com.physicsim.game.model.particle.Binding;
 import com.physicsim.game.model.rigidbody.RigidBody;
 
 /**
@@ -26,10 +25,10 @@ public abstract class GameObjectVisitor<V> {
     public V visit(final GameObject theDefault) {
         return null;
     }
-    public V visit(final VerletPoint theEntity) {
+    public V visit(final Particle theEntity) {
         return visit((GameObject) theEntity);
     }
-    public V visit(final VerletStick theEntity) {
+    public V visit(final Binding theEntity) {
         return visit((GameObject) theEntity);
     }
     public V visit(final RigidBody theEntity) {
