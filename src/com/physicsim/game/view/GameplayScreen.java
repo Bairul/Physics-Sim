@@ -40,7 +40,7 @@ public class GameplayScreen extends GameScreen {
 
     /**
      * Renders the gameplay by updating the graphics and drawing each game object.
-     * @param theG
+     * @param theG the graphics
      */
     @Override
     public void render(final Graphics theG) {
@@ -48,7 +48,7 @@ public class GameplayScreen extends GameScreen {
         myRenderer.updateGraphics(theG);
         GameWorld gw = myGameplayController.getGameWorld();
 
-        if (gw.getDynamicObjects() != null) gw.getDynamicObjects().forEach(go -> go.accept(myRenderer));
-        if (gw.getStaticObjects() != null) gw.getStaticObjects().forEach(b -> b.accept(myRenderer));
+        gw.getDynamicObjects().forEach(go -> go.accept(myRenderer));
+        gw.getStaticObjects().forEach(b -> b.accept(myRenderer));
     }
 }

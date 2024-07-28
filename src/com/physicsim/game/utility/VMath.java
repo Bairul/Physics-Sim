@@ -96,4 +96,11 @@ public final class VMath {
 
         return new Vector2(2 * x_i - thePoint.getX(), 2 * y_i - thePoint.getY());
     }
+
+    public static void rotate(final Vector2 theVector, final Vector2 theOrigin, final double theRadians) {
+        theVector.sub(theOrigin);
+        theVector.set(theVector.getX() * Math.cos(theRadians) - theVector.getY() * Math.sin(theRadians),
+                      theVector.getX() * Math.sin(theRadians) + (theVector.getY() * Math.cos(theRadians)));
+        theVector.add(theOrigin);
+    }
 }

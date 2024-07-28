@@ -14,6 +14,7 @@ public abstract class RigidBody extends GameObject {
     private final Vector2[] myVertices;
     /** The edges of this rigid body. */
     private final RigidBodyEdge[] myEdges;
+    private final Vector2 myCenter;
 
     /**
      * Creates a rigid body given a bunch of vertices.
@@ -25,9 +26,11 @@ public abstract class RigidBody extends GameObject {
         if (theVertices.length < 2) throw new IllegalArgumentException("A rigid body must have 3 or more vertices");
 
         myVertices = theVertices;
+        myCenter = new Vector2();
         myEdges = new RigidBodyEdge[theVertices.length];
         for (int i = 0; i < myEdges.length; i++) {
             myEdges[i] = new RigidBodyEdge(myVertices[i], myVertices[(i + 1) % myEdges.length]);
+            myCenter.add(myVertices[i]);
         }
 
         // is convex
@@ -37,6 +40,7 @@ public abstract class RigidBody extends GameObject {
                 throw new IllegalArgumentException("A rigid body must be convex");
             }
         }
+        myCenter.div(myVertices.length);
     }
 
     /**
@@ -87,11 +91,32 @@ public abstract class RigidBody extends GameObject {
         }
     }
 
+    public void collideAgainst(final RigidBody theRB) {
+
+    }
+
+    public void rotate(final double theDegrees) {
+        for (final Vector2 v : myVertices) {
+            VMath.rotate(v, myCenter, Math.toRadians(theDegrees));
+        }
+    }
+
+    public void translate(final Vector2 theTranslation) {
+        for (final Vector2 v : myVertices) {
+            v.add(theTranslation);
+        }
+        myCenter.add(theTranslation);
+    }
+
     public RigidBodyEdge[] getEdges() {
         return myEdges;
     }
 
     public Vector2[] getVertices() {
         return myVertices;
+    }
+
+    public Vector2 getCenter() {
+        return myCenter;
     }
 }

@@ -95,7 +95,7 @@ public abstract class GameScreen {
      */
     @Override
     public boolean equals(final Object theO) {
-        if (!(theO instanceof GameScreen gs)) {
+        if (!(theO instanceof final GameScreen gs)) {
             return false;
         }
         return myName.equals(gs.myName);
