@@ -4,6 +4,7 @@ import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.Binding;
 import com.physicsim.game.model.rigidbody.RigidBody;
+import com.physicsim.game.model.rigidbody.RigidCircle;
 
 /**
  * A (GameObject) visitor implements a function F for which objects belonging to the GameObject
@@ -24,6 +25,9 @@ import com.physicsim.game.model.rigidbody.RigidBody;
 public abstract class GameObjectVisitor<V> {
     public V visit(final GameObject theDefault) {
         return null;
+    }
+    public V visit(final RigidCircle theEntity) {
+        return visit((GameObject) theEntity);
     }
     public V visit(final Particle theEntity) {
         return visit((GameObject) theEntity);

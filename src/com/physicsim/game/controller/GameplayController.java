@@ -7,6 +7,7 @@ import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.VerletObject;
 import com.physicsim.game.model.rigidbody.Box;
 import com.physicsim.game.model.rigidbody.RigidBody;
+import com.physicsim.game.model.rigidbody.RigidCircle;
 import com.physicsim.game.model.rigidbody.Triangle;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.controller.input.InputController;
@@ -49,7 +50,9 @@ public class GameplayController {
 //
 //        myCache.set(-200, -200);
 //        myGameWorld.addDynamicObject(new Particle(myCache, 1, 4));
-        myGameWorld.addDynamicObject(myBox);
+//        myGameWorld.addDynamicObject(myBox);
+        myCache.set(-250, -50);
+        myGameWorld.addStaticObject(new RigidCircle(myCache, 200));
     }
 
     /**
@@ -60,23 +63,24 @@ public class GameplayController {
         if (myInputs.getKeyboard().isKeyDown(KeyType.D)) {
             debugMode = !debugMode;
         }
-        if (debugMode) {
-            if (!myInputs.getKeyboard().isKeyDown(KeyType.S))
-                return;
-        }
 
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
             System.out.println(myInputs.getMousePos());
             myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
 
+        if (debugMode) {
+            if (!myInputs.getKeyboard().isKeyDown(KeyType.S))
+                return;
+        }
+
         if (myInputs.getKeyboard().isKeyHeld(KeyType.Space)) {
-//            myGameWorld.clearDynamicObjects();
-            myCache.set(myInputs.getMousePos());
-            myCache.sub(myBox.getCenter());
-            myCache.norm();
-            myBox.translate(myCache);
-            myBox.rotate(1);
+            myGameWorld.clearDynamicObjects();
+//            myCache.set(myInputs.getMousePos());
+//            myCache.sub(myBox.getCenter());
+//            myCache.norm();
+//            myBox.translate(myCache);
+//            myBox.rotate(1);
         }
 
         // O(D * S) --> every dynamic object with every static object
@@ -90,6 +94,9 @@ public class GameplayController {
 
                 for (final GameObject staticObject : myGameWorld.getStaticObjects()) {
                     if (staticObject instanceof final RigidBody r) {
+                        r.collideAgainst(p);
+                    }
+                    if (staticObject instanceof final RigidCircle r) {
                         r.collideAgainst(p);
                     }
                 }

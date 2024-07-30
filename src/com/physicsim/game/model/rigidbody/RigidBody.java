@@ -85,6 +85,7 @@ public abstract class RigidBody extends GameObject {
         // if there is a closest edge and the old position is not a point on the edge (solves a tunneling bug when the
         // point collides perfectly with the edge)
         if (closestEdge != null
+                // check co-linearity
                 && closestEdge.getEdge().crossProduct(theVO.getOldPosition().subNew(closestEdge.getStart())) != 0) {
             theVO.getPosition().set(closestEdge.reflectPoint(theVO.getPosition()));
             theVO.getOldPosition().set(closestEdge.reflectPoint(theVO.getOldPosition()));

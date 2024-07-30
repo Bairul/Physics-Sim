@@ -1,5 +1,7 @@
 package com.physicsim.game.utility;
 
+import java.util.ArrayList;
+
 /**
  * Utility class for vector mathematics.
  */
@@ -40,7 +42,7 @@ public final class VMath {
      * @param theEndA   the ending endpoint of A
      * @param theStartB the starting endpoint of B
      * @param theEndB   the ending endpoint of B
-     * @return the intersection vector of the 2 line segments if it exists. Null otherwise.
+     * @return the intersection vector of the 2 line segments if it exists. Null otherwise
      */
     public static Vector2 intersect(final Vector2 theStartA, final Vector2 theEndA,
                                     final Vector2 theStartB, final Vector2 theEndB) {
@@ -63,6 +65,71 @@ public final class VMath {
         B.add(A);
 
         return B;
+    }
+
+    /**
+     * Computes the intersection point of a line segment and the circumference of a circle if it exists. The line
+     * segment consists of a start and end vector while the circle consists of an origin and radius.
+     * Returns empty array if no intersection, and an array of vectors for the 1 (tangential) or 2 intersections.
+     * <br><br>
+     * Uses the formula after for solving x by plugging in y=mx+b to x^2+y^2=r^2
+     * @param theStart  the starting endpoint of the segment
+     * @param theEnd    the ending endpoint of the segment
+     * @param theOrigin the origin vector of the circle
+     * @param theRadius the radius of the circle
+     * @return the intersection vector(s) of the circle and line if it exists
+     */
+    public static Vector2[] intersect(final Vector2 theStart, final Vector2 theEnd,
+                                      final Vector2 theOrigin, final double theRadius) {
+        final ArrayList<Vector2> intersections = new ArrayList<>();
+        final Vector2 start = theStart.subNew(theOrigin);
+        final Vector2 end = theEnd.subNew(theOrigin);
+
+        try {
+            final double m = slope(theStart, theEnd);
+            final double b = -1 * m * start.getX() + start.getY(); // y-intercept
+            final double c = m * m + 1;                            // some constant ¯\_(`-`)_/¯
+            final double D = theRadius * theRadius * c - b * b;    // discriminant
+            // if D negative, there is no intersection
+            // if D is 0, there is only 1 intersection and that is the tangent
+            if (D >= 0) {
+                final double x_i = (-1 * m * b + Math.sqrt(D)) / c; // circle-line formula for x
+                final double y_i = m * x_i + b;
+                start.set(x_i, y_i);
+                start.add(theOrigin);
+                intersections.add(start);
+                // if D is positive, then there is 2 intersections on the circle
+                if (D > 1) {
+                    final double x_i2 = (-1 * m * b - Math.sqrt(D)) / c; // circle-line formula for x
+                    final double y_i2 = m * x_i2 + b;
+                    end.set(x_i2, y_i2);
+                    end.add(theOrigin);
+                    intersections.add(end);
+                }
+            }
+        } catch (final ArithmeticException e) {
+            // when the segment has a vertical slope
+            final double D = theRadius * theRadius - start.getX() * start.getX();
+            // if D negative, there is no intersection
+            // if D is 0, there is only 1 intersection and that is the tangent
+            if (D >= 0) {
+                start.setY(Math.sqrt(D));
+                start.add(theOrigin);
+                intersections.add(start);
+                // if D is positive, then there is 2 intersections on the circle
+                if (D > 1) {
+                    end.setY(-1 * Math.sqrt(D));
+                    end.add(theOrigin);
+                    intersections.add(end);
+                }
+            }
+        }
+
+        intersections.removeIf(intersection ->
+                (intersection.getX() < theStart.getX() == intersection.getX() < theEnd.getX()) &&
+                        (intersection.getY() < theStart.getY() == intersection.getY() < theEnd.getY()));
+
+        return intersections.toArray(new Vector2[0]);
     }
 
     /**
@@ -95,6 +162,38 @@ public final class VMath {
         double y_i = m * (x_i - x) + y;
 
         return new Vector2(2 * x_i - thePoint.getX(), 2 * y_i - thePoint.getY());
+    }
+
+    /**
+     * Projects a point on to a line created by a starting point and ending point.
+     *
+     * @param theStart the starting endpoint
+     * @param theEnd   the ending endpoint
+     * @param thePoint the point to reflect over
+     * @return the projected point
+     */
+    public static Vector2 project(final Vector2 theStart, final Vector2 theEnd, final Vector2 thePoint) {
+        double m;
+
+        try {
+            m = slope(theStart, theEnd);
+        } catch (final ArithmeticException e) {
+            // project on to a vertical slope
+            return new Vector2(theStart.getX(), thePoint.getY());
+        }
+        if (m == 0) {
+            // project on to a horizontal slope
+            return new Vector2(thePoint.getX(), theStart.getY());
+        }
+
+        double m_p = -1 / m;
+        double x = theStart.getX();
+        double y = theStart.getY();
+
+        double x_i = (m * x - m_p * thePoint.getX() - y + thePoint.getY()) / (m - m_p);
+        double y_i = m * (x_i - x) + y;
+
+        return new Vector2(x_i, y_i);
     }
 
     public static void rotate(final Vector2 theVector, final Vector2 theOrigin, final double theRadians) {

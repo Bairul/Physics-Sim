@@ -4,6 +4,7 @@ import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.Binding;
 import com.physicsim.game.model.rigidbody.RigidBody;
 import com.physicsim.game.model.rigidbody.RigidBodyEdge;
+import com.physicsim.game.model.rigidbody.RigidCircle;
 import com.physicsim.game.utility.Vector2;
 
 import java.awt.Color;
@@ -38,7 +39,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     }
 
     /**
-     * Draws the verlet point for testing and development.
+     * Draws the verlet point.
      * @param theEntity the VerletPoint
      * @return null
      */
@@ -58,8 +59,8 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     }
 
     /**
-     * Draws the verlet stick for testing and development.
-     * @param theEntity the VerletStick
+     * Draws the verlet binding.
+     * @param theEntity the binding
      * @return null
      */
     @Override
@@ -74,8 +75,8 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     }
 
     /**
-     * Draws a box.
-     * @param theEntity the VerletBox
+     * Draws a rigid body.
+     * @param theEntity the rigid body
      * @return null
      */
     @Override
@@ -89,6 +90,16 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
                     myOrigin.intY() + edge.getEnd().intY());
         }
         myGraphics.fillOval(myOrigin.intX() + theEntity.getCenter().intX() - 1, myOrigin.intY() + theEntity.getCenter().intY() - 1, 2, 2);
+        return null;
+    }
+
+    @Override
+    public Void visit(final RigidCircle theEntity) {
+        myGraphics.setColor(Color.black);
+        myGraphics.drawOval(
+                myOrigin.intX() + theEntity.getOrigin().intX() - (int) theEntity.getRadius(),
+                myOrigin.intY() + theEntity.getOrigin().intY() - (int) theEntity.getRadius(),
+                (int) theEntity.getRadius() * 2, (int) theEntity.getRadius() * 2);
         return null;
     }
 }
