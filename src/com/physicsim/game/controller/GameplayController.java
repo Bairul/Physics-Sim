@@ -3,6 +3,8 @@ package com.physicsim.game.controller;
 import com.physicsim.game.controller.input.ClickType;
 import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
+import com.physicsim.game.model.mesh.VerletBox;
+import com.physicsim.game.model.particle.Binding;
 import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.VerletObject;
 import com.physicsim.game.model.rigidbody.Box;
@@ -45,14 +47,13 @@ public class GameplayController {
 
         myCache.set(0, 0);
         myGameWorld.addStaticObject(new Box(myCache, 200));
-//        myCache.set(-400, 0);
-//        myGameWorld.addStaticObject(new Triangle(myCache, 200));
-//
-//        myCache.set(-200, -200);
-//        myGameWorld.addDynamicObject(new Particle(myCache, 1, 4));
-//        myGameWorld.addDynamicObject(myBox);
-        myCache.set(-250, -50);
-        myGameWorld.addStaticObject(new RigidCircle(myCache, 200));
+        myCache.set(-280, 0);
+        myGameWorld.addStaticObject(new Triangle(myCache, 200));
+
+        myCache.set(0, 0);
+        myGameWorld.addStaticObject(new RigidCircle(myCache, 350));
+        myCache.set(0, -60);
+        myGameWorld.addStaticObject(new RigidCircle(myCache, 50));
     }
 
     /**
@@ -69,11 +70,6 @@ public class GameplayController {
             myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
 
-        if (debugMode) {
-            if (!myInputs.getKeyboard().isKeyDown(KeyType.S))
-                return;
-        }
-
         if (myInputs.getKeyboard().isKeyHeld(KeyType.Space)) {
             myGameWorld.clearDynamicObjects();
 //            myCache.set(myInputs.getMousePos());
@@ -81,6 +77,11 @@ public class GameplayController {
 //            myCache.norm();
 //            myBox.translate(myCache);
 //            myBox.rotate(1);
+        }
+
+        if (debugMode) {
+            if (!myInputs.getKeyboard().isKeyDown(KeyType.S))
+                return;
         }
 
         // O(D * S) --> every dynamic object with every static object
@@ -96,7 +97,7 @@ public class GameplayController {
                     if (staticObject instanceof final RigidBody r) {
                         r.collideAgainst(p);
                     }
-                    if (staticObject instanceof final RigidCircle r) {
+                    else if (staticObject instanceof final RigidCircle r) {
                         r.collideAgainst(p);
                     }
                 }

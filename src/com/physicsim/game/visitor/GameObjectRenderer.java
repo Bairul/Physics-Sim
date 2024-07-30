@@ -53,7 +53,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         myGraphics.fillOval(x - theEntity.getRadius() + 1,y - theEntity.getRadius() + 1, theEntity.getDiameter() - 2, theEntity.getDiameter() - 2);
 
         // draw velocity tail
-//        myGraphics.setColor(Color.black);
+//        myGraphics.setColor(Color.red);
 //        myGraphics.drawLine(x, y, myOrigin.intX() + theEntity.getOldPosition().intX(), myOrigin.intY() + theEntity.getOldPosition().intY());
         return null;
     }
@@ -93,13 +93,18 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         return null;
     }
 
+    /**
+     * Draws a rigid circle.
+     * @param theEntity the rigid circle
+     * @return null
+     */
     @Override
     public Void visit(final RigidCircle theEntity) {
         myGraphics.setColor(Color.black);
         myGraphics.drawOval(
                 myOrigin.intX() + theEntity.getOrigin().intX() - (int) theEntity.getRadius(),
                 myOrigin.intY() + theEntity.getOrigin().intY() - (int) theEntity.getRadius(),
-                (int) theEntity.getRadius() * 2, (int) theEntity.getRadius() * 2);
+                theEntity.getDiameter(), theEntity.getDiameter());
         return null;
     }
 }
