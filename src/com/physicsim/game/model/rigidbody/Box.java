@@ -17,7 +17,7 @@ public class Box extends RigidBody {
     }
 
     @Override
-    public <V> V accept(final GameObjectVisitor<V> v) {
-        return v.visit(this);
+    public <V> V accept(final GameObjectVisitor<V> theV) {
+        return theV.visit(this);
     }
 }

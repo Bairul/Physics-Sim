@@ -73,9 +73,9 @@ public class Mouse extends MouseAdapter {
      * @return true if left click is lifted
      */
     public boolean isButtonUp(final ClickType theClick) {
-        int button = enumToInt(theClick);
+        final int button = enumToInt(theClick);
 
-        boolean r = myButtonUps[button];
+        final boolean r = myButtonUps[button];
         myButtonUps[button] = false;
         return r;
     }
@@ -87,7 +87,7 @@ public class Mouse extends MouseAdapter {
      * @return true if left click is lifted
      */
     public boolean isButtonDown(final ClickType theClick) {
-        int button = enumToInt(theClick);
+        final int button = enumToInt(theClick);
 
         if (myButtonDowns[button]) return false;
 

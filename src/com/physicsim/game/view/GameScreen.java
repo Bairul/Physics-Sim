@@ -15,6 +15,7 @@ public abstract class GameScreen {
     private static GameScreen myCurrentScreen;
     /** Size of the screen in case I want to change it. */
     protected static GameCanvas myCanvas;
+    /** The origin of the screen. Used to offset the origin in the top-left corner of the screen. */
     protected static Vector2 myOrigin;
 
     // instance fields

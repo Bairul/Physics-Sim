@@ -62,9 +62,9 @@ public class Keyboard extends KeyAdapter {
      * @return whether the key has been released
      */
     public boolean isKeyUp(final KeyType theKey) {
-        int keyCode = enumToInt(theKey);
+        final int keyCode = enumToInt(theKey);
 
-        boolean r = myKeyUps[keyCode];
+        final boolean r = myKeyUps[keyCode];
         myKeyUps[keyCode] = false;
         return r;
     }
@@ -78,7 +78,7 @@ public class Keyboard extends KeyAdapter {
      * @return whether the key has been pressed
      */
     public boolean isKeyDown(final KeyType theKey) {
-        int keyCode = enumToInt(theKey);
+        final int keyCode = enumToInt(theKey);
 
         if (myKeyDowns[keyCode]) return false;
 

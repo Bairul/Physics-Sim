@@ -23,19 +23,49 @@ import com.physicsim.game.model.rigidbody.RigidCircle;
  *
  */
 public abstract class GameObjectVisitor<V> {
+
+    /**
+     * Used for visiting and overloading.
+     * @param theDefault the game object
+     * @return null
+     */
     public V visit(final GameObject theDefault) {
         return null;
     }
-    public V visit(final RigidCircle theEntity) {
-        return visit((GameObject) theEntity);
-    }
+
+    /**
+     * Draws the verlet point as a particle.
+     * @param theEntity the particle
+     * @return null
+     */
     public V visit(final Particle theEntity) {
         return visit((GameObject) theEntity);
     }
+
+    /**
+     * Draws the verlet stick as a binding.
+     * @param theEntity the binding
+     * @return null
+     */
     public V visit(final Binding theEntity) {
         return visit((GameObject) theEntity);
     }
+
+    /**
+     * Draws a rigid body.
+     * @param theEntity the rigid body
+     * @return null
+     */
     public V visit(final RigidBody theEntity) {
+        return visit((GameObject) theEntity);
+    }
+
+    /**
+     * Draws a rigid circle.
+     * @param theEntity the rigid circle
+     * @return null
+     */
+    public V visit(final RigidCircle theEntity) {
         return visit((GameObject) theEntity);
     }
 }

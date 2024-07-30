@@ -50,11 +50,11 @@ public final class VMath {
         final Vector2 B = theEndB.subNew(theStartB);
         final Vector2 AB = theStartB.subNew(theStartA);
 
-        double denom = A.crossProduct(B);
+        final double denom = A.crossProduct(B);
         if (denom == 0) return null; // if denominator = 0, then the 2 line segments are parallel or co-linear
 
-        double t1 = AB.crossProduct(B) / denom;
-        double t2 = -1 * AB.crossProduct(A) / denom;
+        final double t1 = AB.crossProduct(B) / denom;
+        final double t2 = -1 * AB.crossProduct(A) / denom;
 
         // not intersecting but not parallel
         if (t1 < 0 || t1 > 1 || t2 < -1 || t2 > 0) return null;
@@ -95,14 +95,14 @@ public final class VMath {
             if (D >= 0) {
                 final double x_i = (-1 * m * b + Math.sqrt(D)) / c; // circle-line formula for x
                 final double y_i = m * x_i + b;
-                start.set(x_i, y_i);
+                start.set(x_i, y_i); // reuse vector
                 start.add(theOrigin);
                 intersections.add(start);
                 // if D is positive, then there is 2 intersections on the circle
                 if (D > 1) {
                     final double x_i2 = (-1 * m * b - Math.sqrt(D)) / c; // circle-line formula for x
                     final double y_i2 = m * x_i2 + b;
-                    end.set(x_i2, y_i2);
+                    end.set(x_i2, y_i2); // reuse vector
                     end.add(theOrigin);
                     intersections.add(end);
                 }
@@ -113,18 +113,19 @@ public final class VMath {
             // if D negative, there is no intersection
             // if D is 0, there is only 1 intersection and that is the tangent
             if (D >= 0) {
-                start.setY(Math.sqrt(D));
+                start.setY(Math.sqrt(D)); // reuse vector
                 start.add(theOrigin);
                 intersections.add(start);
                 // if D is positive, then there is 2 intersections on the circle
                 if (D > 1) {
-                    end.setY(-1 * Math.sqrt(D));
+                    end.setY(-1 * Math.sqrt(D)); // reuse vector
                     end.add(theOrigin);
                     intersections.add(end);
                 }
             }
         }
 
+        // remove points that are not on the line segment
         intersections.removeIf(intersection ->
                 (intersection.getX() < theStart.getX() == intersection.getX() < theEnd.getX()) &&
                         (intersection.getY() < theStart.getY() == intersection.getY() < theEnd.getY()));
@@ -154,12 +155,12 @@ public final class VMath {
             return new Vector2(thePoint.getX(), 2 * theStart.getY() - thePoint.getY());
         }
 
-        double m_p = -1 / m;
-        double x = theStart.getX();
-        double y = theStart.getY();
+        final double m_p = -1 / m;
+        final double x = theStart.getX();
+        final double y = theStart.getY();
 
-        double x_i = (m * x - m_p * thePoint.getX() - y + thePoint.getY()) / (m - m_p);
-        double y_i = m * (x_i - x) + y;
+        final double x_i = (m * x - m_p * thePoint.getX() - y + thePoint.getY()) / (m - m_p);
+        final double y_i = m * (x_i - x) + y;
 
         return new Vector2(2 * x_i - thePoint.getX(), 2 * y_i - thePoint.getY());
     }
@@ -186,16 +187,22 @@ public final class VMath {
             return new Vector2(thePoint.getX(), theStart.getY());
         }
 
-        double m_p = -1 / m;
-        double x = theStart.getX();
-        double y = theStart.getY();
+        final double m_p = -1 / m;
+        final double x = theStart.getX();
+        final double y = theStart.getY();
 
-        double x_i = (m * x - m_p * thePoint.getX() - y + thePoint.getY()) / (m - m_p);
-        double y_i = m * (x_i - x) + y;
+        final double x_i = (m * x - m_p * thePoint.getX() - y + thePoint.getY()) / (m - m_p);
+        final double y_i = m * (x_i - x) + y;
 
         return new Vector2(x_i, y_i);
     }
 
+    /**
+     * Rotates a vector by some radian about an origin vector.
+     * @param theVector  the vector to rotate
+     * @param theOrigin  the vector to rotate around
+     * @param theRadians the radians of rotation
+     */
     public static void rotate(final Vector2 theVector, final Vector2 theOrigin, final double theRadians) {
         theVector.sub(theOrigin);
         theVector.set(theVector.getX() * Math.cos(theRadians) - theVector.getY() * Math.sin(theRadians),

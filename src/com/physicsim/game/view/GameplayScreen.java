@@ -46,7 +46,7 @@ public class GameplayScreen extends GameScreen {
     public void render(final Graphics theG) {
         // must have update graphics
         myRenderer.updateGraphics(theG);
-        GameWorld gw = myGameplayController.getGameWorld();
+        final GameWorld gw = myGameplayController.getGameWorld();
 
         gw.getDynamicObjects().forEach(go -> go.accept(myRenderer));
         gw.getStaticObjects().forEach(b -> b.accept(myRenderer));

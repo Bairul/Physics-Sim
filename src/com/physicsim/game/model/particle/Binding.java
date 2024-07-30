@@ -74,9 +74,9 @@ public class Binding extends GameObject {
      */
     @Override
     public void update() {
-        double dist = myStart.getPosition().getDistance(myEnd.getPosition());
-        double diff = myLength - dist;
-        double percent = diff / dist / (2 * myStrength);
+        final double dist = myStart.getPosition().getDistance(myEnd.getPosition());
+        final double diff = myLength - dist;
+        final double percent = diff / dist / (2 * myStrength);
 
         myCache.set(myStart.getPosition());
         myCache.sub(myEnd.getPosition());
@@ -87,7 +87,7 @@ public class Binding extends GameObject {
     }
 
     @Override
-    public <V> V accept(final GameObjectVisitor<V> v) {
-        return v.visit(this);
+    public <V> V accept(final GameObjectVisitor<V> theV) {
+        return theV.visit(this);
     }
 }

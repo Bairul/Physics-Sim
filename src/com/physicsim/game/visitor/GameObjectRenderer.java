@@ -38,15 +38,10 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         myGraphics = theG;
     }
 
-    /**
-     * Draws the verlet point.
-     * @param theEntity the VerletPoint
-     * @return null
-     */
     @Override
     public Void visit(final Particle theEntity) {
-        int x = myOrigin.intX() + theEntity.getPosition().intX();
-        int y = myOrigin.intY() + theEntity.getPosition().intY();
+        final int x = myOrigin.intX() + theEntity.getPosition().intX();
+        final int y = myOrigin.intY() + theEntity.getPosition().intY();
         myGraphics.setColor(Color.black);
         myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
         myGraphics.setColor(Color.yellow);
@@ -58,27 +53,17 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         return null;
     }
 
-    /**
-     * Draws the verlet binding.
-     * @param theEntity the binding
-     * @return null
-     */
     @Override
     public Void visit(final Binding theEntity) {
-        int x = myOrigin.intX() + theEntity.getStartPoint().getPosition().intX();
-        int y = myOrigin.intY() + theEntity.getStartPoint().getPosition().intY();
-        int x2 = myOrigin.intX() + theEntity.getEndPoint().getPosition().intX();
-        int y2 = myOrigin.intY() + theEntity.getEndPoint().getPosition().intY();
+        final int x = myOrigin.intX() + theEntity.getStartPoint().getPosition().intX();
+        final int y = myOrigin.intY() + theEntity.getStartPoint().getPosition().intY();
+        final int x2 = myOrigin.intX() + theEntity.getEndPoint().getPosition().intX();
+        final int y2 = myOrigin.intY() + theEntity.getEndPoint().getPosition().intY();
         myGraphics.setColor(Color.black);
         myGraphics.drawLine(x, y, x2, y2);
         return null;
     }
 
-    /**
-     * Draws a rigid body.
-     * @param theEntity the rigid body
-     * @return null
-     */
     @Override
     public Void visit(final RigidBody theEntity) {
         myGraphics.setColor(Color.black);
@@ -93,11 +78,6 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         return null;
     }
 
-    /**
-     * Draws a rigid circle.
-     * @param theEntity the rigid circle
-     * @return null
-     */
     @Override
     public Void visit(final RigidCircle theEntity) {
         myGraphics.setColor(Color.black);

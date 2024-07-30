@@ -25,9 +25,9 @@ public abstract class GameObject {
      * extensions (new methods) can be introduced without modifying all classes in the GameObject
      * hierarchy.
      *
-     * @param v   the incoming visitor
+     * @param theV   the incoming visitor
      * @param <V> abstract return type of visitor
      * @return output data from application of visitor
      */
-    public abstract <V> V accept(final GameObjectVisitor<V> v);
+    public abstract <V> V accept(final GameObjectVisitor<V> theV);
 }

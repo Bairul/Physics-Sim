@@ -56,7 +56,7 @@ public class RigidCircle extends GameObject {
                 // horizontal slope (intersection point is directly left/right of center)
                 tanVector.set(intersect.getX(), intersect.getY() + 1);
             } else {
-                double tangent = -1 / m;
+                final double tangent = -1 / m;
                 tanVector.set(intersect.getX() + 1, intersect.getY() + tangent);
             }
         } catch (final ArithmeticException e) {
@@ -93,7 +93,7 @@ public class RigidCircle extends GameObject {
     }
 
     @Override
-    public <V> V accept(final GameObjectVisitor<V> v) {
-        return v.visit(this);
+    public <V> V accept(final GameObjectVisitor<V> theV) {
+        return theV.visit(this);
     }
 }

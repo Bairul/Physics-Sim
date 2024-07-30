@@ -14,6 +14,7 @@ public abstract class RigidBody extends GameObject {
     private final Vector2[] myVertices;
     /** The edges of this rigid body. */
     private final RigidBodyEdge[] myEdges;
+    /** The center of mass. */
     private final Vector2 myCenter;
 
     /**
@@ -40,6 +41,7 @@ public abstract class RigidBody extends GameObject {
                 throw new IllegalArgumentException("A rigid body must be convex");
             }
         }
+        // center would be the average of the vertices
         myCenter.div(myVertices.length);
     }
 
@@ -96,12 +98,20 @@ public abstract class RigidBody extends GameObject {
 
     }
 
+    /**
+     * Rotates the rigid body by some degree.
+     * @param theDegrees the degree
+     */
     public void rotate(final double theDegrees) {
         for (final Vector2 v : myVertices) {
             VMath.rotate(v, myCenter, Math.toRadians(theDegrees));
         }
     }
 
+    /**
+     * Translates the rigid body by a vector.
+     * @param theTranslation the vector of translation
+     */
     public void translate(final Vector2 theTranslation) {
         for (final Vector2 v : myVertices) {
             v.add(theTranslation);
@@ -109,14 +119,28 @@ public abstract class RigidBody extends GameObject {
         myCenter.add(theTranslation);
     }
 
+    // ======== getters ========
+
+    /**
+     * Gets the edges of the rigid body.
+     * @return the edges as rigid body edges
+     */
     public RigidBodyEdge[] getEdges() {
         return myEdges;
     }
 
+    /**
+     * Gets the vertices of the rigid body.
+     * @return the vertices as vectors
+     */
     public Vector2[] getVertices() {
         return myVertices;
     }
 
+    /**
+     * Gets the center of mass of the rigid body.
+     * @return the center vector
+     */
     public Vector2 getCenter() {
         return myCenter;
     }

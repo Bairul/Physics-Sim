@@ -55,7 +55,7 @@ public final class GameRoot implements Runnable {
      */
     @Override
     public void run() {
-        double framesPerNs = 1000000000D / FPS;
+        final double framesPerNs = 1000000000D / FPS;
         double delta = 0;
         long now;
         long past = System.nanoTime();
