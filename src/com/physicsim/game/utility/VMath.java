@@ -15,6 +15,7 @@ public final class VMath {
      * @param theStart the starting endpoint
      * @param theEnd   the ending enpoint
      * @return the slope
+     * @throws ArithmeticException if the slope is vertical
      */
     public static double slope(final Vector2 theStart, final Vector2 theEnd) {
         if (theEnd.getX() == theStart.getX()) throw new ArithmeticException("Divide by 0");
@@ -82,6 +83,7 @@ public final class VMath {
     public static Vector2[] intersect(final Vector2 theStart, final Vector2 theEnd,
                                       final Vector2 theOrigin, final double theRadius) {
         final ArrayList<Vector2> intersections = new ArrayList<>();
+        // shifts line to by the circle's origin because this method assumes the circle is at the origin
         final Vector2 start = theStart.subNew(theOrigin);
         final Vector2 end = theEnd.subNew(theOrigin);
 
@@ -93,17 +95,17 @@ public final class VMath {
             // if D negative, there is no intersection
             // if D is 0, there is only 1 intersection and that is the tangent
             if (D >= 0) {
-                final double x_i = (-1 * m * b + Math.sqrt(D)) / c; // circle-line formula for x
+                final double x_i = (-1 * m * b + Math.sqrt(D)) / c;      // circle-line formula for x
                 final double y_i = m * x_i + b;
-                start.set(x_i, y_i); // reuse vector
-                start.add(theOrigin);
+                start.set(x_i, y_i);             // reuse vector
+                start.add(theOrigin);            // shift the point back
                 intersections.add(start);
                 // if D is positive, then there is 2 intersections on the circle
                 if (D > 1) {
                     final double x_i2 = (-1 * m * b - Math.sqrt(D)) / c; // circle-line formula for x
                     final double y_i2 = m * x_i2 + b;
-                    end.set(x_i2, y_i2); // reuse vector
-                    end.add(theOrigin);
+                    end.set(x_i2, y_i2);         // reuse vector
+                    end.add(theOrigin);          // shift the point back
                     intersections.add(end);
                 }
             }
@@ -113,13 +115,13 @@ public final class VMath {
             // if D negative, there is no intersection
             // if D is 0, there is only 1 intersection and that is the tangent
             if (D >= 0) {
-                start.setY(Math.sqrt(D)); // reuse vector
-                start.add(theOrigin);
+                start.setY(Math.sqrt(D));        // reuse vector
+                start.add(theOrigin);            // shift the point back
                 intersections.add(start);
                 // if D is positive, then there is 2 intersections on the circle
                 if (D > 1) {
                     end.setY(-1 * Math.sqrt(D)); // reuse vector
-                    end.add(theOrigin);
+                    end.add(theOrigin);          // shift the point back
                     intersections.add(end);
                 }
             }
@@ -208,5 +210,48 @@ public final class VMath {
         theVector.set(theVector.getX() * Math.cos(theRadians) - theVector.getY() * Math.sin(theRadians),
                       theVector.getX() * Math.sin(theRadians) + (theVector.getY() * Math.cos(theRadians)));
         theVector.add(theOrigin);
+    }
+
+    public static double getArea(final Vector2[] theVertices) {
+        double area = 0;
+        for (int i = 0; i < theVertices.length; i++) {
+            area += theVertices[i].crossProduct(theVertices[(i + 1) % theVertices.length]);
+        }
+        return area / 2;
+    }
+
+    public static Vector2 getCentroid(final Vector2[] theVertices) {
+        final Vector2 centroid = new Vector2();
+        final double c = 1 / (6 * getArea(theVertices));
+
+        for (int i = 0; i < theVertices.length; i++) {
+            final Vector2 nextVertex = theVertices[(i + 1) % theVertices.length];
+            final double a = theVertices[i].crossProduct(nextVertex);
+
+            centroid.add(theVertices[i].addNew(nextVertex).mulNew(a));
+        }
+
+        centroid.mul(c);
+        return centroid;
+    }
+
+    public static double getMomentOfInertia(final Vector2[] theVertices, final double theMass) {
+        final Vector2 G = getCentroid(theVertices);
+        double inertia = 0;
+
+        for (int i = 0; i < theVertices.length; i++) {
+            final Vector2 nextVertex = theVertices[(i + 1) % theVertices.length];
+            final double a = theVertices[i].crossProduct(nextVertex);
+
+            final double b = theVertices[i].dotProduct(theVertices[i])
+                           + theVertices[i].dotProduct(nextVertex)
+                           + nextVertex.dotProduct(nextVertex);
+
+            inertia += a * b;
+        }
+
+        inertia *= theMass / (12 * getArea(theVertices));
+
+        return inertia - theMass * G.dotProduct(G);
     }
 }

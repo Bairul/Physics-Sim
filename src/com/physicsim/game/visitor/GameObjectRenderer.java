@@ -74,7 +74,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
                     myOrigin.intX() + edge.getEnd().intX(),
                     myOrigin.intY() + edge.getEnd().intY());
         }
-        myGraphics.fillOval(myOrigin.intX() + theEntity.getCenter().intX() - 1, myOrigin.intY() + theEntity.getCenter().intY() - 1, 2, 2);
+        myGraphics.fillOval(myOrigin.intX() + theEntity.getCenter().intX() - 2, myOrigin.intY() + theEntity.getCenter().intY() - 2, 4, 4);
         return null;
     }
 

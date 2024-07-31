@@ -3,7 +3,6 @@ package com.physicsim.game.controller;
 import com.physicsim.game.controller.input.ClickType;
 import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
-import com.physicsim.game.model.mesh.VerletBox;
 import com.physicsim.game.model.particle.Binding;
 import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.VerletObject;
@@ -22,7 +21,7 @@ import com.physicsim.game.view.GameScreen;
  * @author Bairu Li
  */
 public class GameplayController {
-    private static final Box myBox = new Box(new Vector2(-300, 0), 100);
+//    private static final Box myBox = new Box(new Vector2(-300, 0), 100, 1);
 
     /** The user inputs. */
     private final InputController myInputs;
@@ -45,15 +44,15 @@ public class GameplayController {
         GameWorld.GRAVITY.set(0, 0.25);
         debugMode = false;
 
-        myCache.set(0, 0);
-        myGameWorld.addStaticObject(new Box(myCache, 200));
-        myCache.set(-280, 0);
-        myGameWorld.addStaticObject(new Triangle(myCache, 200));
-
-        myCache.set(0, 0);
-        myGameWorld.addStaticObject(new RigidCircle(myCache, 350));
-        myCache.set(0, -60);
-        myGameWorld.addStaticObject(new RigidCircle(myCache, 50));
+//        myCache.set(0, 0);
+//        myGameWorld.addStaticObject(new Box(myCache, 200, 1));
+//        myCache.set(-280, 0);
+//        myGameWorld.addStaticObject(new Triangle(myCache, 200, 1));
+//
+//        myCache.set(0, 0);
+//        myGameWorld.addStaticObject(new RigidCircle(myCache, 350));
+//        myCache.set(0, -60);
+//        myGameWorld.addStaticObject(new RigidCircle(myCache, 50));
     }
 
     /**
@@ -67,7 +66,10 @@ public class GameplayController {
 
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
             System.out.println(myInputs.getMousePos());
-            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
+            Box b = new Box(myInputs.getMousePos(), 100, 1);
+            b.setPhysics(true);
+            myGameWorld.addDynamicObject(b);
+//            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
 
         if (myInputs.getKeyboard().isKeyHeld(KeyType.Space)) {
@@ -105,12 +107,19 @@ public class GameplayController {
             }
 
             if (dynObject instanceof final RigidBody r) {
+//                myCache.set(GameWorld.GRAVITY);
+//                myCache.mul(r.getMass());
+//                r.applyForce(myCache);
+//                myCache.set(0, 0.01);
+                r.applyTorque(0.1, myInputs.getMousePos().addNew(new Vector2(50, 50)));
+
                 for (final GameObject staticObject : myGameWorld.getStaticObjects()) {
                     if (staticObject instanceof final RigidBody rs) {
                         rs.collideAgainst(r);
                     }
                 }
             }
+
             dynObject.update();
         }
 

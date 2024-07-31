@@ -14,35 +14,63 @@ public abstract class RigidBody extends GameObject {
     private final Vector2[] myVertices;
     /** The edges of this rigid body. */
     private final RigidBodyEdge[] myEdges;
-    /** The center of mass. */
-    private final Vector2 myCenter;
+    private final Vector2 myCache;
+    // physics
+    private final double myMass;
+    private final double myMoi;
+    // Linear components
+    /** The position vector but also the center of mass. */
+    private final Vector2 myPosition;
+    private final Vector2 myOldPosition;
+    private final Vector2 myAcceleration;
+
+    // Rotational components
+    // In 2D space, angular components are scalars not vectors
+    private double myAngularPos; // theta
+    private double myOldAngularPos;
+    private double myAngularAccel;
 
     /**
      * Creates a rigid body given a bunch of vertices.
      * @param theVertices the number of new vertices as vectors.
      * @throws IllegalArgumentException if it is not a convex 2d polygon that have 3 or more vertices
      */
-    public RigidBody(final Vector2... theVertices) {
+    public RigidBody(final double theMass, final Vector2... theVertices) {
         // valid vertices
         if (theVertices.length < 2) throw new IllegalArgumentException("A rigid body must have 3 or more vertices");
 
-        myVertices = theVertices;
-        myCenter = new Vector2();
+        myVertices = theVertices; //TODO: not deep copy
         myEdges = new RigidBodyEdge[theVertices.length];
         for (int i = 0; i < myEdges.length; i++) {
             myEdges[i] = new RigidBodyEdge(myVertices[i], myVertices[(i + 1) % myEdges.length]);
-            myCenter.add(myVertices[i]);
         }
 
-        // is convex
+        if (!isConvex()) throw new IllegalArgumentException("A rigid body must be convex");
+
+        myCache = new Vector2();
+        myMass = theMass;
+        myMoi = VMath.getMomentOfInertia(myVertices, myMass);
+
+        myPosition = VMath.getCentroid(myVertices);
+        myOldPosition = new Vector2(myPosition);
+        myAcceleration = new Vector2();
+
+        myAngularPos = 0;
+        myOldAngularPos = 0;
+        myAngularAccel = 0;
+
+//        System.out.println("Area: " + VMath.getArea(myVertices));
+        System.out.println("MOI: " + myMoi);
+    }
+
+    private boolean isConvex() {
         int convexity = (int) Math.signum(myEdges[0].getEdge().crossProduct(myEdges[1].getEdge()));
         for (int i = 1; i < myEdges.length - 1; i++) {
             if ((int) Math.signum(myEdges[i].getEdge().crossProduct(myEdges[i + 1].getEdge())) * convexity < 0) {
-                throw new IllegalArgumentException("A rigid body must be convex");
+                return false;
             }
         }
-        // center would be the average of the vertices
-        myCenter.div(myVertices.length);
+        return true;
     }
 
     /**
@@ -58,7 +86,6 @@ public abstract class RigidBody extends GameObject {
                 count = !count;
             }
         }
-
         return count;
     }
 
@@ -94,29 +121,81 @@ public abstract class RigidBody extends GameObject {
         }
     }
 
+    // physics
+    public void applyForce(final Vector2 theForce) {
+        // F = MA --> A = F / M
+        myCache.set(theForce);
+        myCache.div(myMass);
+        myAcceleration.add(myCache);
+    }
+
+    protected void move() {
+        // linear movement
+        myCache.set(myPosition);
+        translateBody(myPosition.subNew(myOldPosition).addNew(myAcceleration));
+        myOldPosition.set(myCache);
+    }
+
+    protected void postUpdate() {
+        myAngularAccel = 0;
+        myAcceleration.set(0, 0);
+    }
+
+    // ************========  rotational physics  ========************ \\
+
+    public void applyTorque(final Vector2 theLinearForce, final Vector2 thePointOfAction) {
+        // T = r x F
+        // T = I * a --> a = T / I
+
+        // r is the lever arm from the force of action to the center of mass
+        myCache.set(thePointOfAction);
+        myCache.sub(myPosition);
+        double t = myCache.crossProduct(theLinearForce);
+        //TODO: don't know how to use parallel axis theorem
+        myAngularAccel += t / myMoi;
+    }
+
+    public void applyTorque(final double theTorque, final Vector2 thePointOfAction) {
+        // T = I * a --> a = T / I
+        //TODO: don't know how to use parallel axis theorem
+        myAngularAccel += -theTorque / myMoi;
+    }
+
+    protected void rotate() {
+        double current = myAngularPos;
+        System.out.println(myAngularPos - myOldAngularPos);
+        rotateBody(myAngularPos - myOldAngularPos + myAngularAccel);
+        myOldAngularPos = current;
+    }
+
+    //TODO: collision against another rigid body
     public void collideAgainst(final RigidBody theRB) {
 
     }
 
     /**
      * Rotates the rigid body by some degree.
-     * @param theDegrees the degree
+     * @param theRadians the degree
      */
-    public void rotate(final double theDegrees) {
+    private void rotateBody(final double theRadians) {
         for (final Vector2 v : myVertices) {
-            VMath.rotate(v, myCenter, Math.toRadians(theDegrees));
+            VMath.rotate(v, myPosition, theRadians);
         }
+        myAngularPos += theRadians;
+
+        if (myAngularPos > Math.PI) myAngularPos -= Math.PI * 2;
+        else if (myAngularPos < -Math.PI) myAngularPos += Math.PI * 2;
     }
 
     /**
      * Translates the rigid body by a vector.
      * @param theTranslation the vector of translation
      */
-    public void translate(final Vector2 theTranslation) {
+    private void translateBody(final Vector2 theTranslation) {
         for (final Vector2 v : myVertices) {
             v.add(theTranslation);
         }
-        myCenter.add(theTranslation);
+        myPosition.add(theTranslation);
     }
 
     // ======== getters ========
@@ -142,6 +221,10 @@ public abstract class RigidBody extends GameObject {
      * @return the center vector
      */
     public Vector2 getCenter() {
-        return myCenter;
+        return myPosition;
+    }
+
+    public double getMass() {
+        return myMass;
     }
 }

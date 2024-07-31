@@ -13,7 +13,7 @@ public abstract class VerletObject extends GameObject {
     protected final Vector2 myPosition;
     /** The previous position vector. */
     protected final Vector2 myOldPosition;
-    /** The acceleration vector. */
+    /** The NET acceleration vector. */
     protected final Vector2 myAcceleration;
     /** A reusable vector to save some memory. */
     private final Vector2 myCache;
@@ -69,7 +69,7 @@ public abstract class VerletObject extends GameObject {
         // F = MA --> A = F / M
         myCache.set(theForce);
         myCache.div(myMass);
-        myAcceleration.add(myCache);
+        myAcceleration.add(myCache); // add to NET acceleration
     }
 
     /**
