@@ -39,12 +39,12 @@ public abstract class RigidBody extends GameObject {
         // valid vertices
         if (theVertices.length < 2) throw new IllegalArgumentException("A rigid body must have 3 or more vertices");
 
-        myVertices = theVertices; //TODO: not deep copy
+        myVertices = theVertices;
         myEdges = new RigidBodyEdge[theVertices.length];
+
         for (int i = 0; i < myEdges.length; i++) {
             myEdges[i] = new RigidBodyEdge(myVertices[i], myVertices[(i + 1) % myEdges.length]);
         }
-
         if (!isConvex()) throw new IllegalArgumentException("A rigid body must be convex");
 
         myCache = new Vector2();
@@ -54,15 +54,12 @@ public abstract class RigidBody extends GameObject {
         myPosition = VMath.getCentroid(myVertices);
         myOldPosition = new Vector2(myPosition);
         myAcceleration = new Vector2();
-
-        myAngularPos = 0;
-        myOldAngularPos = 0;
-        myAngularAccel = 0;
-
-//        System.out.println("Area: " + VMath.getArea(myVertices));
-        System.out.println("MOI: " + myMoi);
     }
 
+    /**
+     * Helper method to test to see if the vertices of this rigid body is convex or not.
+     * @return whether it is convex
+     */
     private boolean isConvex() {
         int convexity = (int) Math.signum(myEdges[0].getEdge().crossProduct(myEdges[1].getEdge()));
         for (int i = 1; i < myEdges.length - 1; i++) {
@@ -129,6 +126,17 @@ public abstract class RigidBody extends GameObject {
         myAcceleration.add(myCache);
     }
 
+    /**
+     * Sets the velocity of the rigid body. Velocity in verlet integration is done by using changing the old
+     * position vector.
+     * @param theVelocity the velocity vector
+     */
+    public void setVelocity(final Vector2 theVelocity) {
+        myCache.set(myPosition);
+        myCache.sub(theVelocity);
+        myOldPosition.set(myCache);
+    }
+
     protected void move() {
         // linear movement
         myCache.set(myPosition);
@@ -151,35 +159,35 @@ public abstract class RigidBody extends GameObject {
         myCache.set(thePointOfAction);
         myCache.sub(myPosition);
         double t = myCache.crossProduct(theLinearForce);
-        //TODO: don't know how to use parallel axis theorem
         myAngularAccel += t / myMoi;
     }
 
     public void applyTorque(final double theTorque, final Vector2 thePointOfAction) {
         // T = I * a --> a = T / I
-        //TODO: don't know how to use parallel axis theorem
-        myAngularAccel += -theTorque / myMoi;
+        myAngularAccel += theTorque / myMoi;
+    }
+
+    public void setAngularVelocity(final double theAngVelocity) {
+        myOldAngularPos = -theAngVelocity;
     }
 
     protected void rotate() {
         double current = myAngularPos;
-        System.out.println(myAngularPos - myOldAngularPos);
         rotateBody(myAngularPos - myOldAngularPos + myAngularAccel);
         myOldAngularPos = current;
     }
 
-    //TODO: collision against another rigid body
     public void collideAgainst(final RigidBody theRB) {
-
+        //TODO: collision against another rigid body
     }
 
     /**
-     * Rotates the rigid body by some degree.
+     * Rotates the rigid body about its center of mass by some radian.
      * @param theRadians the degree
      */
     private void rotateBody(final double theRadians) {
         for (final Vector2 v : myVertices) {
-            VMath.rotate(v, myPosition, theRadians);
+            VMath.rotate(v, myPosition, -theRadians);
         }
         myAngularPos += theRadians;
 

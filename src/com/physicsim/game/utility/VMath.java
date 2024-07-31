@@ -212,6 +212,11 @@ public final class VMath {
         theVector.add(theOrigin);
     }
 
+    /**
+     * Calculates the area of the polygon given an array of vertices.
+     * @param theVertices the vertices as vectors (assumes the vertices are ordered counter-clockwise or clockwise)
+     * @return the area of the polygon made from the vertices
+     */
     public static double getArea(final Vector2[] theVertices) {
         double area = 0;
         for (int i = 0; i < theVertices.length; i++) {
@@ -220,6 +225,11 @@ public final class VMath {
         return area / 2;
     }
 
+    /**
+     * Gets the center of mass of an array of vertices. This is not the same as the average of all vertices.
+     * @param theVertices the vertices as vectors (assumes the vertices are ordered counter-clockwise or clockwise)
+     * @return the center of mass of the polygon aka centroid
+     */
     public static Vector2 getCentroid(final Vector2[] theVertices) {
         final Vector2 centroid = new Vector2();
         final double c = 1 / (6 * getArea(theVertices));
@@ -235,6 +245,13 @@ public final class VMath {
         return centroid;
     }
 
+    /**
+     * Gets the moment of inertia from a polygon given its vertices and mass. Assumes the polygon has a unifrom
+     * mass distribution.
+     * @param theVertices the vertices as vectors (assumes the vertices are ordered counter-clockwise or clockwise)
+     * @param theMass the mass
+     * @return the moment of inertia
+     */
     public static double getMomentOfInertia(final Vector2[] theVertices, final double theMass) {
         final Vector2 G = getCentroid(theVertices);
         double inertia = 0;

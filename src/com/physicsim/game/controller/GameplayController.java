@@ -68,6 +68,8 @@ public class GameplayController {
             System.out.println(myInputs.getMousePos());
             Box b = new Box(myInputs.getMousePos(), 100, 1);
             b.setPhysics(true);
+//            b.setVelocity(new Vector2(0, -10));
+//            b.setAngularVelocity(0.1);
             myGameWorld.addDynamicObject(b);
 //            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
@@ -110,8 +112,8 @@ public class GameplayController {
 //                myCache.set(GameWorld.GRAVITY);
 //                myCache.mul(r.getMass());
 //                r.applyForce(myCache);
-//                myCache.set(0, 0.01);
-                r.applyTorque(0.1, myInputs.getMousePos().addNew(new Vector2(50, 50)));
+//                myCache.set(-20, 0);
+//                r.applyTorque(-0.2, r.getCenter().addNew(myCache));
 
                 for (final GameObject staticObject : myGameWorld.getStaticObjects()) {
                     if (staticObject instanceof final RigidBody rs) {
