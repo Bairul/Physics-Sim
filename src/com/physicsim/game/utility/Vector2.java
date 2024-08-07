@@ -83,6 +83,15 @@ public class Vector2 {
         div(getMagnitude());
     }
 
+    /**
+     * Converts this vector to its perpendicular vector counterclockwise.
+     */
+    public void perp() {
+        double temp = myX;
+        myX = -myY;
+        myY = temp;
+    }
+
     // === vector math with return ===
 
     /**
@@ -128,6 +137,19 @@ public class Vector2 {
     public Vector2 normNew() {
         return divNew(getMagnitude());
     }
+
+    /**
+     * Converts this vector to its perpendicular vector counter-clockwise.
+     */
+    public Vector2 perpNew() {
+        /*
+         * NOTE: This is actually the clockwise transformation. However, in computer graphics
+         * positive y points down, so a clockwise transform becomes counter-clockwise and vice versa.
+         */
+        return new Vector2(myY, -myX);
+    }
+
+    // ===== other math =====
 
     /**
      * Computes the dot product between 2 vectors.

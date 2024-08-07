@@ -1,5 +1,8 @@
 package com.physicsim.game.utility;
 
+import com.physicsim.game.model.rigidbody.RigidBody;
+import com.physicsim.game.model.rigidbody.RigidBodyEdge;
+
 import java.util.ArrayList;
 
 /**
@@ -200,15 +203,19 @@ public final class VMath {
     }
 
     /**
-     * Rotates a vector by some radian about an origin vector.
+     * Rotates a vector by some radian about an origin vector counter-clockwise.
      * @param theVector  the vector to rotate
      * @param theOrigin  the vector to rotate around
      * @param theRadians the radians of rotation
      */
     public static void rotate(final Vector2 theVector, final Vector2 theOrigin, final double theRadians) {
+        /*
+         * NOTE: The formula used is actually the clockwise rotation. However, in computer graphics
+         * positive y points down, so a clockwise rotation becomes counter-clockwise and vice versa.
+         */
         theVector.sub(theOrigin);
-        theVector.set(theVector.getX() * Math.cos(theRadians) - theVector.getY() * Math.sin(theRadians),
-                      theVector.getX() * Math.sin(theRadians) + (theVector.getY() * Math.cos(theRadians)));
+        theVector.set(theVector.getX() * Math.cos(theRadians) + theVector.getY() * Math.sin(theRadians),
+                theVector.getY() * Math.cos(theRadians) - theVector.getX() * Math.sin(theRadians));
         theVector.add(theOrigin);
     }
 
@@ -217,7 +224,7 @@ public final class VMath {
      * @param theVertices the vertices as vectors (assumes the vertices are ordered counter-clockwise or clockwise)
      * @return the area of the polygon made from the vertices
      */
-    public static double getArea(final Vector2[] theVertices) {
+    public static double findArea(final Vector2[] theVertices) {
         double area = 0;
         for (int i = 0; i < theVertices.length; i++) {
             area += theVertices[i].crossProduct(theVertices[(i + 1) % theVertices.length]);
@@ -230,9 +237,9 @@ public final class VMath {
      * @param theVertices the vertices as vectors (assumes the vertices are ordered counter-clockwise or clockwise)
      * @return the center of mass of the polygon aka centroid
      */
-    public static Vector2 getCentroid(final Vector2[] theVertices) {
+    public static Vector2 findCentroid(final Vector2[] theVertices) {
         final Vector2 centroid = new Vector2();
-        final double c = 1 / (6 * getArea(theVertices));
+        final double c = 1 / (6 * findArea(theVertices));
 
         for (int i = 0; i < theVertices.length; i++) {
             final Vector2 nextVertex = theVertices[(i + 1) % theVertices.length];
@@ -252,8 +259,8 @@ public final class VMath {
      * @param theMass the mass
      * @return the moment of inertia
      */
-    public static double getMomentOfInertia(final Vector2[] theVertices, final double theMass) {
-        final Vector2 G = getCentroid(theVertices);
+    public static double findMomentOfInertia(final Vector2[] theVertices, final double theMass) {
+        final Vector2 G = findCentroid(theVertices);
         double inertia = 0;
 
         for (int i = 0; i < theVertices.length; i++) {
@@ -267,8 +274,77 @@ public final class VMath {
             inertia += a * b;
         }
 
-        inertia *= theMass / (12 * getArea(theVertices));
+        inertia *= theMass / (12 * findArea(theVertices));
 
         return inertia - theMass * G.dotProduct(G);
+    }
+
+    /**
+     * Gets the support vector from an array of vectors (vertices). The support vector is the farthest vector
+     * in a given direction. Think of the direction vector as a plane that sweeps in that direction. This will
+     * return the last vector (point). Time complexity is θ(V) where V is the number of vectors in the array.
+     * @param theVectors   the vectors to find the support vector
+     * @param theDirection the direction
+     * @return the support vector
+     */
+    public static Vector2 findSupportVector(final Vector2[] theVectors, final Vector2 theDirection) {
+        if (theVectors.length == 0) throw new IllegalArgumentException("Empty vector array");
+
+        Vector2 bestVector = theVectors[0];
+        double bestProjection = theVectors[0].dotProduct(theDirection);
+
+        for (final Vector2 vector : theVectors) {
+            double projection = vector.dotProduct(theDirection);
+
+            if (projection > bestProjection) {
+                bestProjection = projection;
+                bestVector = vector;
+            }
+        }
+
+        return bestVector;
+    }
+
+    // ********========= Rigid Body Stuff =========******** \\
+
+    /**
+     * Determines whether a point is contained in a rigid body. Uses ray casting algorithm
+     * with a time complexity of θ(V) where V is the number of Vertices. In a polygon, the number of Edges
+     * is equal to its Vertices.
+     * @param theEdges the edges of the rigid body
+     * @param thePoint the point
+     * @return whether it is contained
+     */
+    public static boolean overlaps(final RigidBodyEdge[] theEdges, final Vector2 thePoint) {
+        boolean count = false;
+        for (final RigidBodyEdge e : theEdges) {
+            if (e.rayCast(thePoint)) {
+                count = !count;
+            }
+        }
+        return count;
+    }
+
+    public static Vector2[] findAxisOfLeastPenetration(final RigidBody theA, final RigidBody theB) {
+        // (bestProjection, bestIndex)
+        final Vector2 point = new Vector2();
+        final Vector2 normal = new Vector2();
+        double bestProjection = Integer.MIN_VALUE;
+
+        for (final RigidBodyEdge e : theA.getEdges()) {
+            final Vector2 edgeNormalOfA = e.getPerp();
+            final Vector2 support = findSupportVector(theB.getVertices(), edgeNormalOfA.mulNew(-1));
+
+            double projection = support.subNew(e.getStart()).dotProduct(edgeNormalOfA);
+            if (projection > bestProjection) {
+                bestProjection = projection;
+                point.set(support);
+                normal.set(edgeNormalOfA);
+            }
+        }
+
+        if (bestProjection > 0) return new Vector2[] {};
+
+        return new Vector2[] {point, normal, new Vector2(bestProjection, 0)};
     }
 }

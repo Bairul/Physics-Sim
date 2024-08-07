@@ -21,8 +21,6 @@ import com.physicsim.game.view.GameScreen;
  * @author Bairu Li
  */
 public class GameplayController {
-//    private static final Box myBox = new Box(new Vector2(-300, 0), 100, 1);
-
     /** The user inputs. */
     private final InputController myInputs;
     /** World that holds entities and other stuff. */
@@ -44,8 +42,8 @@ public class GameplayController {
         GameWorld.GRAVITY.set(0, 0.25);
         debugMode = false;
 
-//        myCache.set(0, 0);
-//        myGameWorld.addStaticObject(new Box(myCache, 200, 1));
+        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY() - 50);
+        myGameWorld.addStaticObject(new Box(myCache, GameWorld.SCREEN_BOUNDARY.getX() * 2, 1));
 //        myCache.set(-280, 0);
 //        myGameWorld.addStaticObject(new Triangle(myCache, 200, 1));
 //
@@ -68,19 +66,14 @@ public class GameplayController {
             System.out.println(myInputs.getMousePos());
             Box b = new Box(myInputs.getMousePos(), 100, 1);
             b.setPhysics(true);
-//            b.setVelocity(new Vector2(0, -10));
-//            b.setAngularVelocity(0.1);
+            b.setLinearVelocity(myInputs.getMousePos().normNew());
+            b.setAngularVelocity(0.1);
             myGameWorld.addDynamicObject(b);
 //            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
 
         if (myInputs.getKeyboard().isKeyHeld(KeyType.Space)) {
             myGameWorld.clearDynamicObjects();
-//            myCache.set(myInputs.getMousePos());
-//            myCache.sub(myBox.getCenter());
-//            myCache.norm();
-//            myBox.translate(myCache);
-//            myBox.rotate(1);
         }
 
         if (debugMode) {
@@ -109,15 +102,15 @@ public class GameplayController {
             }
 
             if (dynObject instanceof final RigidBody r) {
-//                myCache.set(GameWorld.GRAVITY);
-//                myCache.mul(r.getMass());
-//                r.applyForce(myCache);
-//                myCache.set(-20, 0);
-//                r.applyTorque(-0.2, r.getCenter().addNew(myCache));
+                myCache.set(GameWorld.GRAVITY);
+                myCache.mul(r.getMass());
+                r.applyLinearForce(myCache);
 
                 for (final GameObject staticObject : myGameWorld.getStaticObjects()) {
                     if (staticObject instanceof final RigidBody rs) {
-                        rs.collideAgainst(r);
+                        if (r.collideAgainst(rs)) {
+//                            debugMode = true;
+                        }
                     }
                 }
             }

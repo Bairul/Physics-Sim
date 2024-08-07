@@ -4,7 +4,6 @@ import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.visitor.GameObjectVisitor;
 
 public class Box extends RigidBody {
-    private boolean hasPhysics;
 
     public Box(Vector2 theOrigin, final double theLength, final double theMass) {
         super(theMass, new Vector2(theOrigin),
@@ -13,16 +12,12 @@ public class Box extends RigidBody {
                 theOrigin.addNew(new Vector2(0, theLength)));
     }
 
-    public void setPhysics(final boolean theEnabled) {
-        hasPhysics = theEnabled;
-    }
-
     @Override
     public void update() {
         if (!hasPhysics) return;
         // must have
-        move();
-        rotate();
+        linearMove();
+        angularMove();
 
         // must have
         postUpdate();

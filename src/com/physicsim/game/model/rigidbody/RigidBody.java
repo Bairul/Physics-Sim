@@ -9,6 +9,8 @@ import com.physicsim.game.utility.Vector2;
  * Abstract class for a rigid body physics game object. Must be a convex polygon.
  */
 public abstract class RigidBody extends GameObject {
+    /** The coefficient of restitution. */
+    public static double COE_RES = 1;
 
     /** The vertices of this rigid body. */
     private final Vector2[] myVertices;
@@ -30,6 +32,8 @@ public abstract class RigidBody extends GameObject {
     private double myOldAngularPos;
     private double myAngularAccel;
 
+    protected boolean hasPhysics;
+
     /**
      * Creates a rigid body given a bunch of vertices.
      * @param theVertices the number of new vertices as vectors.
@@ -49,11 +53,15 @@ public abstract class RigidBody extends GameObject {
 
         myCache = new Vector2();
         myMass = theMass;
-        myMoi = VMath.getMomentOfInertia(myVertices, myMass);
+        myMoi = VMath.findMomentOfInertia(myVertices, myMass);
 
-        myPosition = VMath.getCentroid(myVertices);
+        myPosition = VMath.findCentroid(myVertices);
         myOldPosition = new Vector2(myPosition);
         myAcceleration = new Vector2();
+    }
+
+    public void setPhysics(final boolean thePhysics) {
+        hasPhysics = thePhysics;
     }
 
     /**
@@ -68,22 +76,6 @@ public abstract class RigidBody extends GameObject {
             }
         }
         return true;
-    }
-
-    /**
-     * Determines whether a point is contained in this rigid body. Uses ray casting algorithm
-     * with a time complexity of θ(E) where E is the number of Edges in this rigid body.
-     * @param thePoint the point
-     * @return whether it is contained
-     */
-    public boolean overlaps(final Vector2 thePoint) {
-        boolean count = false;
-        for (final RigidBodyEdge e : myEdges) {
-            if (e.rayCast(thePoint)) {
-                count = !count;
-            }
-        }
-        return count;
     }
 
     /**
@@ -108,7 +100,7 @@ public abstract class RigidBody extends GameObject {
             }
         }
 
-        // if there is a closest edge and the old position is not a point on the edge (solves a tunneling bug when the
+        // if closest edge exists and the old position is not a point on the edge (solves a tunneling bug when the
         // point collides perfectly with the edge)
         if (closestEdge != null
                 // check co-linearity
@@ -119,7 +111,7 @@ public abstract class RigidBody extends GameObject {
     }
 
     // physics
-    public void applyForce(final Vector2 theForce) {
+    public void applyLinearForce(final Vector2 theForce) {
         // F = MA --> A = F / M
         myCache.set(theForce);
         myCache.div(myMass);
@@ -127,17 +119,17 @@ public abstract class RigidBody extends GameObject {
     }
 
     /**
-     * Sets the velocity of the rigid body. Velocity in verlet integration is done by using changing the old
+     * Sets the velocity of the rigid body. Velocity in verlet integration is done by changing the old
      * position vector.
      * @param theVelocity the velocity vector
      */
-    public void setVelocity(final Vector2 theVelocity) {
+    public void setLinearVelocity(final Vector2 theVelocity) {
         myCache.set(myPosition);
         myCache.sub(theVelocity);
         myOldPosition.set(myCache);
     }
 
-    protected void move() {
+    protected void linearMove() {
         // linear movement
         myCache.set(myPosition);
         translateBody(myPosition.subNew(myOldPosition).addNew(myAcceleration));
@@ -147,6 +139,11 @@ public abstract class RigidBody extends GameObject {
     protected void postUpdate() {
         myAngularAccel = 0;
         myAcceleration.set(0, 0);
+        if (Math.abs(myAngularPos) > 10) {
+            int adjustment = myAngularPos > 10 ? -10 : 10;
+            myAngularPos += adjustment;
+            myOldAngularPos += adjustment;
+        }
     }
 
     // ************========  rotational physics  ========************ \\
@@ -154,31 +151,63 @@ public abstract class RigidBody extends GameObject {
     public void applyTorque(final Vector2 theLinearForce, final Vector2 thePointOfAction) {
         // T = r x F
         // T = I * a --> a = T / I
-
         // r is the lever arm from the force of action to the center of mass
         myCache.set(thePointOfAction);
         myCache.sub(myPosition);
-        double t = myCache.crossProduct(theLinearForce);
-        myAngularAccel += t / myMoi;
+        // negative to correct the spin
+        myAngularAccel += -1 * myCache.crossProduct(theLinearForce) / myMoi;
     }
 
-    public void applyTorque(final double theTorque, final Vector2 thePointOfAction) {
+    public void applyTorque(final double theTorque) {
         // T = I * a --> a = T / I
         myAngularAccel += theTorque / myMoi;
     }
 
     public void setAngularVelocity(final double theAngVelocity) {
-        myOldAngularPos = -theAngVelocity;
+        myOldAngularPos = myAngularPos - theAngVelocity;
     }
 
-    protected void rotate() {
+    protected void angularMove() {
         double current = myAngularPos;
         rotateBody(myAngularPos - myOldAngularPos + myAngularAccel);
         myOldAngularPos = current;
     }
 
-    public void collideAgainst(final RigidBody theRB) {
-        //TODO: collision against another rigid body
+    public boolean collideAgainst(final RigidBody theRB) {
+        final Vector2[] a = VMath.findAxisOfLeastPenetration(this, theRB);
+        if (a.length == 0) return false;
+
+        final Vector2[] b = VMath.findAxisOfLeastPenetration(theRB, this);
+        if (b.length == 0) return false;
+
+        final boolean isACollision = a[2].getX() > b[2].getX();
+        final Vector2 collisionPoint = isACollision ? a[0] : b[0];
+        final Vector2 collisionNormal = isACollision ? a[1] : b[1];
+
+        final double sumInvMassA = 1 / myMass + (theRB.hasPhysics ? 1 / theRB.myMass : 0);
+        final double normalSquared = collisionNormal.dotProduct(collisionNormal);
+        final Vector2 relVelA = getLinearVelocity().addNew(getLinearAngularVelocity(collisionPoint));
+        final Vector2 relVelB = theRB.getLinearVelocity().addNew(theRB.getLinearAngularVelocity(collisionPoint));
+        final double relNorm = relVelB.subNew(relVelA).dotProduct(collisionNormal);
+
+        final Vector2 rA = collisionPoint.subNew(myPosition);
+        final Vector2 rB = collisionPoint.subNew(theRB.myPosition);
+        final double angA = collisionNormal.crossProduct(rA);
+        final double angB = collisionNormal.crossProduct(rB);
+
+        final double denom = normalSquared * sumInvMassA + (angA * angA / myMoi) + (theRB.hasPhysics ? (angB * angB / theRB.myMoi) : 0);
+        final double impulse = -(1 + COE_RES) * relNorm / denom;
+
+        applyImpulse(-impulse, collisionNormal, rA);
+        if (theRB.hasPhysics) theRB.applyImpulse(impulse, collisionNormal, rB);
+
+        return true;
+    }
+
+    public void applyImpulse(final double theImpulseMag, final Vector2 theDirection, final Vector2 theDistance) {
+        final Vector2 jn = theDirection.mulNew(theImpulseMag);
+        setLinearVelocity(getLinearVelocity().addNew(jn.divNew(myMass)));
+        setAngularVelocity(getAngularVelocity() + jn.crossProduct(theDistance) / myMoi);
     }
 
     /**
@@ -187,12 +216,9 @@ public abstract class RigidBody extends GameObject {
      */
     private void rotateBody(final double theRadians) {
         for (final Vector2 v : myVertices) {
-            VMath.rotate(v, myPosition, -theRadians);
+            VMath.rotate(v, myPosition, theRadians);
         }
         myAngularPos += theRadians;
-
-        if (myAngularPos > Math.PI) myAngularPos -= Math.PI * 2;
-        else if (myAngularPos < -Math.PI) myAngularPos += Math.PI * 2;
     }
 
     /**
@@ -207,6 +233,18 @@ public abstract class RigidBody extends GameObject {
     }
 
     // ======== getters ========
+
+    public Vector2 getLinearVelocity() {
+        return myPosition.subNew(myOldPosition);
+    }
+
+    public double getAngularVelocity() {
+        return myAngularPos - myOldAngularPos;
+    }
+
+    public Vector2 getLinearAngularVelocity(final Vector2 thePoint) {
+        return thePoint.subNew(myPosition).perpNew().mulNew(getAngularVelocity());
+    }
 
     /**
      * Gets the edges of the rigid body.
@@ -228,7 +266,7 @@ public abstract class RigidBody extends GameObject {
      * Gets the center of mass of the rigid body.
      * @return the center vector
      */
-    public Vector2 getCenter() {
+    public Vector2 getCenterOfMass() {
         return myPosition;
     }
 
