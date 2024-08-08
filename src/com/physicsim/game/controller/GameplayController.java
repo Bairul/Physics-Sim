@@ -4,13 +4,9 @@ import com.physicsim.game.controller.input.ClickType;
 import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
 import com.physicsim.game.model.collision.CollisionManager;
-import com.physicsim.game.model.particle.Binding;
-import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.VerletObject;
 import com.physicsim.game.model.rigidbody.Box;
 import com.physicsim.game.model.rigidbody.RigidBody;
-import com.physicsim.game.model.rigidbody.RigidCircle;
-import com.physicsim.game.model.rigidbody.Triangle;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.view.GameScreen;
@@ -46,7 +42,9 @@ public class GameplayController {
         debugMode = false;
 
         myCache.set(0, 0);
-        myGameWorld.addStaticObject(new Box(myCache, 200, 1));
+        Box b = new Box(myCache, 200, 1);
+//        b.setAngularPosition(3.1416 / 4);
+        myGameWorld.addStaticObject(b);
 //        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY() - 50);
 //        myGameWorld.addStaticObject(new Box(myCache, GameWorld.SCREEN_BOUNDARY.getX() * 2, 1));
 //        myCache.set(-280, 0);
@@ -72,6 +70,7 @@ public class GameplayController {
             Box b = new Box(myInputs.getMousePos(), 100, 1);
             b.setPhysics(true);
             b.setLinearVelocity(new Vector2(0, 3));
+            b.setAngularPosition(3.1416 / 8);
 //            b.setAngularVelocity(0.01);
             myGameWorld.addDynamicObject(b);
 //            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
@@ -102,14 +101,14 @@ public class GameplayController {
 //                myCache.set(GameWorld.GRAVITY);
 //                myCache.mul(r.getMass());
 //                r.applyLinearForce(myCache);
-                myCollisionManager.testAndHandle(r);
+                if (myCollisionManager.testAndHandle(r)) debugMode = true;
 //                for (final GameObject staticObject : myGameWorld.getStaticObjects()) {
 //                    if (r.collideAgainst((RigidBody) staticObject)) {
 //                        debugMode = true;
 //                    }
 //                }
             }
-            myCollisionManager.update();
+//            myCollisionManager.update();
 
             dynObject.update();
         }

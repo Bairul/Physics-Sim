@@ -326,10 +326,11 @@ public final class VMath {
     }
 
     public static Vector2[] findAxisOfLeastPenetration(final RigidBody theA, final RigidBody theB) {
-        // (bestProjection, bestIndex)
         final Vector2 point = new Vector2();
         final Vector2 normal = new Vector2();
         double bestProjection = Integer.MIN_VALUE;
+        int bestIndex = 0;
+        int index = 0;
 
         for (final RigidBodyEdge e : theA.getEdges()) {
             final Vector2 edgeNormalOfA = e.getPerp();
@@ -337,14 +338,16 @@ public final class VMath {
 
             double projection = support.subNew(e.getStart()).dotProduct(edgeNormalOfA);
             if (projection > bestProjection) {
+                bestIndex = index;
                 bestProjection = projection;
                 point.set(support);
                 normal.set(edgeNormalOfA);
             }
+            index++;
         }
 
         if (bestProjection > 0) return new Vector2[] {};
 
-        return new Vector2[] {point, normal, new Vector2(bestProjection, 0)};
+        return new Vector2[] {point, normal, new Vector2(bestProjection, bestIndex)};
     }
 }

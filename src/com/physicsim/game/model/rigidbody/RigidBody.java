@@ -147,6 +147,10 @@ public abstract class RigidBody extends GameObject {
         myAngularAccel += theTorque / myMoi;
     }
 
+    public void setAngularPosition(final double theOrientation) {
+        rotateBody(theOrientation);
+        myOldAngularPos = myAngularPos;
+    }
     public void setAngularVelocity(final double theAngVelocity) {
         myOldAngularPos = myAngularPos - theAngVelocity;
     }
