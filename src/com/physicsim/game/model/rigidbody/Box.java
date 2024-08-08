@@ -16,8 +16,7 @@ public class Box extends RigidBody {
     public void update() {
         if (!hasPhysics) return;
         // must have
-        linearMove();
-        angularMove();
+        move();
 
         // must have
         postUpdate();

@@ -3,6 +3,7 @@ package com.physicsim.game.controller;
 import com.physicsim.game.controller.input.ClickType;
 import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
+import com.physicsim.game.model.collision.CollisionManager;
 import com.physicsim.game.model.particle.Binding;
 import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.VerletObject;
@@ -26,6 +27,7 @@ public class GameplayController {
     /** World that holds entities and other stuff. */
     private final GameWorld myGameWorld;
     /** A reusable vector to save some memory. */
+    private final CollisionManager myCollisionManager;
     private final Vector2 myCache;
     private boolean debugMode;
 
@@ -36,14 +38,17 @@ public class GameplayController {
     public GameplayController(final InputController theInput) {
         myInputs = theInput;
         myGameWorld = new GameWorld();
+        myCollisionManager = new CollisionManager(myGameWorld);
         myCache = new Vector2();
         // boundary will be at the center of the game screen
         GameWorld.SCREEN_BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         GameWorld.GRAVITY.set(0, 0.25);
         debugMode = false;
 
-        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY() - 50);
-        myGameWorld.addStaticObject(new Box(myCache, GameWorld.SCREEN_BOUNDARY.getX() * 2, 1));
+        myCache.set(0, 0);
+        myGameWorld.addStaticObject(new Box(myCache, 200, 1));
+//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY() - 50);
+//        myGameWorld.addStaticObject(new Box(myCache, GameWorld.SCREEN_BOUNDARY.getX() * 2, 1));
 //        myCache.set(-280, 0);
 //        myGameWorld.addStaticObject(new Triangle(myCache, 200, 1));
 //
@@ -66,8 +71,8 @@ public class GameplayController {
             System.out.println(myInputs.getMousePos());
             Box b = new Box(myInputs.getMousePos(), 100, 1);
             b.setPhysics(true);
-            b.setLinearVelocity(myInputs.getMousePos().normNew());
-            b.setAngularVelocity(0.1);
+            b.setLinearVelocity(new Vector2(0, 3));
+//            b.setAngularVelocity(0.01);
             myGameWorld.addDynamicObject(b);
 //            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
@@ -89,36 +94,27 @@ public class GameplayController {
                 p.applyForce(myCache);
                 p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
                 p.update();
-
-                for (final GameObject staticObject : myGameWorld.getStaticObjects()) {
-                    if (staticObject instanceof final RigidBody r) {
-                        r.collideAgainst(p);
-                    }
-                    else if (staticObject instanceof final RigidCircle r) {
-                        r.collideAgainst(p);
-                    }
-                }
+                myCollisionManager.testAndHandle(p);
                 continue;
             }
 
             if (dynObject instanceof final RigidBody r) {
-                myCache.set(GameWorld.GRAVITY);
-                myCache.mul(r.getMass());
-                r.applyLinearForce(myCache);
-
-                for (final GameObject staticObject : myGameWorld.getStaticObjects()) {
-                    if (staticObject instanceof final RigidBody rs) {
-                        if (r.collideAgainst(rs)) {
-//                            debugMode = true;
-                        }
-                    }
-                }
+//                myCache.set(GameWorld.GRAVITY);
+//                myCache.mul(r.getMass());
+//                r.applyLinearForce(myCache);
+                myCollisionManager.testAndHandle(r);
+//                for (final GameObject staticObject : myGameWorld.getStaticObjects()) {
+//                    if (r.collideAgainst((RigidBody) staticObject)) {
+//                        debugMode = true;
+//                    }
+//                }
             }
+            myCollisionManager.update();
 
             dynObject.update();
         }
 
-        myGameWorld.getStaticObjects().forEach(GameObject::update);
+//        myGameWorld.getStaticObjects().forEach(GameObject::update);
     }
 
     /**

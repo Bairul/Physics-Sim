@@ -9,8 +9,6 @@ import com.physicsim.game.utility.Vector2;
  * Abstract class for a rigid body physics game object. Must be a convex polygon.
  */
 public abstract class RigidBody extends GameObject {
-    /** The coefficient of restitution. */
-    public static double COE_RES = 1;
 
     /** The vertices of this rigid body. */
     private final Vector2[] myVertices;
@@ -25,12 +23,14 @@ public abstract class RigidBody extends GameObject {
     private final Vector2 myPosition;
     private final Vector2 myOldPosition;
     private final Vector2 myAcceleration;
+    private final Vector2 myImpulse;
 
     // Rotational components
     // In 2D space, angular components are scalars not vectors
     private double myAngularPos; // theta
     private double myOldAngularPos;
     private double myAngularAccel;
+    private double myAngularImpulse;
 
     protected boolean hasPhysics;
 
@@ -58,6 +58,7 @@ public abstract class RigidBody extends GameObject {
         myPosition = VMath.findCentroid(myVertices);
         myOldPosition = new Vector2(myPosition);
         myAcceleration = new Vector2();
+        myImpulse = new Vector2();
     }
 
     public void setPhysics(final boolean thePhysics) {
@@ -129,23 +130,6 @@ public abstract class RigidBody extends GameObject {
         myOldPosition.set(myCache);
     }
 
-    protected void linearMove() {
-        // linear movement
-        myCache.set(myPosition);
-        translateBody(myPosition.subNew(myOldPosition).addNew(myAcceleration));
-        myOldPosition.set(myCache);
-    }
-
-    protected void postUpdate() {
-        myAngularAccel = 0;
-        myAcceleration.set(0, 0);
-        if (Math.abs(myAngularPos) > 10) {
-            int adjustment = myAngularPos > 10 ? -10 : 10;
-            myAngularPos += adjustment;
-            myOldAngularPos += adjustment;
-        }
-    }
-
     // ************========  rotational physics  ========************ \\
 
     public void applyTorque(final Vector2 theLinearForce, final Vector2 thePointOfAction) {
@@ -167,18 +151,15 @@ public abstract class RigidBody extends GameObject {
         myOldAngularPos = myAngularPos - theAngVelocity;
     }
 
-    protected void angularMove() {
-        double current = myAngularPos;
-        rotateBody(myAngularPos - myOldAngularPos + myAngularAccel);
-        myOldAngularPos = current;
-    }
-
     public boolean collideAgainst(final RigidBody theRB) {
         final Vector2[] a = VMath.findAxisOfLeastPenetration(this, theRB);
         if (a.length == 0) return false;
 
         final Vector2[] b = VMath.findAxisOfLeastPenetration(theRB, this);
         if (b.length == 0) return false;
+//
+//        System.out.println(a[0] + " " + a[1] + " " + a[2]);
+//        System.out.println(b[0] + " " + b[1] + " " + b[2]);
 
         final boolean isACollision = a[2].getX() > b[2].getX();
         final Vector2 collisionPoint = isACollision ? a[0] : b[0];
@@ -196,9 +177,9 @@ public abstract class RigidBody extends GameObject {
         final double angB = collisionNormal.crossProduct(rB);
 
         final double denom = normalSquared * sumInvMassA + (angA * angA / myMoi) + (theRB.hasPhysics ? (angB * angB / theRB.myMoi) : 0);
-        final double impulse = -(1 + COE_RES) * relNorm / denom;
+        final double impulse = -2 * relNorm / denom;
 
-        applyImpulse(-impulse, collisionNormal, rA);
+        if (hasPhysics) applyImpulse(-impulse, collisionNormal, rA);
         if (theRB.hasPhysics) theRB.applyImpulse(impulse, collisionNormal, rB);
 
         return true;
@@ -206,8 +187,36 @@ public abstract class RigidBody extends GameObject {
 
     public void applyImpulse(final double theImpulseMag, final Vector2 theDirection, final Vector2 theDistance) {
         final Vector2 jn = theDirection.mulNew(theImpulseMag);
-        setLinearVelocity(getLinearVelocity().addNew(jn.divNew(myMass)));
-        setAngularVelocity(getAngularVelocity() + jn.crossProduct(theDistance) / myMoi);
+        myImpulse.add(jn);
+        myAngularImpulse += jn.crossProduct(theDistance);
+    }
+
+    protected void move() {
+        // impulsive movement
+        setLinearVelocity(getLinearVelocity().addNew(myImpulse.divNew(myMass)));
+        setAngularVelocity(getAngularVelocity() + myAngularImpulse / myMoi);
+
+        // linear movement
+        myCache.set(myPosition);
+        translateBody(myPosition.subNew(myOldPosition).addNew(myAcceleration));
+        myOldPosition.set(myCache);
+
+        // angular movement
+        double current = myAngularPos;
+        rotateBody(myAngularPos - myOldAngularPos + myAngularAccel);
+        myOldAngularPos = current;
+    }
+
+    protected void postUpdate() {
+        myAngularImpulse = 0;
+        myImpulse.set(0, 0);
+        myAngularAccel = 0;
+        myAcceleration.set(0, 0);
+        if (Math.abs(myAngularPos) > 10) {
+            int adjustment = myAngularPos > 10 ? -10 : 10;
+            myAngularPos += adjustment;
+            myOldAngularPos += adjustment;
+        }
     }
 
     /**
@@ -272,5 +281,13 @@ public abstract class RigidBody extends GameObject {
 
     public double getMass() {
         return myMass;
+    }
+
+    public double getMoi() {
+        return myMoi;
+    }
+
+    public boolean hasPhysics() {
+        return hasPhysics;
     }
 }
