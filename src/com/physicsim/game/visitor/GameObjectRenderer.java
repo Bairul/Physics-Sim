@@ -75,13 +75,6 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
                     myOrigin.intY() + edge.getEnd().intY());
 
         }
-//        myGraphics.setColor(Color.green);
-//        myGraphics.fillOval(myOrigin.intX() - 200 - 2, myOrigin.intY() - 100 - 2, 4, 4);
-//        myGraphics.fillOval(myOrigin.intX() - 263 - 2, myOrigin.intY() - 88 - 2, 4, 4);
-//        myGraphics.setColor(Color.red);
-//        myGraphics.fillOval(myOrigin.intX() - 262 - 2, myOrigin.intY() - 100 - 2, 4, 4);
-//        myGraphics.setColor(Color.yellow);
-//        myGraphics.fillOval(myOrigin.intX() - 200 - 2, myOrigin.intY() - 99 - 2, 4, 4);
 
         myGraphics.setColor(Color.black);
         myGraphics.drawLine(myOrigin.intX() + theEntity.getCenterOfMass().intX(), myOrigin.intY() + theEntity.getCenterOfMass().intY(), myOrigin.intX() + theEntity.getVertices()[0].intX(), myOrigin.intY() + theEntity.getVertices()[0].intY());

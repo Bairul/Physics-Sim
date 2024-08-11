@@ -4,9 +4,11 @@ import com.physicsim.game.controller.input.ClickType;
 import com.physicsim.game.controller.input.KeyType;
 import com.physicsim.game.model.*;
 import com.physicsim.game.model.collision.CollisionManager;
+import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.VerletObject;
 import com.physicsim.game.model.rigidbody.RegularPolygon;
 import com.physicsim.game.model.rigidbody.RigidBody;
+import com.physicsim.game.model.rigidbody.RigidCircle;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.view.GameScreen;
@@ -59,11 +61,11 @@ public class GameplayController {
 
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
             System.out.println(myInputs.getMousePos());
-            RegularPolygon b = new RegularPolygon(myInputs.getMousePos(), 3, 100, 4);
-            b.setPhysics(true);
-//            b.setLinearVelocity(new Vector2(0, 3));
-            b.setAngularPosition(Math.toRadians(-55));
-            myGameWorld.addDynamicObject(b);
+//            RegularPolygon b = new RegularPolygon(myInputs.getMousePos(), 3, 100, 4);
+//            b.setPhysics(true);
+//            b.setAngularPosition(Math.toRadians(-55));
+//            myGameWorld.addDynamicObject(b);
+            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
 
         if (myInputs.getKeyboard().isKeyHeld(KeyType.Space)) {
@@ -82,22 +84,13 @@ public class GameplayController {
                 myCache.mul(p.getMass());
                 p.applyForce(myCache);
                 p.bounceOffBoundary(GameWorld.SCREEN_BOUNDARY);
-//                p.update();
                 myCollisionManager.testAndHandle(p);
-//                continue;
             }
-
-            if (dynObject instanceof final RigidBody r) {
+            else if (dynObject instanceof final RigidBody r) {
                 myCache.set(GameWorld.GRAVITY);
                 myCache.mul(r.getMass());
                 r.applyLinearForce(myCache);
-                if (myCollisionManager.testAndHandle(r)) {
-//                    myCollisionManager.update();
-//                    r.update();
-//                    debugMode = true;
-//                    continue;
-//                    myGameWorld.clearStaticObjects();
-                }
+                myCollisionManager.testAndHandle(r);
             }
         }
         myCollisionManager.update();

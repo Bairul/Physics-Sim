@@ -1,8 +1,6 @@
 package com.physicsim.game.model.rigidbody;
 
 import com.physicsim.game.model.GameObject;
-import com.physicsim.game.model.particle.VerletObject;
-import com.physicsim.game.utility.VMath;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.visitor.GameObjectVisitor;
 
@@ -29,43 +27,6 @@ public class RigidCircle extends GameObject {
     @Override
     public void update() {
 
-    }
-
-    /**
-     * Collision detection and resolution against a Verlet object (particle).
-     * Tests if the particle collides against the circumference of the circle, then reflects it over the tangent
-     * of the collision.
-     * @see VMath#intersect(Vector2, Vector2, Vector2, double)
-     * @param theVO the verlet object
-     */
-    public void collideAgainst(final VerletObject theVO) {
-        if (theVO.getOldPosition().getDistance(myOrigin) == myRadius) return;
-
-        final Vector2[] intersections = VMath.intersect(theVO.getOldPosition(), theVO.getPosition(), myOrigin, myRadius);
-        if (intersections.length < 1) return;
-
-        // if more than 1 intersection, get the one closest to the old position
-        final Vector2 intersect = intersections.length > 1
-                && intersections[1].getDistance(theVO.getOldPosition()) < intersections[0].getDistance(theVO.getOldPosition())
-                ? intersections[1] : intersections[0];
-        final Vector2 tanVector = new Vector2();
-
-        try {
-            final double m = VMath.slope(myOrigin, intersect);
-            if (m == 0) {
-                // horizontal slope (intersection point is directly left/right of center)
-                tanVector.set(intersect.getX(), intersect.getY() + 1);
-            } else {
-                final double tangent = -1 / m;
-                tanVector.set(intersect.getX() + 1, intersect.getY() + tangent);
-            }
-        } catch (final ArithmeticException e) {
-            // vertical slope (intersection point is directly top/bot of center)
-            tanVector.set(intersect.getX() + 1, intersect.getY());
-        }
-
-        theVO.getPosition().set(VMath.reflect(intersect, tanVector, theVO.getPosition()));
-        theVO.getOldPosition().set(VMath.reflect(intersect, tanVector, theVO.getOldPosition()));
     }
 
     /**

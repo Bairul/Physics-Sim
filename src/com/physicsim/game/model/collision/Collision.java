@@ -1,7 +1,11 @@
 package com.physicsim.game.model.collision;
 
-import com.physicsim.game.model.GameObject;
-
+/**
+ * Abstract class for all collision types to inherit.
+ */
 public abstract class Collision {
+    /**
+     * Handles the collision response.
+     */
     public abstract void handleCollision();
 }

@@ -9,7 +9,9 @@ import java.util.ArrayList;
  * Utility class for vector mathematics.
  */
 public final class VMath {
+    /** The tolerance. */
     private static final double LOW_TOLERANCE = 0.001;
+
     /** Private constructor to prevent instantiation. */
     private VMath() {}
 
@@ -71,22 +73,6 @@ public final class VMath {
         B.add(A);
 
         return B;
-    }
-
-    public static boolean isIntersecting(final Vector2 theStartA, final Vector2 theEndA,
-                                         final Vector2 theStartB, final Vector2 theEndB) {
-        final Vector2 A = theEndA.subNew(theStartA);
-        final Vector2 B = theEndB.subNew(theStartB);
-        final Vector2 AB = theStartB.subNew(theStartA);
-
-        final double denom = A.crossProduct(B);
-        if (denom == 0) return false; // if denominator = 0, then the 2 line segments are parallel or co-linear
-
-        final double t1 = AB.crossProduct(B) / denom;
-        final double t2 = -1 * AB.crossProduct(A) / denom;
-
-        // not intersecting but not parallel
-        return !(t1 < 0 || t1 > 1 || t2 < -1 || t2 > 0);
     }
 
     /**
@@ -224,7 +210,7 @@ public final class VMath {
             proj = new Vector2(theStart.getX(), thePoint.getY());
             isVertical = true;
         }
-
+        // test for point on the segment
         if (isHorizontal && (proj.getX() <= theStart.getX() == proj.getX() <= theEnd.getX()) &&
                     (Math.abs(proj.getY() - theStart.getY()) <= LOW_TOLERANCE == Math.abs(proj.getY() - theEnd.getY()) <= LOW_TOLERANCE)) {
             return null;
@@ -291,7 +277,7 @@ public final class VMath {
     }
 
     /**
-     * Gets the moment of inertia from a polygon given its vertices and mass. Assumes the polygon has a unifrom
+     * Gets the moment of inertia from a polygon given its vertices and mass. Assumes the polygon has a uniform
      * mass distribution.
      * @param theVertices the vertices as vectors (assumes the vertices are ordered counter-clockwise or clockwise)
      * @param theMass the mass
@@ -347,7 +333,8 @@ public final class VMath {
      * Gets the support vector from an array of vectors (vertices). The support vector is the farthest vector
      * in a given direction. Think of the direction vector as a plane that sweeps in that direction. This will
      * return the last vector (point). Time complexity is θ(V) where V is the number of vectors in the array.
-     * @param theVectors   the vectors to find the support vector
+     * O(1) space.
+     * @param theVectors   the vectors to find the support vector.
      * @param theDirection the direction
      * @return the support vector
      */
@@ -373,8 +360,7 @@ public final class VMath {
 
     /**
      * Determines whether a point is contained in a rigid body. Uses ray casting algorithm
-     * with a time complexity of θ(V) where V is the number of Vertices. In a polygon, the number of Edges
-     * is equal to its Vertices.
+     * with a time complexity of θ(V) where V is the number of Vertices.
      * @param theEdges the edges of the rigid body
      * @param thePoint the point
      * @return whether it is contained
@@ -389,7 +375,30 @@ public final class VMath {
         return count;
     }
 
-    public static Vector2[] findAxisOfLeastPenetration(final RigidBody theA, final RigidBody theB) {
+    /**
+     * Determines if a rigid body is convex given its edges.
+     * @return whether it is convex
+     */
+    public static boolean isConvex(final RigidBodyEdge[] theEdges) {
+        int convexity = (int) Math.signum(theEdges[0].getEdge().crossProduct(theEdges[1].getEdge()));
+        for (int i = 1; i < theEdges.length - 1; i++) {
+            if ((int) Math.signum(theEdges[i].getEdge().crossProduct(theEdges[i + 1].getEdge())) * convexity < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Finds the axis of penetration of one rigid body to another. This is done by going through each edge of
+     * one rigid body and finding the support points using that edge's negative normal vector and taking the maximum
+     * projection along edges' normal. This has a time complexity of θ(E * V) where E is the number of edges on
+     * rigid body A and V is the number of vertices on rigid body B.
+     * @param theA the rigid body to test for
+     * @param theB tests the vertices of this body
+     * @return
+     */
+    public static Vector2[] findAxisOfPenetration(final RigidBody theA, final RigidBody theB) {
         final Vector2 point = new Vector2();
         final Vector2 normal = new Vector2();
         double bestProjection = Integer.MIN_VALUE;
@@ -397,9 +406,12 @@ public final class VMath {
         int index = 0;
 
         for (final RigidBodyEdge e : theA.getEdges()) {
+            // gets the normal vector of an edge
             final Vector2 edgeNormalOfA = e.getPerp();
+            // finds the support using the negative of the normal
             final Vector2 support = findSupportVector(theB.getVertices(), edgeNormalOfA.mulNew(-1));
 
+            // projects the support on to the normal to find the deepest penetrating vertex
             double projection = support.subNew(e.getStart()).dotProduct(edgeNormalOfA);
             if (projection > bestProjection) {
                 bestIndex = index;
@@ -410,8 +422,10 @@ public final class VMath {
             index++;
         }
 
+        // if projection is greater than 0, then that means the vertices of the other rigid body is not contained within
+        // but that doesn't mean it is not overlapping. Need to still test for the other.
         if (bestProjection > 0) return new Vector2[] {};
 
-        return new Vector2[] {point, normal, new Vector2(bestProjection, bestIndex)};
+        return new Vector2[] {point, normal, new Vector2(bestIndex, 0)};
     }
 }
