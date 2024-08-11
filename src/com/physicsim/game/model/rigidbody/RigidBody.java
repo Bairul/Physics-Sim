@@ -41,7 +41,7 @@ public abstract class RigidBody extends GameObject {
      */
     public RigidBody(final double theMass, final Vector2... theVertices) {
         // valid vertices
-        if (theVertices.length < 2) throw new IllegalArgumentException("A rigid body must have 3 or more vertices");
+        if (theVertices.length < 3) throw new IllegalArgumentException("A rigid body must have 3 or more vertices");
 
         myVertices = theVertices;
         myEdges = new RigidBodyEdge[theVertices.length];
@@ -56,6 +56,33 @@ public abstract class RigidBody extends GameObject {
         myMoi = VMath.findMomentOfInertia(myVertices, myMass);
 
         myPosition = VMath.findCentroid(myVertices);
+        myOldPosition = new Vector2(myPosition);
+        myAcceleration = new Vector2();
+        myImpulse = new Vector2();
+    }
+
+    /**
+     * Creates a rigid body given a bunch of vertices.
+     * @param theVertices the number of new vertices as vectors.
+     * @throws IllegalArgumentException if it is not a convex 2d polygon that have 3 or more vertices
+     */
+    public RigidBody(final Vector2 theCenterOfMass, final double theMass, final Vector2... theVertices) {
+        // valid vertices
+        if (theVertices.length < 3) throw new IllegalArgumentException("A rigid body must have 3 or more vertices");
+
+        myVertices = theVertices;
+        myEdges = new RigidBodyEdge[theVertices.length];
+
+        for (int i = 0; i < myEdges.length; i++) {
+            myEdges[i] = new RigidBodyEdge(myVertices[i], myVertices[(i + 1) % myEdges.length]);
+        }
+        if (!isConvex()) throw new IllegalArgumentException("A rigid body must be convex");
+
+        myCache = new Vector2();
+        myMass = theMass;
+        myMoi = VMath.findMomentOfInertia(myVertices, theCenterOfMass, myMass);
+
+        myPosition = new Vector2(theCenterOfMass);
         myOldPosition = new Vector2(myPosition);
         myAcceleration = new Vector2();
         myImpulse = new Vector2();
@@ -155,40 +182,6 @@ public abstract class RigidBody extends GameObject {
         myOldAngularPos = myAngularPos - theAngVelocity;
     }
 
-    public boolean collideAgainst(final RigidBody theRB) {
-        final Vector2[] a = VMath.findAxisOfLeastPenetration(this, theRB);
-        if (a.length == 0) return false;
-
-        final Vector2[] b = VMath.findAxisOfLeastPenetration(theRB, this);
-        if (b.length == 0) return false;
-//
-//        System.out.println(a[0] + " " + a[1] + " " + a[2]);
-//        System.out.println(b[0] + " " + b[1] + " " + b[2]);
-
-        final boolean isACollision = a[2].getX() > b[2].getX();
-        final Vector2 collisionPoint = isACollision ? a[0] : b[0];
-        final Vector2 collisionNormal = isACollision ? a[1] : b[1];
-
-        final double sumInvMassA = 1 / myMass + (theRB.hasPhysics ? 1 / theRB.myMass : 0);
-        final double normalSquared = collisionNormal.dotProduct(collisionNormal);
-        final Vector2 relVelA = getLinearVelocity().addNew(getLinearAngularVelocity(collisionPoint));
-        final Vector2 relVelB = theRB.getLinearVelocity().addNew(theRB.getLinearAngularVelocity(collisionPoint));
-        final double relNorm = relVelB.subNew(relVelA).dotProduct(collisionNormal);
-
-        final Vector2 rA = collisionPoint.subNew(myPosition);
-        final Vector2 rB = collisionPoint.subNew(theRB.myPosition);
-        final double angA = collisionNormal.crossProduct(rA);
-        final double angB = collisionNormal.crossProduct(rB);
-
-        final double denom = normalSquared * sumInvMassA + (angA * angA / myMoi) + (theRB.hasPhysics ? (angB * angB / theRB.myMoi) : 0);
-        final double impulse = -2 * relNorm / denom;
-
-        if (hasPhysics) applyImpulse(-impulse, collisionNormal, rA);
-        if (theRB.hasPhysics) theRB.applyImpulse(impulse, collisionNormal, rB);
-
-        return true;
-    }
-
     public void applyImpulse(final double theImpulseMag, final Vector2 theDirection, final Vector2 theDistance) {
         final Vector2 jn = theDirection.mulNew(theImpulseMag);
         myImpulse.add(jn);
@@ -197,8 +190,12 @@ public abstract class RigidBody extends GameObject {
 
     protected void move() {
         // impulsive movement
-        setLinearVelocity(getLinearVelocity().addNew(myImpulse.divNew(myMass)));
-        setAngularVelocity(getAngularVelocity() + myAngularImpulse / myMoi);
+        if (myImpulse.getX() != 0D || myImpulse.getY() != 0D) {
+            setLinearVelocity(getLinearVelocity().addNew(myImpulse.divNew(myMass)));
+        }
+        if (myAngularImpulse != 0F) {
+            setAngularVelocity(getAngularVelocity() + myAngularImpulse / myMoi);
+        }
 
         // linear movement
         myCache.set(myPosition);
@@ -243,6 +240,11 @@ public abstract class RigidBody extends GameObject {
             v.add(theTranslation);
         }
         myPosition.add(theTranslation);
+    }
+
+    public void translate(final Vector2 theTranslation) {
+        translateBody(theTranslation);
+        myOldPosition.add(theTranslation);
     }
 
     // ======== getters ========

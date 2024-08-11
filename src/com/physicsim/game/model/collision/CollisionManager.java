@@ -4,6 +4,7 @@ import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.model.particle.VerletObject;
 import com.physicsim.game.model.rigidbody.RigidBody;
+import com.physicsim.game.model.rigidbody.RigidBodyEdge;
 import com.physicsim.game.model.rigidbody.RigidCircle;
 import com.physicsim.game.utility.VMath;
 import com.physicsim.game.utility.Vector2;
@@ -39,22 +40,32 @@ public final class CollisionManager {
                 final Vector2[] b = VMath.findAxisOfLeastPenetration(r, theRB);
                 if (b.length == 0) return false;
 
-                System.out.println("Dynamic: pt:" + a[0] + ", norm: " + a[1] + ", proj: " + a[2].getX() + ", index: " + a[2].getY());
-                System.out.println("Static: pt:" + b[0] + ", norm: " + b[1] + ",proj:  " + b[2].getX() + ", index: " + b[2].getY());
+//                System.out.println("Dynamic: pt:" + a[0] + ", norm: " + a[1] + ", proj: " + a[2].getX() + ", index: " + a[2].getY());
+//                System.out.println("Static: pt:" + b[0] + ", norm: " + b[1] + ", proj: " + b[2].getX() + ", index: " + b[2].getY());
 
-                System.out.println(theRB.getEdges()[a[2].intY()].getEdge().crossProduct(r.getEdges()[b[2].intY()].getEdge()));
+                final int ia = a[2].intY();
+                final int ib = b[2].intY();
+                final Vector2 projAB = VMath.project(r.getEdges()[ib].getStart(), r.getEdges()[ib].getEnd(), b[0]);
+                final Vector2 projBA = VMath.project(theRB.getEdges()[ia].getStart(), theRB.getEdges()[ia].getEnd(), a[0]);
 
-                if (Math.abs(a[2].getX() - b[2].getX()) < 0.001) {
-                    System.out.println(true);
-                    myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, a[0], a[1]));
-                    myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, b[0], b[1].mulNew(-1)));
+                Vector2 penVector;
+                if (projAB == null) {
+                    assert projBA != null;
+                    penVector = a[0].subNew(projBA);
+                    myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, a[0], a[1], penVector));
+                } else if (projBA == null) {
+                    penVector = projAB.subNew(b[0]);
+                    myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, b[0], b[1], penVector));
                 } else {
-                    final boolean isACollision = a[2].getX() > b[2].getX();
-                    final Vector2 collisionPoint = isACollision ? a[0] : b[0];
-                    final Vector2 collisionNormal = isACollision ? a[1] : b[1];
-                    System.out.println("Collision Point: " + collisionPoint + ", Collision Normal: " + collisionNormal);
-
-                    myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, collisionPoint, collisionNormal));
+                    final Vector2 vel = theRB.getLinearVelocity();
+                    vel.mul(-1);
+                    final Vector2 penAB = projAB.subNew(b[0]);
+                    final Vector2 penBA = a[0].subNew(projBA);
+                    if (vel.dotProduct(penAB) > vel.dotProduct(penBA)) {
+                        myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, b[0], b[1], penAB));
+                    } else {
+                        myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, a[0], a[1], penBA));
+                    }
                 }
             }
         }
@@ -62,6 +73,8 @@ public final class CollisionManager {
     }
 
     public void update() {
+        if (myCollisions.isEmpty()) return;
+
         for (final Collision c: myCollisions) {
             c.handleCollision();
         }

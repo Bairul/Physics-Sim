@@ -48,6 +48,10 @@ public class GameWorld {
         myDynamicObjects.clear();
     }
 
+    public void clearStaticObjects() {
+        myStaticObjects.clear();
+    }
+
     /**
      * Gets the list of dynamic objects.
      * @return the list of game objects

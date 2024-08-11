@@ -9,6 +9,7 @@ import java.util.ArrayList;
  * Utility class for vector mathematics.
  */
 public final class VMath {
+    private static final double LOW_TOLERANCE = 0.001;
     /** Private constructor to prevent instantiation. */
     private VMath() {}
 
@@ -21,7 +22,8 @@ public final class VMath {
      * @throws ArithmeticException if the slope is vertical
      */
     public static double slope(final Vector2 theStart, final Vector2 theEnd) {
-        if (theEnd.getX() == theStart.getX()) throw new ArithmeticException("Divide by 0");
+        if (Math.abs(theEnd.getX() - theStart.getX()) < LOW_TOLERANCE) throw new ArithmeticException("Divide by 0");
+        if (Math.abs(theEnd.getY() - theStart.getY()) < LOW_TOLERANCE) return 0;
         return (theEnd.getY() - theStart.getY()) / (theEnd.getX() - theStart.getX());
     }
 
@@ -69,6 +71,22 @@ public final class VMath {
         B.add(A);
 
         return B;
+    }
+
+    public static boolean isIntersecting(final Vector2 theStartA, final Vector2 theEndA,
+                                         final Vector2 theStartB, final Vector2 theEndB) {
+        final Vector2 A = theEndA.subNew(theStartA);
+        final Vector2 B = theEndB.subNew(theStartB);
+        final Vector2 AB = theStartB.subNew(theStartA);
+
+        final double denom = A.crossProduct(B);
+        if (denom == 0) return false; // if denominator = 0, then the 2 line segments are parallel or co-linear
+
+        final double t1 = AB.crossProduct(B) / denom;
+        final double t2 = -1 * AB.crossProduct(A) / denom;
+
+        // not intersecting but not parallel
+        return !(t1 < 0 || t1 > 1 || t2 < -1 || t2 > 0);
     }
 
     /**
@@ -132,8 +150,8 @@ public final class VMath {
 
         // remove points that are not on the line segment
         intersections.removeIf(intersection ->
-                (intersection.getX() < theStart.getX() == intersection.getX() < theEnd.getX()) &&
-                        (intersection.getY() < theStart.getY() == intersection.getY() < theEnd.getY()));
+                (intersection.getX() <= theStart.getX() == intersection.getX() <= theEnd.getX()) &&
+                        (intersection.getY() <= theStart.getY() == intersection.getY() <= theEnd.getY()));
 
         return intersections.toArray(new Vector2[0]);
     }
@@ -171,35 +189,55 @@ public final class VMath {
     }
 
     /**
-     * Projects a point on to a line created by a starting point and ending point.
+     * Projects a point on to a line segment created by a starting point and ending point.
+     * Returns null if the projected point is not on the segment.
      *
      * @param theStart the starting endpoint
      * @param theEnd   the ending endpoint
      * @param thePoint the point to reflect over
-     * @return the projected point
+     * @return the projected point or null
      */
     public static Vector2 project(final Vector2 theStart, final Vector2 theEnd, final Vector2 thePoint) {
+        boolean isVertical = false;
+        boolean isHorizontal = false;
+        Vector2 proj;
         double m;
 
         try {
             m = slope(theStart, theEnd);
+
+            if (m == 0) {
+                // project on to a horizontal slope
+                proj = new Vector2(thePoint.getX(), theStart.getY());
+                isHorizontal = true;
+            } else {
+                final double m_p = -1 / m;
+                final double x = theStart.getX();
+                final double y = theStart.getY();
+
+                final double x_i = (m * x - m_p * thePoint.getX() - y + thePoint.getY()) / (m - m_p);
+                final double y_i = m * (x_i - x) + y;
+                proj = new Vector2(x_i, y_i);
+            }
         } catch (final ArithmeticException e) {
             // project on to a vertical slope
-            return new Vector2(theStart.getX(), thePoint.getY());
-        }
-        if (m == 0) {
-            // project on to a horizontal slope
-            return new Vector2(thePoint.getX(), theStart.getY());
+            proj = new Vector2(theStart.getX(), thePoint.getY());
+            isVertical = true;
         }
 
-        final double m_p = -1 / m;
-        final double x = theStart.getX();
-        final double y = theStart.getY();
-
-        final double x_i = (m * x - m_p * thePoint.getX() - y + thePoint.getY()) / (m - m_p);
-        final double y_i = m * (x_i - x) + y;
-
-        return new Vector2(x_i, y_i);
+        if (isHorizontal && (proj.getX() <= theStart.getX() == proj.getX() <= theEnd.getX()) &&
+                    (Math.abs(proj.getY() - theStart.getY()) <= LOW_TOLERANCE == Math.abs(proj.getY() - theEnd.getY()) <= LOW_TOLERANCE)) {
+            return null;
+        }
+        if (isVertical && (Math.abs(proj.getX() - theStart.getX()) <= LOW_TOLERANCE == Math.abs(proj.getX() - theEnd.getX()) <= LOW_TOLERANCE) &&
+                    (proj.getY() <= theStart.getY() == proj.getY() <= theEnd.getY())) {
+            return null;
+        }
+        if ((proj.getX() <= theStart.getX() == proj.getX() <= theEnd.getX()) &&
+           (proj.getY() <= theStart.getY() == proj.getY() <= theEnd.getY())) {
+            return null;
+        }
+        return proj;
     }
 
     /**
@@ -277,6 +315,32 @@ public final class VMath {
         inertia *= theMass / (12 * findArea(theVertices));
 
         return inertia - theMass * G.dotProduct(G);
+    }
+
+    /**
+     * Gets the moment of inertia from a polygon given its center of mass and mass. Assumes the polygon has a unifrom
+     * mass distribution.
+     * @param theVertices the vertices as vectors (assumes the vertices are ordered counter-clockwise or clockwise)
+     * @param theMass the mass
+     * @return the moment of inertia
+     */
+    public static double findMomentOfInertia(final Vector2[] theVertices, final Vector2 theCenterOfMass, final double theMass) {
+        double inertia = 0;
+
+        for (int i = 0; i < theVertices.length; i++) {
+            final Vector2 nextVertex = theVertices[(i + 1) % theVertices.length];
+            final double a = theVertices[i].crossProduct(nextVertex);
+
+            final double b = theVertices[i].dotProduct(theVertices[i])
+                    + theVertices[i].dotProduct(nextVertex)
+                    + nextVertex.dotProduct(nextVertex);
+
+            inertia += a * b;
+        }
+
+        inertia *= theMass / (12 * findArea(theVertices));
+
+        return inertia - theMass * theCenterOfMass.dotProduct(theCenterOfMass);
     }
 
     /**

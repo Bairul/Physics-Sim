@@ -10,15 +10,19 @@ public class RigidBodyAndRigidBodyCollision extends Collision {
     private final RigidBody myB;
     private final Vector2 myCollisionPoint;
     private final Vector2 myCollisionNormal;
-    public RigidBodyAndRigidBodyCollision(final RigidBody theA, final RigidBody theB, final Vector2 theCollisionPoint, final Vector2 theCollisionNormal) {
+    private final Vector2 myPenetrationVector;
+    public RigidBodyAndRigidBodyCollision(final RigidBody theA, final RigidBody theB, final Vector2 theCollisionPoint,
+                                          final Vector2 theCollisionNormal, final Vector2 thePenetrationVector) {
         myA = theA;
         myB = theB;
         myCollisionPoint = theCollisionPoint;
         myCollisionNormal = theCollisionNormal;
+        myPenetrationVector = thePenetrationVector;
     }
+
     @Override
     public void handleCollision() {
-        final double sumInvMassA = 1 / myA.getMass() + (myB.hasPhysics() ? 1 / myB.getMass() : 0);
+        final double sumInvMassA = 1 / myA.getMass() + (myB.hasPhysics() ? (1 / myB.getMass()) : 0);
         final double normalSquared = myCollisionNormal.dotProduct(myCollisionNormal);
         final Vector2 relVelA = myA.getLinearVelocity().addNew(myA.getLinearAngularVelocity(myCollisionPoint));
         final Vector2 relVelB = myB.getLinearVelocity().addNew(myB.getLinearAngularVelocity(myCollisionPoint));
@@ -32,7 +36,15 @@ public class RigidBodyAndRigidBodyCollision extends Collision {
         final double denom = normalSquared * sumInvMassA + (angA * angA / myA.getMoi()) + (myB.hasPhysics() ? (angB * angB / myB.getMoi()) : 0);
         final double impulse = -(1 + COE_RES) * relNorm / denom;
 
-        if (myA.hasPhysics()) myA.applyImpulse(-impulse, myCollisionNormal, rA);
-        if (myB.hasPhysics()) myB.applyImpulse(impulse, myCollisionNormal, rB);
+        if (myB.hasPhysics()) {
+//            double sumMass = myA.getMass() + myB.getMass();
+//            myA.translate(myPenetrationVector.mulNew(myB.getMass() / sumMass));
+//            myB.translate(myPenetrationVector.mulNew(-myA.getMass() / sumMass));
+//            myA.applyImpulse(-impulse, myCollisionNormal, rA);
+//            myB.applyImpulse(impulse, myCollisionNormal, rB);
+        } else {
+            myA.translate(myPenetrationVector);
+            myA.applyImpulse(-impulse, myCollisionNormal, rA);
+        }
     }
 }
