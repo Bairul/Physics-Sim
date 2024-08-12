@@ -91,4 +91,12 @@ public final class RigidBodyEdge {
     public Vector2 getPerp() {
         return getEdge().perpNew();
     }
+
+    /***
+     * Gets the midpoint of this edge.
+     * @return the midpoint
+     */
+    public Vector2 getMiddle() {
+        return VMath.findMidpoint(myStart, myEnd);
+    }
 }

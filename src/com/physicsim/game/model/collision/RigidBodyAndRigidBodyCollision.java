@@ -55,15 +55,8 @@ public final class RigidBodyAndRigidBodyCollision extends Collision {
         final double denom = normalSquared * sumInvMassA + (angA * angA / myA.getMoi()) + (myB.hasPhysics() ? (angB * angB / myB.getMoi()) : 0);
         final double impulse = -(1 + COE_RES) * relNorm / denom;
 
-        if (myB.hasPhysics()) {
-//            double sumMass = myA.getMass() + myB.getMass();
-//            myA.translate(myPenetrationVector.mulNew(myB.getMass() / sumMass));
-//            myB.translate(myPenetrationVector.mulNew(-myA.getMass() / sumMass));
-//            myA.applyImpulse(-impulse, myCollisionNormal, rA);
-//            myB.applyImpulse(impulse, myCollisionNormal, rB);
-        } else {
-            myA.translate(myPenetrationVector);
-            myA.applyImpulse(-impulse, myCollisionNormal, rA);
-        }
+        myA.translate(myPenetrationVector);
+        myA.applyImpulse(-impulse, myCollisionNormal, rA);
+        if (myB.hasPhysics()) myB.applyImpulse(impulse, myCollisionNormal, rB);
     }
 }

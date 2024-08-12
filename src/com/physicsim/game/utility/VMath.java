@@ -175,6 +175,16 @@ public final class VMath {
     }
 
     /**
+     * Finds the mid point between 2 vectors.
+     * @param theA the vector A
+     * @param theB the vector B
+     * @return the midpoint
+     */
+    public static Vector2 findMidpoint(final Vector2 theA, final Vector2 theB) {
+        return new Vector2((theA.getX() + theB.getX()) / 2, (theA.getY() + theB.getY()) / 2);
+    }
+
+    /**
      * Projects a point on to a line segment created by a starting point and ending point.
      * Returns null if the projected point is not on the segment.
      *

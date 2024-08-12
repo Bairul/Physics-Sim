@@ -2,7 +2,6 @@ package com.physicsim.game.model;
 
 import com.physicsim.game.utility.Vector2;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class GameWorld {
      */
     public GameWorld() {
         myDynamicObjects = new LinkedList<>();
-        myStaticObjects = new ArrayList<>();
+        myStaticObjects = new LinkedList<>();
     }
 
     /**

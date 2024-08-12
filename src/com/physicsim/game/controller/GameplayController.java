@@ -6,6 +6,7 @@ import com.physicsim.game.model.*;
 import com.physicsim.game.model.collision.CollisionManager;
 import com.physicsim.game.model.particle.Particle;
 import com.physicsim.game.model.particle.VerletObject;
+import com.physicsim.game.model.rigidbody.Box;
 import com.physicsim.game.model.rigidbody.RegularPolygon;
 import com.physicsim.game.model.rigidbody.RigidBody;
 import com.physicsim.game.model.rigidbody.RigidCircle;
@@ -43,11 +44,27 @@ public class GameplayController {
         GameWorld.GRAVITY.set(0, 0.1);
         debugMode = false;
 
+//        myCache.set(-257, 36);
+//        RegularPolygon db = new RegularPolygon(myCache, 4, 100, 20);
+//        db.setPhysics(true);
+//        db.setAngularPosition(Math.toRadians(-45));
+//        myGameWorld.addDynamicObject(db);
+
         // static polygon
-        myCache.set(-200, 200);
-        RegularPolygon b = new RegularPolygon(myCache, 3, 400, 1);
-        b.setAngularPosition(Math.toRadians(10));
-        myGameWorld.addStaticObject(b);
+//        myCache.set(-300, GameWorld.SCREEN_BOUNDARY.getY() - 200);
+//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1);
+//        b.setAngularPosition(Math.toRadians(45));
+//        myGameWorld.addStaticObject(b);
+
+        // walls
+        myCache.set(-400, GameWorld.SCREEN_BOUNDARY.getY() - 300);
+        myGameWorld.addStaticObject(new Box(myCache, 200, 200, 1));
+//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY() - 50);
+//        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
+//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX() - 50, -GameWorld.SCREEN_BOUNDARY.getY());
+//        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
+//        myCache.set(GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY());
+//        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
     }
 
     /**
@@ -61,11 +78,11 @@ public class GameplayController {
 
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
             System.out.println(myInputs.getMousePos());
-//            RegularPolygon b = new RegularPolygon(myInputs.getMousePos(), 3, 100, 4);
-//            b.setPhysics(true);
-//            b.setAngularPosition(Math.toRadians(-55));
-//            myGameWorld.addDynamicObject(b);
-            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
+            RegularPolygon b = new RegularPolygon(new Vector2(-257, 36), 4, 100, 100);
+            b.setPhysics(true);
+            b.setAngularPosition(Math.toRadians(-45));
+            myGameWorld.addDynamicObject(b);
+//            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
 
         if (myInputs.getKeyboard().isKeyHeld(KeyType.Space)) {
@@ -77,7 +94,7 @@ public class GameplayController {
                 return;
         }
 
-        // O(D * S) --> every dynamic object with every static object
+        // O(D * (S + D)) --> every dynamic object with every static and dynamic object
         for (final GameObject dynObject : myGameWorld.getDynamicObjects())  {
             if (dynObject instanceof final VerletObject p) {
                 myCache.set(GameWorld.GRAVITY);

@@ -116,34 +116,80 @@ public final class CollisionManager {
                 final Vector2[] b = VMath.findAxisOfPenetration(r, theRB);
                 if (b.length == 0) continue;
 
-//                System.out.println("Dynamic: pt:" + a[0] + ", norm: " + a[1] + ", index: " + a[2].getX());
-//                System.out.println("Static: pt:" + b[0] + ", norm: " + b[1] + ", index: " + b[2].getX());
+                System.out.println("Dynamic: pt:" + a[0] + ", norm: " + a[1] + ", index: " + a[2].getX());
+                System.out.println("Static: pt:" + b[0] + ", norm: " + b[1] + ", index: " + b[2].getX());
 
                 // at this point, there is at least 1 point that is overlapping
                 final int ia = a[2].intX();
                 final int ib = b[2].intX();
-                // projects the point to the edge
-                final Vector2 projAB = VMath.project(r.getEdges()[ib].getStart(), r.getEdges()[ib].getEnd(), b[0]);
-                final Vector2 projBA = VMath.project(theRB.getEdges()[ia].getStart(), theRB.getEdges()[ia].getEnd(), a[0]);
+                Vector2 collisionPoint;
+                Vector2 collisionNormal;
+                Vector2 penVector; // minimum translation vector
 
-                if (projAB == null) {
-                    assert projBA != null;
-                    final Vector2 penVector = a[0].subNew(projBA);
-                    myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, a[0], a[1], penVector));
-                } else if (projBA == null) {
-                    final Vector2 penVector = projAB.subNew(b[0]);
-                    myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, b[0], b[1], penVector));
-                } else {
-                    final Vector2 vel = theRB.getLinearVelocity();
-                    vel.mul(-1);
-                    final Vector2 penAB = projAB.subNew(b[0]);
-                    final Vector2 penBA = a[0].subNew(projBA);
-                    if (vel.dotProduct(penAB) > vel.dotProduct(penBA)) {
-                        myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, b[0], b[1], penAB));
+                if (Math.abs(theRB.getEdges()[ia].getEdge().crossProduct(r.getEdges()[ib].getEdge())) < 0.0001) {
+                    final Vector2 starts = theRB.getEdges()[ia].getEnd().subNew(r.getEdges()[ib].getStart());
+                    final Vector2 ends = theRB.getEdges()[ia].getStart().subNew(r.getEdges()[ib].getEnd());
+
+                    System.out.println(starts.dotProduct(ends));
+                    if (starts.dotProduct(ends) > 0) {
+                        // 1 edge outside
+                        if (starts.dotProduct(r.getEdges()[ib].getEdge()) < 0) {
+                            System.out.println("left");
+                            // left
+                            final Vector2 projA = VMath.project(theRB.getEdges()[ia].getStart(), theRB.getEdges()[ia].getEnd(), r.getEdges()[ib].getStart());
+                            collisionPoint = VMath.findMidpoint(projA, theRB.getEdges()[ia].getStart());
+                            collisionNormal = b[1];
+                            final Vector2 projB = VMath.project(r.getEdges()[ib].getStart(), r.getEdges()[ib].getEnd(), collisionPoint);
+                            penVector = projB.subNew(collisionPoint);
+                        } else {
+                            System.out.println("right");
+                            // right
+                            final Vector2 projA = VMath.project(theRB.getEdges()[ia].getStart(), theRB.getEdges()[ia].getEnd(), r.getEdges()[ib].getEnd());
+                            collisionPoint = VMath.findMidpoint(projA, theRB.getEdges()[ia].getEnd());
+                            collisionNormal = b[1];
+                            final Vector2 projB = VMath.project(r.getEdges()[ib].getStart(), r.getEdges()[ib].getEnd(), collisionPoint);
+                            penVector = projB.subNew(collisionPoint);
+                        }
                     } else {
-                        myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, a[0], a[1], penBA));
+                        // both inside
+                        collisionPoint = theRB.getEdges()[ia].getMiddle();
+                        collisionNormal = b[1];
+                        final Vector2 proj = VMath.project(r.getEdges()[ib].getStart(), r.getEdges()[ib].getEnd(), collisionPoint);
+                        penVector = proj.subNew(collisionPoint);
+                    }
+                } else {
+                    final Vector2 projAB = VMath.project(r.getEdges()[ib].getStart(), r.getEdges()[ib].getEnd(), b[0]);
+                    final Vector2 projBA = VMath.project(theRB.getEdges()[ia].getStart(), theRB.getEdges()[ia].getEnd(), a[0]);
+
+                    if (projAB == null) {
+                        collisionPoint = a[0];
+                        collisionNormal = a[1];
+                        penVector = collisionPoint.subNew(projBA);
+//                        myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, a[0], a[1], penVector));
+                    } else if (projBA == null) {
+                        collisionPoint = b[0];
+                        collisionNormal = b[1];
+                        penVector = projAB.subNew(collisionPoint);
+//                        myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, b[0], b[1], penVector));
+                    } else {
+                        final Vector2 vel = theRB.getLinearVelocity().mulNew(-1);
+                        final Vector2 penAB = projAB.subNew(b[0]);
+                        final Vector2 penBA = a[0].subNew(projBA);
+                        if (vel.dotProduct(penAB) > vel.dotProduct(penBA)) {
+                            collisionPoint = b[0];
+                            collisionNormal = b[1];
+                            penVector = penAB;
+//                            myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, b[0], b[1], penAB));
+                        } else {
+                            collisionPoint = a[0];
+                            collisionNormal = a[1];
+                            penVector = penBA;
+//                            myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, a[0], a[1], penBA));
+                        }
                     }
                 }
+
+                myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, collisionPoint, collisionNormal, penVector));
             }
         }
     }
