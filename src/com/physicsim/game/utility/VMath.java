@@ -194,46 +194,16 @@ public final class VMath {
      * @return the projected point or null
      */
     public static Vector2 project(final Vector2 theStart, final Vector2 theEnd, final Vector2 thePoint) {
-        boolean isVertical = false;
-        boolean isHorizontal = false;
-        Vector2 proj;
-        double m;
+        final Vector2 startToEnd = theEnd.subNew(theStart);
+        final Vector2 startToPoint = thePoint.subNew(theStart);
 
-        try {
-            m = slope(theStart, theEnd);
+        final double t = startToPoint.dotProduct(startToEnd) / startToEnd.dotProduct(startToEnd);
 
-            if (m == 0) {
-                // project on to a horizontal slope
-                proj = new Vector2(thePoint.getX(), theStart.getY());
-                isHorizontal = true;
-            } else {
-                final double m_p = -1 / m;
-                final double x = theStart.getX();
-                final double y = theStart.getY();
+        // not on the segment
+        if (t < 0 || t > 1) return null;
 
-                final double x_i = (m * x - m_p * thePoint.getX() - y + thePoint.getY()) / (m - m_p);
-                final double y_i = m * (x_i - x) + y;
-                proj = new Vector2(x_i, y_i);
-            }
-        } catch (final ArithmeticException e) {
-            // project on to a vertical slope
-            proj = new Vector2(theStart.getX(), thePoint.getY());
-            isVertical = true;
-        }
-        // test for point on the segment
-        if (isHorizontal && (proj.getX() <= theStart.getX() == proj.getX() <= theEnd.getX()) &&
-                    (Math.abs(proj.getY() - theStart.getY()) <= LOW_TOLERANCE == Math.abs(proj.getY() - theEnd.getY()) <= LOW_TOLERANCE)) {
-            return null;
-        }
-        if (isVertical && (Math.abs(proj.getX() - theStart.getX()) <= LOW_TOLERANCE == Math.abs(proj.getX() - theEnd.getX()) <= LOW_TOLERANCE) &&
-                    (proj.getY() <= theStart.getY() == proj.getY() <= theEnd.getY())) {
-            return null;
-        }
-        if ((proj.getX() <= theStart.getX() == proj.getX() <= theEnd.getX()) &&
-           (proj.getY() <= theStart.getY() == proj.getY() <= theEnd.getY())) {
-            return null;
-        }
-        return proj;
+        startToEnd.mul(t);
+        return theStart.addNew(startToEnd);
     }
 
     /**

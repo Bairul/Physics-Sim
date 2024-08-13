@@ -78,9 +78,11 @@ public class GameplayController {
 
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
             System.out.println(myInputs.getMousePos());
-            RegularPolygon b = new RegularPolygon(new Vector2(-257, 36), 4, 100, 100);
+            // new Vector2(-257, 36)
+            RegularPolygon b = new RegularPolygon(myInputs.getMousePos(), 4, 100, 100);
             b.setPhysics(true);
-            b.setAngularPosition(Math.toRadians(-45));
+            b.setAngularPosition(Math.toRadians(-40));
+//            b.setAngularVelocity(Math.toRadians(5));
             myGameWorld.addDynamicObject(b);
 //            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
         }
