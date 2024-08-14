@@ -1,5 +1,6 @@
 package com.physicsim.game.model.collision;
 
+import com.physicsim.game.controller.GameplayController;
 import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.model.particle.VerletObject;
@@ -121,6 +122,9 @@ public final class CollisionManager {
             final int ib = b[2].intX();
             Vector2 collisionPoint, collisionNormal, penVector;
 
+//            System.out.println("Point: " + a[0] + ", Normal: " + a[1] +", Index: " + a[2].intX());
+//            System.out.println("Point: " + b[0] + ", Normal: " + b[1] +", Index: " + b[2].intX());
+
             // Check for parallel edges using cross product
             final boolean edgesParallel = Math.abs(theRB.getEdges()[ia].getEdge().crossProduct(r.getEdges()[ib].getEdge())) < 0.00001;
             if (edgesParallel) {
@@ -154,7 +158,6 @@ public final class CollisionManager {
                 // corner to edge collision
                 if (projAB == null) {
                     // body B is a corner
-                    System.out.println( true);
                     collisionPoint = a[0];
                     collisionNormal = a[1];
                     penVector = collisionPoint.subNew(projBA);

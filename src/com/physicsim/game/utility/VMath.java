@@ -336,6 +336,7 @@ public final class VMath {
         return bestVector;
     }
 
+
     // ********========= Rigid Body Stuff =========******** \\
 
     /**
@@ -376,7 +377,7 @@ public final class VMath {
      * rigid body A and V is the number of vertices on rigid body B.
      * @param theA the rigid body to test for
      * @param theB tests the vertices of this body
-     * @return
+     * @return an array of vectors that is a collision manifold containing the point of collision, collision normal, and the index of the collided edge
      */
     public static Vector2[] findAxisOfPenetration(final RigidBody theA, final RigidBody theB) {
         final Vector2 point = new Vector2();
@@ -392,7 +393,8 @@ public final class VMath {
             final Vector2 support = findSupportVector(theB.getVertices(), edgeNormalOfA.mulNew(-1));
 
             // projects the support on to the normal to find the deepest penetrating vertex
-            double projection = support.subNew(e.getStart()).dotProduct(edgeNormalOfA);
+            double projection = support.subNew(e.getStart()).dotProduct(edgeNormalOfA.normNew()); // normalizing :(
+
             if (projection > bestProjection) {
                 bestIndex = index;
                 bestProjection = projection;

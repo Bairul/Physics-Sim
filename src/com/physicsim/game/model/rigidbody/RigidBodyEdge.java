@@ -86,7 +86,7 @@ public final class RigidBodyEdge {
      * Gets the perpendicular vector from the edge vector (end - start).
      * <br>
      * <b>Note:</b> the direction is counter-clockwise from the edge vector.
-     * @return
+     * @return the perpendicular vector
      */
     public Vector2 getPerp() {
         return getEdge().perpNew();

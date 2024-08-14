@@ -8,7 +8,6 @@ import com.physicsim.game.utility.Vector2;
  * Abstract class for a rigid body physics game object. Must be a convex polygon.
  */
 public abstract class RigidBody extends GameObject {
-
     /** The vertices of this rigid body. */
     private final Vector2[] myVertices;
     /** The edges of this rigid body. */
@@ -16,8 +15,6 @@ public abstract class RigidBody extends GameObject {
     /** Reusable vector to save some memory. */
     private final Vector2 myCache;
     // physics fields
-    /** Whether physics applies to this body. Distinguishes static bodies.*/
-    protected boolean hasPhysics;
     /** The uniform mass of the rigid body. */
     private final double myMass;
     // Linear components
@@ -41,6 +38,8 @@ public abstract class RigidBody extends GameObject {
     private double myAngularAccel;
     /** The net angular impulse. */
     private double myAngularImpulse;
+    /** Whether physics applies to this body. Distinguishes static bodies.*/
+    protected boolean hasPhysics;
 
     /**
      * Creates a rigid body given a bunch of vertices without specifying the center of mass.
@@ -289,6 +288,14 @@ public abstract class RigidBody extends GameObject {
      */
     public Vector2 getCenterOfMass() {
         return myPosition;
+    }
+
+    /**
+     * Gets the orientation (the angular position) of the rigid body.
+     * @return the orientation in radians
+     */
+    public double getOrientation() {
+        return myAngularPos;
     }
 
     /**

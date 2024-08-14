@@ -14,12 +14,12 @@ public class Box extends RigidBody {
 
     @Override
     public void update() {
-//        if (!hasPhysics) return;
-//        // must have
-//        move();
-//
-//        // must have
-//        postUpdate();
+        if (!hasPhysics) return;
+        // must have
+        move();
+
+        // must have
+        postUpdate();
     }
 
     @Override

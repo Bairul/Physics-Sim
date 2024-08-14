@@ -28,7 +28,7 @@ public class GameplayController {
     /** A reusable vector to save some memory. */
     private final CollisionManager myCollisionManager;
     private final Vector2 myCache;
-    private boolean debugMode;
+    public static boolean debugMode;
 
     /**
      * Constructs the gameplay controller.
@@ -44,21 +44,28 @@ public class GameplayController {
         GameWorld.GRAVITY.set(0, 0.1);
         debugMode = false;
 
-//        myCache.set(-257, 36);
-//        RegularPolygon db = new RegularPolygon(myCache, 4, 100, 20);
+//        myCache.set(340, 11);
+//        myCache.set(-275, -129);
+//        RegularPolygon db = new RegularPolygon(myCache, 4, 100, 100);
 //        db.setPhysics(true);
-//        db.setAngularPosition(Math.toRadians(-45));
+//        db.setPhysics(true);
+//        db.setAngularPosition(Math.toRadians(10));
+//        db.setLinearVelocity(new Vector2(1, 4));
+//        db.setAngularVelocity(Math.toRadians(5));
 //        myGameWorld.addDynamicObject(db);
 
         // static polygon
-//        myCache.set(-300, GameWorld.SCREEN_BOUNDARY.getY() - 200);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1);
-//        b.setAngularPosition(Math.toRadians(45));
-//        myGameWorld.addStaticObject(b);
+        myCache.set(-200, GameWorld.SCREEN_BOUNDARY.getY() - 200);
+        RegularPolygon b = new RegularPolygon(myCache, 4, 300, 1);
+        b.setAngularPosition(Math.toRadians(40));
+        myGameWorld.addStaticObject(b);
+
+//        myCache.set(-500, GameWorld.SCREEN_BOUNDARY.getY() - 300);
+//        myGameWorld.addStaticObject(new Box(myCache, 1000, 50, 1));
 
         // walls
-        myCache.set(-400, GameWorld.SCREEN_BOUNDARY.getY() - 300);
-        myGameWorld.addStaticObject(new Box(myCache, 200, 200, 1));
+//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
+//        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
 //        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY() - 50);
 //        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
 //        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX() - 50, -GameWorld.SCREEN_BOUNDARY.getY());
@@ -79,9 +86,15 @@ public class GameplayController {
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
             System.out.println(myInputs.getMousePos());
             // new Vector2(-257, 36)
-            RegularPolygon b = new RegularPolygon(myInputs.getMousePos(), 4, 100, 100);
+//            RegularPolygon b = new RegularPolygon(myInputs.getMousePos(), 4, 100, 100);
+//            b.setPhysics(true);
+//            b.setAngularPosition(Math.toRadians(45));
+//            b.setLinearVelocity(new Vector2(1, 4));
+//            b.setAngularVelocity(Math.toRadians(5));
+            Box b = new Box(myInputs.getMousePos(), 200, 50, 100);
             b.setPhysics(true);
-            b.setAngularPosition(Math.toRadians(-40));
+//            b.setAngularPosition(Math.toRadians(45));
+//            b.setLinearVelocity(new Vector2(1, 4));
 //            b.setAngularVelocity(Math.toRadians(5));
             myGameWorld.addDynamicObject(b);
 //            myGameWorld.addDynamicObject(new Particle(myInputs.getMousePos(), 1, 4));
@@ -112,6 +125,11 @@ public class GameplayController {
                 myCollisionManager.testAndHandle(r);
             }
         }
+
+        if (debugMode) {
+            return;
+        }
+
         myCollisionManager.update();
         myGameWorld.getDynamicObjects().forEach(GameObject::update);
     }
