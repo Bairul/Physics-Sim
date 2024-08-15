@@ -9,6 +9,8 @@ import java.util.ArrayList;
  * Utility class for vector mathematics.
  */
 public final class VMath {
+    public static final double PI = 3.14159265;
+    public static final double PI_2 = 6.28318531;
     /** The tolerance. */
     private static final double LOW_TOLERANCE = 0.001;
 

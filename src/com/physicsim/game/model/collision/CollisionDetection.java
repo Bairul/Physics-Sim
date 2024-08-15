@@ -16,26 +16,33 @@ public final class CollisionDetection {
      * to the particle.
      * @param theVO the verlet object
      * @param theRB the rigid body
-     * @return the closest edge to the verlet object if there is a collision, null if no collision
+     * @return a manifold containing the collision point, collision normal, and penetration vector. Null if no collision
      */
-    public static RigidBodyEdge detect(final VerletObject theVO, final RigidBody theRB) {
-        RigidBodyEdge closestEdge = null;
-        double shortestDistance = Integer.MAX_VALUE;
+    public static Manifold detect(final VerletObject theVO, final RigidBody theRB) {
+        Vector2 normal = null;
+        RigidBodyEdge bestEdge = null;
+        double bestProjection = Integer.MIN_VALUE;
 
         for (final RigidBodyEdge e : theRB.getEdges()) {
-            Vector2 intersection = e.getIntersect(theVO.getPosition(), theVO.getOldPosition());
-            if (intersection != null) {
-                double dist = theVO.getOldPosition().getDistance(intersection);
-                if (dist < shortestDistance) {
-                    shortestDistance = dist;
-                    closestEdge = e;
-                }
+            // gets the normal vector of an edge
+            final Vector2 edgeNormalOfRB = e.getPerp();
+
+            // projects the support on to the normal to find the deepest penetrating vertex
+            double projection = theVO.getPosition().subNew(e.getStart()).dotProduct(edgeNormalOfRB.normNew()); // normalizing :(
+
+            if (projection > bestProjection) {
+                bestProjection = projection;
+                normal = edgeNormalOfRB;
+                bestEdge = e;
             }
         }
-        if (closestEdge != null
-                // check co-linearity
-                && closestEdge.getEdge().crossProduct(theVO.getOldPosition().subNew(closestEdge.getStart())) != 0) {
-            return closestEdge;
+
+        // if projection is greater than 0, the position of the VO is not contained within the body
+        if (bestProjection <= 0 && bestEdge != null) {
+            final Vector2 penVector = VMath.project(bestEdge.getStart(), bestEdge.getEnd(), theVO.getPosition());
+
+            penVector.sub(theVO.getPosition());
+            return new Manifold(theVO.getPosition(), normal, penVector);
         }
 
         return null;
@@ -46,35 +53,20 @@ public final class CollisionDetection {
      * against the circumference of the circle, then reflects it over the tangent of the collision.
      * @param theVO the verlet object
      * @param theRC the rigid circle
-     * @return a vector array containing the intersection point, and the circle tangential vector. Null if no collision
+     * @return a manifold containing the collision point, collision normal, and penetration vector. Null if no collision
      */
-    public static Vector2[] detect(final VerletObject theVO, final RigidCircle theRC) {
-        if (theVO.getOldPosition().getDistance(theRC.getOrigin()) == theRC.getRadius()) return null;
+    public static Manifold detect(final VerletObject theVO, final RigidCircle theRC) {
+        final double radiusSq = theRC.getRadius() * theRC.getRadius();
+        final Vector2 toOrigin = theVO.getPosition().subNew(theRC.getCenterOfMass());
 
-        final Vector2[] intersections = VMath.intersect(theVO.getOldPosition(), theVO.getPosition(), theRC.getOrigin(), theRC.getRadius());
-        if (intersections.length < 1) return null;
+        if (toOrigin.dotProduct(toOrigin) > radiusSq) return null;
 
-        // if more than 1 intersection, get the one closest to the old position
-        final Vector2 intersect = intersections.length > 1
-                && intersections[1].getDistance(theVO.getOldPosition()) < intersections[0].getDistance(theVO.getOldPosition())
-                ? intersections[1] : intersections[0];
-        final Vector2 tanVector = new Vector2();
+        final Vector2 penVector = toOrigin.normNew();
+        penVector.mul(theRC.getRadius());
+        penVector.sub(theVO.getPosition());
 
-        try {
-            final double m = VMath.slope(theRC.getOrigin(), intersect);
-            if (m == 0) {
-                // horizontal slope (intersection point is directly left/right of center)
-                tanVector.set(intersect.getX(), intersect.getY() + 1);
-            } else {
-                final double tangent = -1 / m;
-                tanVector.set(intersect.getX() + 1, intersect.getY() + tangent);
-            }
-        } catch (final ArithmeticException e) {
-            // vertical slope (intersection point is directly top/bot of center)
-            tanVector.set(intersect.getX() + 1, intersect.getY());
-        }
-
-        return new Vector2[] {intersect, tanVector};
+        toOrigin.perp();
+        return new Manifold(theVO.getPosition(), toOrigin, penVector);
     }
 
     /**
@@ -83,9 +75,9 @@ public final class CollisionDetection {
      * the number of vertices on rigid body B.
      * @param theA the rigid body A
      * @param theB the rigid body B
-     * @return a vector array containing the collision point, collision normal, and penetration vector. Null if no collision
+     * @return a manifold containing the collision point, collision normal, and penetration vector. Null if no collision
      */
-    public static Vector2[] detect(final RigidBody theA, final RigidBody theB) {
+    public static Manifold detect(final RigidBody theA, final RigidBody theB) {
         final Vector2[] ab = VMath.findAxisOfPenetration(theA, theB);
         if (ab.length == 0) return null;
 
@@ -151,6 +143,6 @@ public final class CollisionDetection {
             }
         }
 
-        return new Vector2[] {collisionPoint, collisionNormal, penVector};
+        return new Manifold(collisionPoint, collisionNormal, penVector);
     }
 }

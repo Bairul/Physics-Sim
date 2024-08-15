@@ -69,5 +69,32 @@ public final class CheckCollide {
         }
     }
 
+
+
+    if (theVO.getOldPosition().getDistance(theRC.getOrigin()) == theRC.getRadius()) return null;
+
+        final Vector2[] intersections = VMath.intersect(theVO.getOldPosition(), theVO.getPosition(), theRC.getOrigin(), theRC.getRadius());
+        if (intersections.length < 1) return null;
+
+        // if more than 1 intersection, get the one closest to the old position
+        final Vector2 intersect = intersections.length > 1
+                && intersections[1].getDistance(theVO.getOldPosition()) < intersections[0].getDistance(theVO.getOldPosition())
+                ? intersections[1] : intersections[0];
+        final Vector2 tanVector = new Vector2();
+
+        try {
+            final double m = VMath.slope(theRC.getOrigin(), intersect);
+            if (m == 0) {
+                // horizontal slope (intersection point is directly left/right of center)
+                tanVector.set(intersect.getX(), intersect.getY() + 1);
+            } else {
+                final double tangent = -1 / m;
+                tanVector.set(intersect.getX() + 1, intersect.getY() + tangent);
+            }
+        } catch (final ArithmeticException e) {
+            // vertical slope (intersection point is directly top/bot of center)
+            tanVector.set(intersect.getX() + 1, intersect.getY());
+        }
+
      */
 }

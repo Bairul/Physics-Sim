@@ -1,4 +1,4 @@
-package com.physicsim.game.model.collision;
+package com.physicsim.game.model.collision.responses;
 
 /**
  * Abstract class for all collision types to inherit.

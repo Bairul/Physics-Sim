@@ -112,6 +112,15 @@ public abstract class RigidBody extends GameObject {
         myOldPosition.set(myCache);
     }
 
+    /**
+     * Translates the rigid body by a vector while keeping its velocity.
+     * @param theTranslation the vector of translation
+     */
+    public void translate(final Vector2 theTranslation) {
+        translateBody(theTranslation);
+        myOldPosition.add(theTranslation);
+    }
+
     // ************========  rotational physics  ========************ \\
 
     /**
@@ -139,12 +148,12 @@ public abstract class RigidBody extends GameObject {
     }
 
     /**
-     * Sets the angular position (orientation) of the body.
+     * Rotates the angular position (orientation) of the body by some radian.
      * @param theOrientation the angular position in radians
      */
-    public void setAngularPosition(final double theOrientation) {
+    public void rotate(final double theOrientation) {
         rotateBody(theOrientation);
-        myOldAngularPos = myAngularPos;
+        myOldAngularPos += theOrientation;
     }
 
     /**
@@ -156,7 +165,7 @@ public abstract class RigidBody extends GameObject {
     }
 
     /**
-     * Accumulates net impulse on this rigid body. For this, impulse is instantaneous force/torque. This is mainly
+     * Accumulates net impulse on this rigid body. Impulse is instantaneous force/torque. This is mainly
      * used to resolve bodies that are already overlapping.
      * @param theImpulseMag the impulse magnitude
      * @param theDirection  the direction of the impulse
@@ -199,8 +208,8 @@ public abstract class RigidBody extends GameObject {
         myImpulse.set(0, 0);
         myAngularAccel = 0;
         myAcceleration.set(0, 0);
-        if (Math.abs(myAngularPos) > 10) {
-            int adjustment = myAngularPos > 10 ? -10 : 10;
+        if (Math.abs(myAngularPos) > VMath.PI_2) {
+            double adjustment = -VMath.PI_2 * Math.signum(myAngularPos);
             myAngularPos += adjustment;
             myOldAngularPos += adjustment;
         }
@@ -226,15 +235,6 @@ public abstract class RigidBody extends GameObject {
             v.add(theTranslation);
         }
         myPosition.add(theTranslation);
-    }
-
-    /**
-     * Translates the rigid body by a vector while keeping its velocity.
-     * @param theTranslation the vector of translation
-     */
-    public void translate(final Vector2 theTranslation) {
-        translateBody(theTranslation);
-        myOldPosition.add(theTranslation);
     }
 
     // ======== getters ========

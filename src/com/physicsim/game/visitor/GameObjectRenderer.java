@@ -86,9 +86,12 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     public Void visit(final RigidCircle theEntity) {
         myGraphics.setColor(Color.black);
         myGraphics.drawOval(
-                myOrigin.intX() + theEntity.getOrigin().intX() - (int) theEntity.getRadius(),
-                myOrigin.intY() + theEntity.getOrigin().intY() - (int) theEntity.getRadius(),
+                myOrigin.intX() + theEntity.getCenterOfMass().intX() - (int) theEntity.getRadius(),
+                myOrigin.intY() + theEntity.getCenterOfMass().intY() - (int) theEntity.getRadius(),
                 theEntity.getDiameter(), theEntity.getDiameter());
+
+        final Vector2 orient = theEntity.getOrientationVector();
+        myGraphics.drawLine(myOrigin.intX() + theEntity.getCenterOfMass().intX(), myOrigin.intY() + theEntity.getCenterOfMass().intY(), myOrigin.intX() + orient.intX(), myOrigin.intY() + orient.intY());
         return null;
     }
 }

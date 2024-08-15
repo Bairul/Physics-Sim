@@ -15,6 +15,8 @@ public abstract class VerletObject extends GameObject {
     protected final Vector2 myOldPosition;
     /** The NET acceleration vector. */
     protected final Vector2 myAcceleration;
+    /** The Net impulse vector. */
+    private final Vector2 myImpulse;
     /** A reusable vector to save some memory. */
     private final Vector2 myCache;
     /** The radius of the object. */
@@ -33,11 +35,13 @@ public abstract class VerletObject extends GameObject {
      */
     public VerletObject(final Vector2 thePosition, final double theMass, final double theRadius) {
         super();
+        if (theMass <= 0) throw new IllegalArgumentException("Mass must be positive");
         if (theRadius < 1) throw new IllegalArgumentException("Radius less than 1");
         // vectors
         myPosition = new Vector2(thePosition);
         myOldPosition = new Vector2(thePosition);
         myAcceleration = new Vector2();
+        myImpulse = new Vector2();
         myCache = new Vector2();
 
         myMass = theMass;
@@ -49,20 +53,24 @@ public abstract class VerletObject extends GameObject {
      */
     protected void postUpdate() {
         myAcceleration.set(0, 0);
+        myImpulse.set(0, 0);
     }
 
     /**
      * Updates the object using verlet integration. Assumes dt = 1.
      */
     protected void move() {
+        if (myImpulse.getX() != 0D || myImpulse.getY() != 0D) {
+            setVelocity(getVelocity().addNew(myImpulse.divNew(myMass)));
+        }
+
         myCache.set(myPosition);
         myPosition.add(myPosition.subNew(myOldPosition).addNew(myAcceleration));
         myOldPosition.set(myCache);
     }
 
     /**
-     * Applies an impulse to this object. Impulse is force over time. One frame is 1 unit of time in
-     * this simulation.
+     * Accumulates the net force acting on this body.
      * @param theForce the force as a vector to apply
      */
     public void applyForce(final Vector2 theForce) {
@@ -70,6 +78,16 @@ public abstract class VerletObject extends GameObject {
         myCache.set(theForce);
         myCache.div(myMass);
         myAcceleration.add(myCache); // add to NET acceleration
+    }
+
+    /**
+     * Accumulates net impulse on this rigid body. Impulse is instantaneous force. This is mainly
+     * used to resolve bodies that are already overlapping.
+     * @param theImpulseMag the impulse magnitude
+     * @param theDirection  the direction of the impulse
+     */
+    public void applyImpulse(final double theImpulseMag, final Vector2 theDirection) {
+        myImpulse.add(theDirection.mulNew(theImpulseMag));
     }
 
     /**
@@ -90,6 +108,11 @@ public abstract class VerletObject extends GameObject {
             myOldPosition.setX(2 * Math.signum(myOldPosition.getX()) * theBoundary.getX() - myOldPosition.getX());
         }
         theBoundary.add(myCache);
+    }
+
+    public void translate(final Vector2 theTranslation) {
+        myPosition.add(theTranslation);
+        myOldPosition.add(theTranslation);
     }
 
     /**
