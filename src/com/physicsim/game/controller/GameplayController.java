@@ -113,7 +113,7 @@ public class GameplayController {
 
             RigidCircle c = new RigidCircle(myInputs.getMousePos(), 50, 1);
             c.setPhysics(true);
-//            myCache.set(1, 0);
+            myCache.set(1, 0);
 //            c.setAngularVelocity(0.1);
 //            c.setLinearVelocity(myCache);
             myGameWorld.addDynamicObject(c);
@@ -139,9 +139,9 @@ public class GameplayController {
                 myCollisionManager.testAndHandle(p);
             }
             else if (dynObject instanceof final RigidBody r) {
-//                myCache.set(GameWorld.GRAVITY);
-//                myCache.mul(r.getMass());
-//                r.applyLinearForce(myCache);
+                myCache.set(GameWorld.GRAVITY);
+                myCache.mul(r.getMass());
+                r.applyLinearForce(myCache);
                 myCollisionManager.testAndHandle(r, index);
             }
             else if (dynObject instanceof final RigidCircle c) {

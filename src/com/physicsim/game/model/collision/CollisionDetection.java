@@ -145,4 +145,10 @@ public final class CollisionDetection {
 
         return new Manifold(collisionPoint, collisionNormal, penVector);
     }
+
+    public static Manifold detect(final RigidCircle theRC, final RigidBody theRB) {
+        for (final RigidBodyEdge e : theRB.getEdges()) {
+            
+        }
+    }
 }
