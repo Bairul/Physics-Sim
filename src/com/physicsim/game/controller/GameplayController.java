@@ -55,23 +55,23 @@ public class GameplayController {
 //        myGameWorld.addDynamicObject(db);
 
         // static polygon
-        myCache.set(-200, GameWorld.SCREEN_BOUNDARY.getY() - 200);
-        RegularPolygon b = new RegularPolygon(myCache, 4, 300, 1);
-        b.setAngularPosition(Math.toRadians(40));
-        myGameWorld.addStaticObject(b);
+//        myCache.set(-200, GameWorld.SCREEN_BOUNDARY.getY() - 200);
+//        RegularPolygon b = new RegularPolygon(myCache, 4, 300, 1);
+//        b.setAngularPosition(Math.toRadians(40));
+//        myGameWorld.addStaticObject(b);
 
 //        myCache.set(-500, GameWorld.SCREEN_BOUNDARY.getY() - 300);
 //        myGameWorld.addStaticObject(new Box(myCache, 1000, 50, 1));
 
         // walls
-//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
+        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
 //        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY() - 50);
 //        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
-//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX() - 50, -GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
-//        myCache.set(GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
+        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX() - 50, -GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
+        myCache.set(GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
     }
 
     /**
@@ -86,12 +86,12 @@ public class GameplayController {
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
             System.out.println(myInputs.getMousePos());
             // new Vector2(-257, 36)
-//            RegularPolygon b = new RegularPolygon(myInputs.getMousePos(), 4, 100, 100);
-//            b.setPhysics(true);
-//            b.setAngularPosition(Math.toRadians(45));
+            RegularPolygon b = new RegularPolygon(myInputs.getMousePos(), 6, 30, 100);
+            b.setPhysics(true);
+            b.setAngularPosition(Math.toRadians(45));
 //            b.setLinearVelocity(new Vector2(1, 4));
 //            b.setAngularVelocity(Math.toRadians(5));
-            Box b = new Box(myInputs.getMousePos(), 200, 50, 100);
+//            Box b = new Box(myInputs.getMousePos(), 200, 50, 100);
             b.setPhysics(true);
 //            b.setAngularPosition(Math.toRadians(45));
 //            b.setLinearVelocity(new Vector2(1, 4));
@@ -110,6 +110,7 @@ public class GameplayController {
         }
 
         // O(D * (S + D)) --> every dynamic object with every static and dynamic object
+        int index = 0;
         for (final GameObject dynObject : myGameWorld.getDynamicObjects())  {
             if (dynObject instanceof final VerletObject p) {
                 myCache.set(GameWorld.GRAVITY);
@@ -122,14 +123,10 @@ public class GameplayController {
                 myCache.set(GameWorld.GRAVITY);
                 myCache.mul(r.getMass());
                 r.applyLinearForce(myCache);
-                myCollisionManager.testAndHandle(r);
+                myCollisionManager.testAndHandle(r, index);
             }
+            index++;
         }
-
-        if (debugMode) {
-            return;
-        }
-
         myCollisionManager.update();
         myGameWorld.getDynamicObjects().forEach(GameObject::update);
     }

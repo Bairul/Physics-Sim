@@ -3,9 +3,9 @@ package com.physicsim.game.model.collision;
 import com.physicsim.game.model.rigidbody.RigidBody;
 import com.physicsim.game.utility.Vector2;
 
-public final class RigidBodyAndRigidBodyCollision extends Collision {
+public final class RigidBodyAndRigidBodyCollision extends CollisionResponse {
     /** The coefficient of restitution. */
-    public static double COE_RES = 1;
+    public static double COE_RES = 0.9;
     /** The rigid body A. */
     private final RigidBody myA;
     /** The rigid body B. */
