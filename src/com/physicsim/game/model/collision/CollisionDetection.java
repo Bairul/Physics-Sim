@@ -192,4 +192,20 @@ public final class CollisionDetection {
 
         return new Manifold(collisionPoint, collisionNormal, penVector);
     }
+
+    public static Manifold detect(final RigidCircle theA, final RigidCircle theB) {
+        final Vector2 ab = theA.getCenterOfMass().subNew(theB.getCenterOfMass());
+        final double radiusSum = theA.getRadius() + theB.getRadius();
+
+        if (ab.dotProduct(ab) > radiusSum * radiusSum) return null;
+
+        final Vector2 collisionNormal = new Vector2(ab);
+        ab.norm();
+        final Vector2 collisionPoint = theA.getCenterOfMass().addNew(ab.mulNew(theA.getRadius()));
+        ab.mul(-1);
+        final Vector2 penVector = theB.getCenterOfMass().addNew(ab.mulNew(theB.getRadius()));
+        penVector.sub(collisionPoint);
+
+        return new Manifold(collisionPoint, collisionNormal, penVector);
+    }
 }

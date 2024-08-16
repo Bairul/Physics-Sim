@@ -104,6 +104,12 @@ public final class CollisionManager {
                     myCollisions.add(new RigidCricleAndRigidBodyCollision(theRC, r, manifold));
                 }
             }
+            else if (staticObject instanceof final RigidCircle c) {
+                final Manifold manifold = CollisionDetection.detect(theRC, c);
+                if (manifold != null) {
+                    myCollisions.add(new RigidCircleAndRigidCircleCollision(theRC, c, manifold));
+                }
+            }
         }
 
         for (int i = theIndex + 1; i < myWorld.getDynamicObjects().size(); i++) {
