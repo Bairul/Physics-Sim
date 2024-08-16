@@ -384,7 +384,7 @@ public final class VMath {
     public static Vector2[] findAxisOfPenetration(final RigidBody theA, final RigidBody theB) {
         final Vector2 point = new Vector2();
         final Vector2 normal = new Vector2();
-        double bestProjection = Integer.MIN_VALUE;
+        double bestProjection = Double.NEGATIVE_INFINITY;
         int bestIndex = 0;
         int index = 0;
 

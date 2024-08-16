@@ -95,6 +95,49 @@ public final class CheckCollide {
             // vertical slope (intersection point is directly top/bot of center)
             tanVector.set(intersect.getX() + 1, intersect.getY());
         }
+public static Manifold detect(final RigidCircle circle, final RigidBody polygon) {
+        Vector2 collisionPoint, penetrationVector, collisionNormal;
+        RigidBodyEdge bestEdge = null;
+        double maxProjection = Double.NEGATIVE_INFINITY;
 
+        // Find the edge with the best (deepest) projection
+        for (final RigidBodyEdge edge : polygon.getEdges()) {
+            Vector2 edgeNormal = edge.getPerp().normNew();
+            double projection = circle.getCenterOfMass().subNew(edge.getStart()).dotProduct(edgeNormal);
+
+            if (projection > maxProjection) {
+                maxProjection = projection;
+                bestEdge = edge;
+            }
+        }
+
+        final double radiusSquared = circle.getRadius() * circle.getRadius();
+        Vector2 closestPointOnEdge = VMath.project(bestEdge.getStart(), bestEdge.getEnd(), circle.getCenterOfMass());
+        double flip = 1;
+
+        // Determine if the projection is on the edge or one of its endpoints
+        if (closestPointOnEdge == null) {
+            closestPointOnEdge = (circle.getCenterOfMass().subNew(bestEdge.getStart()).dotProduct(bestEdge.getEdge()) < 0)
+                    ? bestEdge.getStart()  // Circle-corner collision at start
+                    : bestEdge.getEnd();    // Circle-corner collision at end
+        } else if (circle.getCenterOfMass().subNew(bestEdge.getStart()).crossProduct(bestEdge.getEdge()) < 0) {
+            flip = -1; // Determine the correct collision side
+        }
+
+        Vector2 toClosestPoint = closestPointOnEdge.subNew(circle.getCenterOfMass());
+
+        // Check if the circle is outside the edge's influence
+        if (flip > 0 && toClosestPoint.dotProduct(toClosestPoint) >= radiusSquared) {
+            return null;
+        }
+
+        // Calculate penetration and collision information
+        penetrationVector = toClosestPoint.normNew().mul(circle.getRadius() * flip);
+        collisionPoint = circle.getCenterOfMass().addNew(penetrationVector);
+        collisionNormal = penetrationVector.negate(); // Reverse the penetration vector to get the collision normal
+        penetrationVector = toClosestPoint.subNew(penetrationVector);
+
+        return new Manifold(collisionPoint, collisionNormal, penetrationVector);
+    }
      */
 }

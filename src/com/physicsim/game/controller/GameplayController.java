@@ -62,26 +62,28 @@ public class GameplayController {
 //        myGameWorld.addDynamicObject(c);
 
         // static polygon
-        myCache.set(-200, GameWorld.SCREEN_BOUNDARY.getY() - 0);
-        RegularPolygon b = new RegularPolygon(myCache, 4, 500, 1);
-        b.rotate(Math.toRadians(45));
-        myGameWorld.addStaticObject(b);
+        myCache.set(-200, GameWorld.SCREEN_BOUNDARY.getY() - 300);
+        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 100);
+        b.rotate(Math.toRadians(35));
+        b.setPhysics(true);
+        myGameWorld.addDynamicObject(b);
 
-//        myCache.set(200, GameWorld.SCREEN_BOUNDARY.getY() - 300);
-//        RegularPolygon b2 = new RegularPolygon(myCache, 3, 300, 1);
-//        b2.setAngularPosition(Math.toRadians(1));
-//        myGameWorld.addStaticObject(b2);
+        myCache.set(200, GameWorld.SCREEN_BOUNDARY.getY() - 300);
+        RegularPolygon b2 = new RegularPolygon(myCache, 3, 300, 100);
+        b2.rotate(Math.toRadians(20));
+        b2.setPhysics(true);
+        myGameWorld.addDynamicObject(b2);
 
 //        myCache.set(-500, GameWorld.SCREEN_BOUNDARY.getY() - 300);
 //        myGameWorld.addStaticObject(new Box(myCache, 1000, 50, 1));
 
         // walls
-//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
-//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX() - 50, -GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
-//        myCache.set(GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
+        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
+        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX() - 50, -GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
+        myCache.set(GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
 
 //        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY() - 50);
 //        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
@@ -108,7 +110,7 @@ public class GameplayController {
 
 //            Box b = new Box(myInputs.getMousePos(), 200, 50, 100);
 //            b.setPhysics(true);
-//            b.setAngularPosition(Math.toRadians(45));
+//            b.rotate(Math.toRadians(45));
 //            b.setLinearVelocity(new Vector2(1, 4));
 //            b.setAngularVelocity(Math.toRadians(5));
 //            myGameWorld.addDynamicObject(b);
@@ -118,11 +120,11 @@ public class GameplayController {
 //            p.setVelocity(myCache);
 //            myGameWorld.addDynamicObject(p);
 
-            RigidCircle c = new RigidCircle(myInputs.getMousePos(), 50, 1);
+            RigidCircle c = new RigidCircle(myInputs.getMousePos(), 50, 50);
             c.setPhysics(true);
-            myCache.set(1, 0);
-            c.setAngularVelocity(0.1);
-            c.setLinearVelocity(myCache);
+//            myCache.set(1, 0);
+//            c.setAngularVelocity(0.1);
+//            c.setLinearVelocity(myCache);
             myGameWorld.addDynamicObject(c);
         }
 
@@ -152,10 +154,11 @@ public class GameplayController {
                 myCollisionManager.testAndHandle(r, index);
             }
             else if (dynObject instanceof final RigidCircle c) {
-                myCache.set(0, 0.1);
+                myCache.set(GameWorld.GRAVITY);
+                myCache.mul(c.getMass());
                 c.applyLinearForce(myCache);
 //                c.applyTorque(0.2);
-                myCollisionManager.testAndHandle(c);
+                myCollisionManager.testAndHandle(c, index);
             }
             index++;
         }

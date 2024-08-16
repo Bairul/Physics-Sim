@@ -87,12 +87,29 @@ public final class CollisionManager {
                     myCollisions.add(new RigidBodyAndRigidBodyCollision(theRB, r, manifold));
                 }
             }
+            else if (dynObject instanceof final RigidCircle c) {
+                final Manifold manifold = CollisionDetection.detect(c, theRB);
+                if (manifold != null) {
+                    myCollisions.add(new RigidCricleAndRigidBodyCollision(c, theRB, manifold));
+                }
+            }
         }
     }
 
-    public void testAndHandle(final RigidCircle theRC) {
+    public void testAndHandle(final RigidCircle theRC, final int theIndex) {
         for (final GameObject staticObject : myWorld.getStaticObjects()) {
             if (staticObject instanceof final RigidBody r) {
+                final Manifold manifold = CollisionDetection.detect(theRC, r);
+                if (manifold != null) {
+                    myCollisions.add(new RigidCricleAndRigidBodyCollision(theRC, r, manifold));
+                }
+            }
+        }
+
+        for (int i = theIndex + 1; i < myWorld.getDynamicObjects().size(); i++) {
+            final GameObject dynObject = myWorld.getDynamicObjects().get(i);
+
+            if (dynObject instanceof final RigidBody r) {
                 final Manifold manifold = CollisionDetection.detect(theRC, r);
                 if (manifold != null) {
                     myCollisions.add(new RigidCricleAndRigidBodyCollision(theRC, r, manifold));

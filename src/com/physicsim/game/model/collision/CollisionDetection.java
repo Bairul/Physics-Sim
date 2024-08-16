@@ -21,7 +21,7 @@ public final class CollisionDetection {
     public static Manifold detect(final VerletObject theVO, final RigidBody theRB) {
         Vector2 normal = null;
         RigidBodyEdge bestEdge = null;
-        double bestProjection = Integer.MIN_VALUE;
+        double bestProjection = Double.NEGATIVE_INFINITY;
 
         for (final RigidBodyEdge e : theRB.getEdges()) {
             // gets the normal vector of an edge
@@ -149,12 +149,13 @@ public final class CollisionDetection {
     public static Manifold detect(final RigidCircle theRC, final RigidBody theRB) {
         Vector2 collisionPoint, penVector, collisionNormal;
         RigidBodyEdge bestEdge = null;
-        double bestProjection = Integer.MIN_VALUE;
+        double bestProjection = Double.NEGATIVE_INFINITY;
 
+        // Find the edge with the best (deepest) projection
         for (final RigidBodyEdge e : theRB.getEdges()) {
-            final Vector2 edgeNormal = e.getPerp();
+            final Vector2 edgeNormal = e.getPerp().normNew();
 
-            double projection = theRC.getCenterOfMass().subNew(e.getStart()).dotProduct(edgeNormal.normNew()); // normalizing :(
+            double projection = theRC.getCenterOfMass().subNew(e.getStart()).dotProduct(edgeNormal); // normalizing :(
 
             if (projection > bestProjection) {
                 bestProjection = projection;
@@ -163,31 +164,31 @@ public final class CollisionDetection {
         }
 
         final double radiusSq = theRC.getRadius() * theRC.getRadius();
-        Vector2 proj = VMath.project(bestEdge.getStart(), bestEdge.getEnd(), theRC.getCenterOfMass());
+        Vector2 projOnEdge = VMath.project(bestEdge.getStart(), bestEdge.getEnd(), theRC.getCenterOfMass());
+        double flip = 1;
 
-        if (proj == null) {
-            // TODO: circle-edge collision
-            if (theRC.getCenterOfMass().subNew(bestEdge.getStart()).dotProduct(bestEdge.getEdge()) < 0) {
-                // TODO: circle-corner collision at start
-                proj = bestEdge.getStart();
-            }
-            else {
-                // TODO: circle-corner collision at end
-                proj = bestEdge.getEnd();
-            }
+        // Determine if the projection is on the edge or one of its endpoints
+        if (projOnEdge == null) {
+            projOnEdge = (theRC.getCenterOfMass().subNew(bestEdge.getStart()).dotProduct(bestEdge.getEdge()) < 0)
+                    ? bestEdge.getStart()   // Circle-corner collision at start
+                    : bestEdge.getEnd();    // Circle-corner collision at end
+        } else if (theRC.getCenterOfMass().subNew(bestEdge.getStart()).crossProduct(bestEdge.getEdge()) < 0) {
+            // circle-edge collision if not null
+            flip = -1;
         }
 
-        final Vector2 toProj = proj.subNew(theRC.getCenterOfMass());
+        final Vector2 toProj = projOnEdge.subNew(theRC.getCenterOfMass());
 
-        if (toProj.dotProduct(toProj) >= radiusSq) {
-            return null;
-        }
+        // Check radius
+        if (flip > 0 && toProj.dotProduct(toProj) > radiusSq) return null;
 
         penVector = toProj.normNew();
-        penVector.mul(theRC.getRadius());
+        penVector.mul(theRC.getRadius() * flip);
         collisionPoint = theRC.getCenterOfMass().addNew(penVector);
+        // Reverse the penetration vector to get the collision normal
         collisionNormal = new Vector2(-penVector.getX(), -penVector.getY());
         penVector = toProj.subNew(penVector);
+
 
         return new Manifold(collisionPoint, collisionNormal, penVector);
     }
