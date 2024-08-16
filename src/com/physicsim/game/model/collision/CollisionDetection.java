@@ -63,10 +63,10 @@ public final class CollisionDetection {
 
         final Vector2 penVector = toOrigin.normNew();
         penVector.mul(theRC.getRadius());
+        penVector.add(theRC.getCenterOfMass());
         penVector.sub(theVO.getPosition());
 
-        toOrigin.perp();
-        return new Manifold(theVO.getPosition(), toOrigin, penVector);
+        return new Manifold(theVO.getPosition(), toOrigin.mulNew(-1), penVector);
     }
 
     /**
@@ -182,29 +182,30 @@ public final class CollisionDetection {
         // Check radius
         if (flip > 0 && toProj.dotProduct(toProj) > radiusSq) return null;
 
+        collisionPoint = new Vector2(projOnEdge);
         penVector = toProj.normNew();
         penVector.mul(theRC.getRadius() * flip);
-        collisionPoint = theRC.getCenterOfMass().addNew(penVector);
         // Reverse the penetration vector to get the collision normal
         collisionNormal = new Vector2(-penVector.getX(), -penVector.getY());
         penVector = toProj.subNew(penVector);
-
 
         return new Manifold(collisionPoint, collisionNormal, penVector);
     }
 
     public static Manifold detect(final RigidCircle theA, final RigidCircle theB) {
-        final Vector2 ab = theA.getCenterOfMass().subNew(theB.getCenterOfMass());
+        final Vector2 ab = theB.getCenterOfMass().subNew(theA.getCenterOfMass());
         final double radiusSum = theA.getRadius() + theB.getRadius();
 
         if (ab.dotProduct(ab) > radiusSum * radiusSum) return null;
 
-        final Vector2 collisionNormal = new Vector2(ab);
+        final Vector2 collisionNormal = new Vector2(-ab.getX(), -ab.getY());
         ab.norm();
-        final Vector2 collisionPoint = theA.getCenterOfMass().addNew(ab.mulNew(theA.getRadius()));
-        ab.mul(-1);
-        final Vector2 penVector = theB.getCenterOfMass().addNew(ab.mulNew(theB.getRadius()));
+        final Vector2 collisionPoint = ab.mulNew(theA.getRadius());
+        collisionPoint.add(theA.getCenterOfMass());
+        final Vector2 penVector = ab.mulNew(-theB.getRadius());
+        penVector.add(theB.getCenterOfMass());
         penVector.sub(collisionPoint);
+
 
         return new Manifold(collisionPoint, collisionNormal, penVector);
     }

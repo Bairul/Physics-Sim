@@ -82,8 +82,13 @@ public class Binding extends GameObject {
         myCache.sub(myEnd.getPosition());
         myCache.mul(percent);
 
-        if (!myStart.isPinned()) myStart.getPosition().add(myCache);
-        if (!myEnd.isPinned()) myEnd.getPosition().sub(myCache);
+        if (!myStart.hasDynamics()) myStart.getPosition().add(myCache);
+        if (!myEnd.hasDynamics()) myEnd.getPosition().sub(myCache);
+    }
+
+    @Override
+    public String getName() {
+        return "Binding";
     }
 
     @Override

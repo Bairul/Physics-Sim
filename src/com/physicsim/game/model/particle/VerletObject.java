@@ -1,6 +1,7 @@
 package com.physicsim.game.model.particle;
 
 import com.physicsim.game.model.GameObject;
+import com.physicsim.game.utility.VMath;
 import com.physicsim.game.utility.Vector2;
 
 /**
@@ -23,6 +24,8 @@ public abstract class VerletObject extends GameObject {
     protected double myRadius;
     /** The mass of the object. */
     protected double myMass;
+    /** Whether physics applies to this body. Distinguishes static bodies.*/
+    protected boolean hasDynamics;
 
     /**
      * Creates a game object given the initial position and mass and radius.
@@ -49,24 +52,12 @@ public abstract class VerletObject extends GameObject {
     }
 
     /**
-     * Update after everything else.
+     * Enables/Disables the dynamics of this body. By Default the dynamics are disabled. When disabled, it will be
+     * treated as a static object that can still be interacted with.
+     * @param theDynamics sets the physics
      */
-    protected void postUpdate() {
-        myAcceleration.set(0, 0);
-        myImpulse.set(0, 0);
-    }
-
-    /**
-     * Updates the object using verlet integration. Assumes dt = 1.
-     */
-    protected void move() {
-        if (myImpulse.getX() != 0D || myImpulse.getY() != 0D) {
-            setVelocity(getVelocity().addNew(myImpulse.divNew(myMass)));
-        }
-
-        myCache.set(myPosition);
-        myPosition.add(myPosition.subNew(myOldPosition).addNew(myAcceleration));
-        myOldPosition.set(myCache);
+    public void setDynamics(final boolean theDynamics) {
+        hasDynamics = theDynamics;
     }
 
     /**
@@ -90,29 +81,44 @@ public abstract class VerletObject extends GameObject {
         myImpulse.add(theDirection.mulNew(theImpulseMag));
     }
 
-    /**
-     * Detects if the object is colliding with the edge of a rectangular boundary.
-     * Bounces the object off of the boundary if it hits it.
-     *
-     * @param theBoundary the boundary as a vector
-     */
-    public void bounceOffBoundary(final Vector2 theBoundary) {
-        myCache.set(myRadius, myRadius);
-        theBoundary.sub(myCache);
-        if (Math.abs(myPosition.getY()) > theBoundary.getY()) {
-            myPosition.setY(   2 * Math.signum(myPosition.getY())    * theBoundary.getY() - myPosition.getY());
-            myOldPosition.setY(2 * Math.signum(myOldPosition.getY()) * theBoundary.getY() - myOldPosition.getY());
-        }
-        if (Math.abs(myPosition.getX()) > theBoundary.getX()) {
-            myPosition.setX(   2 * Math.signum(myPosition.getX())    * theBoundary.getX() - myPosition.getX());
-            myOldPosition.setX(2 * Math.signum(myOldPosition.getX()) * theBoundary.getX() - myOldPosition.getX());
-        }
-        theBoundary.add(myCache);
-    }
-
     public void translate(final Vector2 theTranslation) {
         myPosition.add(theTranslation);
         myOldPosition.add(theTranslation);
+    }
+
+    /**
+     * Updates the object using verlet integration. Assumes dt = 1.
+     */
+    protected void move() {
+        myCache.set(myPosition);
+        myPosition.add(myPosition.subNew(myOldPosition).addNew(myAcceleration));
+        myOldPosition.set(myCache);
+    }
+
+    /**
+     * Update before everything else. Used for impulses.
+     */
+    protected void preMove() {
+        // impulsive movement
+        if (myImpulse.getX() != 0D || myImpulse.getY() != 0D) {
+            setVelocity(getVelocity().addNew(myImpulse.divNew(myMass)));
+        }
+    }
+
+    /**
+     * Update after everything else. Used to reset fields.
+     */
+    protected void postMove() {
+        myAcceleration.set(0, 0);
+        myImpulse.set(0, 0);
+    }
+
+    @Override
+    public void update() {
+        if (!hasDynamics) return;
+        preMove();
+        move();
+        postMove();
     }
 
     /**
@@ -172,5 +178,18 @@ public abstract class VerletObject extends GameObject {
      */
     public int getDiameter() {
         return (int) (myRadius * 2);
+    }
+
+    /**
+     * Gets whether this body has physics
+     * @return the physics
+     */
+    public boolean hasDynamics() {
+        return hasDynamics;
+    }
+
+    @Override
+    public String getName() {
+        return "VerletObject";
     }
 }

@@ -13,16 +13,6 @@ public class Box extends RigidBody {
     }
 
     @Override
-    public void update() {
-        if (!hasPhysics) return;
-        // must have
-        move();
-
-        // must have
-        postUpdate();
-    }
-
-    @Override
     public <V> V accept(GameObjectVisitor<V> theV) {
         return theV.visit(this);
     }

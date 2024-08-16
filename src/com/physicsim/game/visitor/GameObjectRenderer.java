@@ -75,9 +75,6 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
                     myOrigin.intY() + edge.getEnd().intY());
 
         }
-//        myGraphics.setColor(Color.red);
-//        myGraphics.fillOval(myOrigin.intX() - 282 - 2, myOrigin.intY() + 13 - 2, 4, 4);
-
         myGraphics.setColor(Color.black);
         myGraphics.drawLine(myOrigin.intX() + theEntity.getCenterOfMass().intX(), myOrigin.intY() + theEntity.getCenterOfMass().intY(), myOrigin.intX() + theEntity.getVertices()[0].intX(), myOrigin.intY() + theEntity.getVertices()[0].intY());
         myGraphics.fillOval(myOrigin.intX() + theEntity.getCenterOfMass().intX() - 2, myOrigin.intY() + theEntity.getCenterOfMass().intY() - 2, 4, 4);
@@ -94,6 +91,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
 
         final Vector2 orient = theEntity.getOrientationVector();
         myGraphics.drawLine(myOrigin.intX() + theEntity.getCenterOfMass().intX(), myOrigin.intY() + theEntity.getCenterOfMass().intY(), myOrigin.intX() + orient.intX(), myOrigin.intY() + orient.intY());
+
         return null;
     }
 }
