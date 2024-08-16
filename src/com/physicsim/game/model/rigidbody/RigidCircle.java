@@ -92,6 +92,15 @@ public class RigidCircle extends GameObject {
         myOldPosition.set(myCache);
     }
 
+    /**
+     * Translates the rigid body by a vector while keeping its velocity.
+     * @param theTranslation the vector of translation
+     */
+    public void translate(final Vector2 theTranslation) {
+        myPosition.add(theTranslation);
+        myOldPosition.add(theTranslation);
+    }
+
     // ************========  rotational physics  ========************ \\
 
     /**
@@ -214,6 +223,16 @@ public class RigidCircle extends GameObject {
      */
     public double getAngularVelocity() {
         return myAngularPos - myOldAngularPos;
+    }
+
+    /**
+     * Gets the velocity of the body at a point. This is done by scaling the perpendicular vector from the
+     * center of mass to that point by the angular velocity.
+     * @param thePoint the point
+     * @return the velocity vector at that point
+     */
+    public Vector2 getLinearAngularVelocity(final Vector2 thePoint) {
+        return thePoint.subNew(myPosition).perpNew().mulNew(getAngularVelocity());
     }
 
     /**

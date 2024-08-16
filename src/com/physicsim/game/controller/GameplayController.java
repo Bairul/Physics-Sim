@@ -54,11 +54,18 @@ public class GameplayController {
 //        db.setAngularVelocity(Math.toRadians(5));
 //        myGameWorld.addDynamicObject(db);
 
+//        myCache.set(-282, -295);
+//        RigidCircle c = new RigidCircle(myCache, 50, 1);
+//        c.setPhysics(true);
+//        myCache.set(0, 6);
+//        c.setLinearVelocity(myCache);
+//        myGameWorld.addDynamicObject(c);
+
         // static polygon
-//        myCache.set(-200, GameWorld.SCREEN_BOUNDARY.getY() - 200);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 300, 1);
-//        b.setAngularPosition(Math.toRadians(45));
-//        myGameWorld.addStaticObject(b);
+        myCache.set(-200, GameWorld.SCREEN_BOUNDARY.getY() - 0);
+        RegularPolygon b = new RegularPolygon(myCache, 4, 500, 1);
+        b.rotate(Math.toRadians(45));
+        myGameWorld.addStaticObject(b);
 
 //        myCache.set(200, GameWorld.SCREEN_BOUNDARY.getY() - 300);
 //        RegularPolygon b2 = new RegularPolygon(myCache, 3, 300, 1);
@@ -114,8 +121,8 @@ public class GameplayController {
             RigidCircle c = new RigidCircle(myInputs.getMousePos(), 50, 1);
             c.setPhysics(true);
             myCache.set(1, 0);
-//            c.setAngularVelocity(0.1);
-//            c.setLinearVelocity(myCache);
+            c.setAngularVelocity(0.1);
+            c.setLinearVelocity(myCache);
             myGameWorld.addDynamicObject(c);
         }
 
@@ -145,13 +152,18 @@ public class GameplayController {
                 myCollisionManager.testAndHandle(r, index);
             }
             else if (dynObject instanceof final RigidCircle c) {
-//                myCache.set(0, 0.01);
-//                c.applyLinearForce(myCache);
+                myCache.set(0, 0.1);
+                c.applyLinearForce(myCache);
 //                c.applyTorque(0.2);
+                myCollisionManager.testAndHandle(c);
             }
             index++;
         }
+
         myCollisionManager.update();
+
+        if (debugMode) return;
+
         myGameWorld.getDynamicObjects().forEach(GameObject::update);
     }
 

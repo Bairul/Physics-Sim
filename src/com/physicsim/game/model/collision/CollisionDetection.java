@@ -147,8 +147,48 @@ public final class CollisionDetection {
     }
 
     public static Manifold detect(final RigidCircle theRC, final RigidBody theRB) {
+        Vector2 collisionPoint, penVector, collisionNormal;
+        RigidBodyEdge bestEdge = null;
+        double bestProjection = Integer.MIN_VALUE;
+
         for (final RigidBodyEdge e : theRB.getEdges()) {
-            
+            final Vector2 edgeNormal = e.getPerp();
+
+            double projection = theRC.getCenterOfMass().subNew(e.getStart()).dotProduct(edgeNormal.normNew()); // normalizing :(
+
+            if (projection > bestProjection) {
+                bestProjection = projection;
+                bestEdge = e;
+            }
         }
+
+        final double radiusSq = theRC.getRadius() * theRC.getRadius();
+        Vector2 proj = VMath.project(bestEdge.getStart(), bestEdge.getEnd(), theRC.getCenterOfMass());
+
+        if (proj == null) {
+            // TODO: circle-edge collision
+            if (theRC.getCenterOfMass().subNew(bestEdge.getStart()).dotProduct(bestEdge.getEdge()) < 0) {
+                // TODO: circle-corner collision at start
+                proj = bestEdge.getStart();
+            }
+            else {
+                // TODO: circle-corner collision at end
+                proj = bestEdge.getEnd();
+            }
+        }
+
+        final Vector2 toProj = proj.subNew(theRC.getCenterOfMass());
+
+        if (toProj.dotProduct(toProj) >= radiusSq) {
+            return null;
+        }
+
+        penVector = toProj.normNew();
+        penVector.mul(theRC.getRadius());
+        collisionPoint = theRC.getCenterOfMass().addNew(penVector);
+        collisionNormal = new Vector2(-penVector.getX(), -penVector.getY());
+        penVector = toProj.subNew(penVector);
+
+        return new Manifold(collisionPoint, collisionNormal, penVector);
     }
 }

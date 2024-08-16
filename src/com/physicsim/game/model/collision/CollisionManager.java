@@ -3,10 +3,7 @@ package com.physicsim.game.model.collision;
 import com.physicsim.game.controller.GameplayController;
 import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.GameWorld;
-import com.physicsim.game.model.collision.responses.CollisionResponse;
-import com.physicsim.game.model.collision.responses.RigidBodyAndRigidBodyCollision;
-import com.physicsim.game.model.collision.responses.VerletObjectAndRigidBodyCollision;
-import com.physicsim.game.model.collision.responses.VerletObjectAndRigidCircleCollision;
+import com.physicsim.game.model.collision.responses.*;
 import com.physicsim.game.model.particle.VerletObject;
 import com.physicsim.game.model.rigidbody.RigidBody;
 import com.physicsim.game.model.rigidbody.RigidBodyEdge;
@@ -93,6 +90,16 @@ public final class CollisionManager {
         }
     }
 
+    public void testAndHandle(final RigidCircle theRC) {
+        for (final GameObject staticObject : myWorld.getStaticObjects()) {
+            if (staticObject instanceof final RigidBody r) {
+                final Manifold manifold = CollisionDetection.detect(theRC, r);
+                if (manifold != null) {
+                    myCollisions.add(new RigidCricleAndRigidBodyCollision(theRC, r, manifold));
+                }
+            }
+        }
+    }
 
     /**
      * Handles all the collisions.
