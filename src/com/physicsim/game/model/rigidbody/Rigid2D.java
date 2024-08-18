@@ -263,12 +263,4 @@ public abstract class Rigid2D extends GameObject {
     public void incCollision() {
         if (hasDynamics) myCollisions++;
     }
-
-    /**
-     * Gets the number of collisions on this body
-     * @return the collision number
-     */
-    public int getCollisions() {
-        return myCollisions;
-    }
 }

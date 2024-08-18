@@ -33,8 +33,17 @@ public class CollisionResponse2D extends CollisionResponse {
         final double denom = normalSquared * sumInvMassA + (angA * angA / myA.getMoi()) + (myB.hasDynamics() ? (angB * angB / myB.getMoi()) : 0);
         final double impulse = -(1 + COE_RES) * relNorm / denom;
 
-        myA.translate(myManifold.getPenetration());
+
         myA.applyImpulse(-impulse, myManifold.getNormal(), rA);
-        if (myB.hasDynamics()) myB.applyImpulse(impulse, myManifold.getNormal(), rB);
+        if (myB.hasDynamics()) {
+            myB.applyImpulse(impulse, myManifold.getNormal(), rB);
+
+            final Vector2 half = myManifold.getPenetration().divNew(2);
+            myA.translate(half);
+            half.mul(-1);
+            myB.translate(half);
+        } else {
+            myA.translate(myManifold.getPenetration());
+        }
     }
 }

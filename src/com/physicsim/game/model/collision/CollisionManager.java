@@ -18,7 +18,7 @@ import java.util.function.BiConsumer;
  */
 public final class CollisionManager {
     /** The coefficient of restitution. ( 0 <= x <= 1)*/
-    public static double COE_RES = 1;
+    public static double COE_RES = 0.9;
     /** The game world containing all the game objects. */
     private final GameWorld myWorld;
     private final Map<String, BiConsumer<GameObject, GameObject>> myCollisionType;
