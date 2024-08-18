@@ -33,6 +33,7 @@ public abstract class Rigid2D extends GameObject {
     protected double myAngularImpulse;
     /** Whether physics applies to this body. Distinguishes static bodies.*/
     protected boolean hasDynamics;
+    protected int myCollisions;
 
     public Rigid2D(final Vector2 theCenterOfMass, final double theMass) {
         myMass = theMass;
@@ -173,6 +174,7 @@ public abstract class Rigid2D extends GameObject {
         myImpulse.set(0, 0);
         myAngularAccel = 0;
         myAcceleration.set(0, 0);
+        myCollisions = 0;
         if (Math.abs(myAngularPos) > VMath.PI_2) {
             double adjustment = -VMath.PI_2 * Math.signum(myAngularPos);
             myAngularPos += adjustment;
@@ -234,6 +236,15 @@ public abstract class Rigid2D extends GameObject {
     }
 
     /**
+     * Gets the mass of the rigid body divided by the number of collisions.
+     * @return the split mass
+     */
+    public double getSplitMass() {
+        if (myCollisions == 0) return  myMass;
+        return myMass / myCollisions;
+    }
+
+    /**
      * Gets the moment of inertia of the rigid body at its center of mass.
      * @return the moment of inertia
      */
@@ -247,5 +258,17 @@ public abstract class Rigid2D extends GameObject {
      */
     public boolean hasDynamics() {
         return hasDynamics;
+    }
+
+    public void incCollision() {
+        if (hasDynamics) myCollisions++;
+    }
+
+    /**
+     * Gets the number of collisions on this body
+     * @return the collision number
+     */
+    public int getCollisions() {
+        return myCollisions;
     }
 }
