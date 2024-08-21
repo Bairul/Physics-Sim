@@ -135,8 +135,10 @@ public abstract class Rigid2D extends GameObject {
      * @param theDistance   the distance from the center of mass to apply the impulse
      */
     public void applyImpulse(final double theImpulseMag, final Vector2 theDirection, final Vector2 theDistance) {
+        System.out.println("Individual Magnitude: " + theImpulseMag);
         final Vector2 jn = theDirection.mulNew(theImpulseMag);
         myImpulse.add(jn);
+
         myAngularImpulse += jn.crossProduct(theDistance);
     }
 
@@ -159,6 +161,7 @@ public abstract class Rigid2D extends GameObject {
     protected void preMove() {
         // impulsive movement
         if (myImpulse.getX() != 0D || myImpulse.getY() != 0D) {
+            System.out.println("Net Impulse: " + myImpulse);
             setLinearVelocity(getLinearVelocity().addNew(myImpulse.divNew(myMass)));
         }
         if (myAngularImpulse != 0F) {

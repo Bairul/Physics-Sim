@@ -39,16 +39,60 @@ public class GameplayController {
         GameWorld.GRAVITY.set(0, 0.1);
         debugMode = false;
 
-        myCache.set(0, 120);
-        RegularPolygon b = new RegularPolygon(myCache, 4, 100, 100);
-        b.setDynamics(true);
+        // flat 2 static
+//        myCache.set(-100.5, 100);
+        myCache.set(-140, 100);
+        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1);
         b.rotate(Math.toRadians(45));
-        myGameWorld.addDynamicObject(b);
-        myCache.set(0, 0);
-        RegularPolygon b2 = new RegularPolygon(myCache, 4, 100, 100);
-        b2.setDynamics(true);
+        myGameWorld.addStaticObject(b);
+//        myCache.set(100.5, 100);
+        myCache.set(140, 100);
+        RegularPolygon b2 = new RegularPolygon(myCache, 4, 200, 1);
         b2.rotate(Math.toRadians(45));
-        myGameWorld.addDynamicObject(b2);
+        myGameWorld.addStaticObject(b2);
+
+        // flat 1 static
+//        myCache.set(0, 100);
+//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1);
+//        b.rotate(Math.toRadians(45));
+//        myGameWorld.addStaticObject(b);
+
+        // diagonal 2 static
+//        myCache.set(-150, 100);
+//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1000);
+//        b.setDynamics(true);
+//        myGameWorld.addStaticObject(b);
+//        myCache.set(150, 100);
+//        RegularPolygon b2 = new RegularPolygon(myCache, 4, 200, 1000);
+//        b2.setDynamics(true);
+//        myGameWorld.addStaticObject(b2);
+
+        // flat 2 dynamic
+//        myCache.set(-101, 100);
+//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 100000);
+//        b.setDynamics(true);
+//        b.rotate(Math.toRadians(45));
+//        myGameWorld.addDynamicObject(b);
+//        myCache.set(101, 100);
+//        RegularPolygon b2 = new RegularPolygon(myCache, 4, 200, 100000);
+//        b2.setDynamics(true);
+//        b2.rotate(Math.toRadians(45));
+//        myGameWorld.addDynamicObject(b2);
+
+        // flat 1 dynamic
+//        myCache.set(0, 100);
+//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1000);
+//        b.rotate(Math.toRadians(45));
+//        b.setDynamics(true);
+//        myGameWorld.addDynamicObject(b);
+
+        myCache.set(0, -150);
+        RegularPolygon b3 = new RegularPolygon(myCache, 4, 100, 50);
+        b3.setDynamics(true);
+        b3.rotate(Math.toRadians(45));
+        myCache.set(0, 1);
+        b3.setLinearVelocity(myCache);
+        myGameWorld.addDynamicObject(b3);
 
         // walls
         myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
@@ -95,10 +139,11 @@ public class GameplayController {
         int index = 0;
         for (final GameObject dynObject : myGameWorld.getDynamicObjects())  {
             if (dynObject instanceof final Rigid2D p) {
-                myCache.set(0, 0.1);
-                myCache.mul(p.getMass());
-                p.applyLinearForce(myCache);
+//                myCache.set(0, 0.1);
+//                myCache.mul(p.getMass());
+//                p.applyLinearForce(myCache);
                 myCollisionManager.detectCollisions(p, index);
+//                System.out.println(p.getLinearVelocity().getMagnitude());
             }
             index++;
         }

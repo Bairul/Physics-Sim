@@ -1,5 +1,6 @@
 package com.physicsim.game.model.collision;
 
+import com.physicsim.game.controller.GameplayController;
 import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.model.collision.response.CollisionResponse;
@@ -18,7 +19,7 @@ import java.util.function.BiConsumer;
  */
 public final class CollisionManager {
     /** The coefficient of restitution. ( 0 <= x <= 1)*/
-    public static double COE_RES = 0.9;
+    public static double COE_RES = 1;
     /** The game world containing all the game objects. */
     private final GameWorld myWorld;
     private final Map<String, BiConsumer<GameObject, GameObject>> myCollisionType;
@@ -151,6 +152,7 @@ public final class CollisionManager {
             theA.incCollision();
             theB.incCollision();
             myCollisionResponses.add(new CollisionResponse2D(theA, theB, manifold));
+//            GameplayController.debugMode = true;
         }
     }
 }
