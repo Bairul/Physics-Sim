@@ -135,10 +135,8 @@ public abstract class Rigid2D extends GameObject {
      * @param theDistance   the distance from the center of mass to apply the impulse
      */
     public void applyImpulse(final double theImpulseMag, final Vector2 theDirection, final Vector2 theDistance) {
-        System.out.println("Individual Magnitude: " + theImpulseMag);
         final Vector2 jn = theDirection.mulNew(theImpulseMag);
         myImpulse.add(jn);
-
         myAngularImpulse += jn.crossProduct(theDistance);
     }
 

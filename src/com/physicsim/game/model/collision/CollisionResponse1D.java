@@ -32,15 +32,15 @@ public class CollisionResponse1D extends CollisionResponse {
         double impulse = get1DImpulse();
         final Vector2 r = myManifold.getPoint().subNew(myRB.getCenterOfMass());
 
-        if (isReversed) {
-            myRB.translate(myManifold.getPenetration());
-            myRB.applyImpulse(impulse, myManifold.getNormal(), r);
-            if (myVO.hasDynamics()) myVO.applyImpulse(-impulse, myManifold.getNormal());
-        } else {
-            myVO.translate(myManifold.getPenetration());
-            myVO.applyImpulse(-impulse, myManifold.getNormal());
-            if (myRB.hasDynamics()) myRB.applyImpulse(impulse, myManifold.getNormal(), r);
-        }
+//        if (isReversed) {
+//            myRB.translate(myManifold.getPenetration());
+//            myRB.applyImpulse(impulse, myManifold.getNormal(), r);
+//            if (myVO.hasDynamics()) myVO.applyImpulse(-impulse, myManifold.getNormal());
+//        } else {
+//            myVO.translate(myManifold.getPenetration());
+//            myVO.applyImpulse(-impulse, myManifold.getNormal());
+//            if (myRB.hasDynamics()) myRB.applyImpulse(impulse, myManifold.getNormal(), r);
+//        }
     }
 
     private double get1DImpulse() {

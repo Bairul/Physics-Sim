@@ -27,7 +27,7 @@ public class CollisionResponse2D extends CollisionResponse {
         final double relNorm = relVelB.subNew(relVelA).dotProduct(myManifold.getNormal());
 
         final Vector2 rA = myManifold.getPoint().subNew(myA.getCenterOfMass());
-        final Vector2 rB = myManifold.getPoint().subNew(myB.getCenterOfMass());
+        Vector2 rB = myManifold.getPoint().subNew(myB.getCenterOfMass());
         final double angA = myManifold.getNormal().crossProduct(rA);
         final double angB = myManifold.getNormal().crossProduct(rB);
 
@@ -40,6 +40,10 @@ public class CollisionResponse2D extends CollisionResponse {
 
         myA.applyImpulse(-impulse, myManifold.getNormal(), rA);
         if (myB.hasDynamics()) {
+            if (myManifold.getPoint2() != null) {
+                rB = myManifold.getPoint2().subNew(myB.getCenterOfMass());
+            }
+
             myB.applyImpulse(impulse, myManifold.getNormal(), rB);
 
             final Vector2 half = myManifold.getPenetration().divNew(2);

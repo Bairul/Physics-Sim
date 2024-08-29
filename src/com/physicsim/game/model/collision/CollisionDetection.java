@@ -84,42 +84,55 @@ public final class CollisionDetection {
         final Vector2[] ba = VMath.findAxisOfPenetration(theB, theA);
         if (ba.length == 0) return null;
 
-        final int ia = ab[2].intX();
-        final int ib = ba[2].intX();
-        Vector2 collisionPoint, collisionNormal, penVector;
+        final RigidBodyEdge edgeA = theA.getEdges()[ab[2].intX()];
+        final RigidBodyEdge edgeB = theB.getEdges()[ba[2].intX()];
+        Vector2 collisionPoint, collisionPoint2 = null, collisionNormal, penVector;
 
 //            System.out.println("Point: " + a[0] + ", Normal: " + a[1] +", Index: " + a[2].intX());
 //            System.out.println("Point: " + b[0] + ", Normal: " + b[1] +", Index: " + b[2].intX());
 
         // Check for parallel edges using cross product
-        final boolean edgesParallel = Math.abs(theA.getEdges()[ia].getEdge().crossProduct(theB.getEdges()[ib].getEdge())) < 0.00001;
+        final boolean edgesParallel = Math.abs(edgeA.getEdge().crossProduct(edgeB.getEdge())) < 0.00001;
         if (edgesParallel) {
             // edge to edge collision
-            final Vector2 projStart = VMath.project(theA.getEdges()[ia].getStart(), theA.getEdges()[ia].getEnd(), theB.getEdges()[ib].getStart());
-            final Vector2 projEnd = VMath.project(theA.getEdges()[ia].getStart(), theA.getEdges()[ia].getEnd(), theB.getEdges()[ib].getEnd());
+            final Vector2 projStart = VMath.project(edgeA.getStart(), edgeA.getEnd(), edgeB.getStart());
+            final Vector2 projEnd = VMath.project(edgeA.getStart(), edgeA.getEnd(), edgeB.getEnd());
 
             if (projStart == null ^ projEnd == null) {
                 // Parallelogram case
-                final Vector2 projCenter = VMath.project(theB.getEdges()[ib].getStart(), theB.getEdges()[ib].getEnd(), theA.getCenterOfMass());
-                if (projCenter == null) {
+                final Vector2 projCenterAB = VMath.project(edgeB.getStart(), edgeB.getEnd(), theA.getCenterOfMass());
+                final Vector2 projCenterBA = VMath.project(edgeA.getStart(), edgeA.getEnd(), theB.getCenterOfMass());
+
+                if (projCenterAB == null) {
                     // center of mass is not hit
-                    collisionPoint = projStart == null ? VMath.findMidpoint(projEnd, theA.getEdges()[ia].getEnd())
-                            : VMath.findMidpoint(projStart, theA.getEdges()[ia].getStart());
+                    collisionPoint = projStart == null ? VMath.findMidpoint(projEnd, edgeA.getEnd())
+                            : VMath.findMidpoint(projStart, edgeA.getStart());
                 } else {
                     // center of mass is hit
-                    collisionPoint = VMath.project(theA.getEdges()[ia].getStart(), theA.getEdges()[ia].getEnd(), theA.getCenterOfMass());
+                    collisionPoint = VMath.project(edgeA.getStart(), edgeA.getEnd(), theA.getCenterOfMass());
+                }
+
+                if (projCenterBA != null) {
+                    // center of mass is hit
+                    collisionPoint2 = VMath.project(edgeB.getStart(), edgeB.getEnd(), theB.getCenterOfMass());
                 }
             } else {
                 // Trapezoidal case
-                collisionPoint = VMath.project(theA.getEdges()[ia].getStart(), theA.getEdges()[ia].getEnd(), theA.getCenterOfMass());
+                collisionPoint = VMath.project(edgeA.getStart(), edgeA.getEnd(), theA.getCenterOfMass());
+
+                final Vector2 projCenterBA = VMath.project(edgeA.getStart(), edgeA.getEnd(), theB.getCenterOfMass());
+                if (projCenterBA != null) {
+                    // center of mass is hit
+                    collisionPoint2 = VMath.project(edgeB.getStart(), edgeB.getEnd(), theB.getCenterOfMass());
+                }
             }
 
             collisionNormal = ba[1];
-            final Vector2 proj = VMath.project(theB.getEdges()[ib].getStart(), theB.getEdges()[ib].getEnd(), collisionPoint);
+            final Vector2 proj = VMath.project(edgeB.getStart(), edgeB.getEnd(), collisionPoint);
             penVector = proj.subNew(collisionPoint);
         } else {
-            final Vector2 projAB = VMath.project(theB.getEdges()[ib].getStart(), theB.getEdges()[ib].getEnd(), ba[0]);
-            final Vector2 projBA = VMath.project(theA.getEdges()[ia].getStart(), theA.getEdges()[ia].getEnd(), ab[0]);
+            final Vector2 projAB = VMath.project(edgeB.getStart(), edgeB.getEnd(), ba[0]);
+            final Vector2 projBA = VMath.project(edgeA.getStart(), edgeA.getEnd(), ab[0]);
 
             // corner to edge collision
             if (projAB == null) {
@@ -143,7 +156,9 @@ public final class CollisionDetection {
             }
         }
 
-        return new Manifold(collisionPoint, collisionNormal, penVector);
+        if (collisionPoint2 == null) return new Manifold(collisionPoint, collisionNormal, penVector);
+
+        return new Manifold(collisionPoint, collisionPoint2, collisionNormal, penVector);
     }
 
     public static Manifold detect(final RigidCircle theRC, final RigidBody theRB) {
