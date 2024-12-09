@@ -31,6 +31,8 @@ public abstract class Rigid2D extends GameObject {
     protected double myAngularAccel;
     /** The net angular impulse. */
     protected double myAngularImpulse;
+    protected double myGhostAngularVel;
+    private Vector2 myGhostVelocity;
     /** Whether physics applies to this body. Distinguishes static bodies.*/
     protected boolean hasDynamics;
     protected int myCollisions;
@@ -44,6 +46,7 @@ public abstract class Rigid2D extends GameObject {
         myOldPosition = new Vector2(myPosition);
         myAcceleration = new Vector2();
         myImpulse = new Vector2();
+        myGhostVelocity = new Vector2();
     }
 
     /**
@@ -137,7 +140,13 @@ public abstract class Rigid2D extends GameObject {
     public void applyImpulse(final double theImpulseMag, final Vector2 theDirection, final Vector2 theDistance) {
         final Vector2 jn = theDirection.mulNew(theImpulseMag);
         myImpulse.add(jn);
-        myAngularImpulse += jn.crossProduct(theDistance);
+        final double angImp = jn.crossProduct(theDistance);
+        myAngularImpulse += angImp;
+
+        myGhostAngularVel += getAngularVelocity() + angImp / myMoi;
+        final Vector2 v = theDistance.subNew(myPosition).perpNew().mulNew(myGhostAngularVel);
+//        System.out.println(VMath.project(v, theDirection).getMagnitude());
+
     }
 
     @Override
@@ -159,7 +168,6 @@ public abstract class Rigid2D extends GameObject {
     protected void preMove() {
         // impulsive movement
         if (myImpulse.getX() != 0D || myImpulse.getY() != 0D) {
-            System.out.println("Net Impulse: " + myImpulse);
             setLinearVelocity(getLinearVelocity().addNew(myImpulse.divNew(myMass)));
         }
         if (myAngularImpulse != 0F) {
@@ -171,10 +179,12 @@ public abstract class Rigid2D extends GameObject {
      * Update after everything else. Used to reset fields.
      */
     protected void postMove() {
+        myGhostAngularVel = 0;
         myAngularImpulse = 0;
         myImpulse.set(0, 0);
         myAngularAccel = 0;
         myAcceleration.set(0, 0);
+        myGhostVelocity.set(0, 0);
         myCollisions = 0;
         if (Math.abs(myAngularPos) > VMath.PI_2) {
             double adjustment = -VMath.PI_2 * Math.signum(myAngularPos);

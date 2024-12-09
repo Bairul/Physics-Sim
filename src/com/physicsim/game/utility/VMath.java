@@ -208,6 +208,11 @@ public final class VMath {
         return theStart.addNew(startToEnd);
     }
 
+    public static Vector2 project(final Vector2 theA, final Vector2 theB) {
+        final double scale = theA.dotProduct(theB) / theB.dotProduct(theB);
+        return theB.mulNew(scale);
+    }
+
     /**
      * Rotates a vector by some radian about an origin vector counter-clockwise.
      * @param theVector  the vector to rotate
