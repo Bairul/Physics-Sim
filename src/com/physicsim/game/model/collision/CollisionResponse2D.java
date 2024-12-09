@@ -31,9 +31,6 @@ public class CollisionResponse2D extends CollisionResponse {
         final double angA = myManifold.getNormal().crossProduct(rA);
         final double angB = myManifold.getNormal().crossProduct(rB);
 
-//        System.out.println("relnorm: " + relNorm);
-//        System.out.println("AngA: " + angA + ", AngB: " + angB);
-
         final double denom = normalSquared * sumInvMassA + (angA * angA / myA.getMoi()) + (myB.hasDynamics() ? (angB * angB / myB.getMoi()) : 0);
         final double impulse = -(1 + COE_RES) * relNorm / denom;
 

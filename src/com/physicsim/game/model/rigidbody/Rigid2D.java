@@ -1,6 +1,7 @@
 package com.physicsim.game.model.rigidbody;
 
 import com.physicsim.game.model.GameObject;
+import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.utility.VMath;
 import com.physicsim.game.utility.Vector2;
 
@@ -67,6 +68,12 @@ public abstract class Rigid2D extends GameObject {
     public void applyLinearForce(final Vector2 theForce) {
         // F = MA --> A = F / M
         myCache.set(theForce);
+        myCache.div(myMass);
+        myAcceleration.add(myCache);
+    }
+
+    public void applyGravity() {
+        myCache.set(GameWorld.GRAVITY);
         myCache.div(myMass);
         myAcceleration.add(myCache);
     }
@@ -144,9 +151,6 @@ public abstract class Rigid2D extends GameObject {
         myAngularImpulse += angImp;
 
         myGhostAngularVel += getAngularVelocity() + angImp / myMoi;
-        final Vector2 v = theDistance.subNew(myPosition).perpNew().mulNew(myGhostAngularVel);
-//        System.out.println(VMath.project(v, theDirection).getMagnitude());
-
     }
 
     @Override

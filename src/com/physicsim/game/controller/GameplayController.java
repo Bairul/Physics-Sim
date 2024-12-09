@@ -22,7 +22,6 @@ public class GameplayController {
     private final GameWorld myGameWorld;
     /** A reusable vector to save some memory. */
     private final CollisionManager myCollisionManager;
-    private final Vector2 myCache;
     public static boolean debugMode;
 
     /**
@@ -33,76 +32,11 @@ public class GameplayController {
         myInputs = theInput;
         myGameWorld = new GameWorld();
         myCollisionManager = new CollisionManager(myGameWorld);
-        myCache = new Vector2();
+        final Vector2 myCache = new Vector2();
         // boundary will be at the center of the game screen
         GameWorld.SCREEN_BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         GameWorld.GRAVITY.set(0, 0.1);
         debugMode = false;
-
-//        myCache.set(0, -150);
-//        RegularPolygon b3 = new RegularPolygon(myCache, 4, 100, 100);
-//        b3.setDynamics(true);
-//        b3.rotate(Math.toRadians(45));
-//        myCache.set(0, 1);
-//        b3.setLinearVelocity(myCache);
-//        myGameWorld.addDynamicObject(b3);
-
-        // flat 2 static
-//        myCache.set(-100.5, 100);
-//        myCache.set(-140, 100);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1);
-//        b.rotate(Math.toRadians(45));
-//        myGameWorld.addStaticObject(b);
-//        myCache.set(100.5, 100);
-//        myCache.set(110, 100);
-//        RegularPolygon b2 = new RegularPolygon(myCache, 4, 200, 1);
-//        b2.rotate(Math.toRadians(45));
-//        myGameWorld.addStaticObject(b2);
-
-        // flat 1 static
-//        myCache.set(-149, 100);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1);
-//        b.rotate(Math.toRadians(45));
-//        myGameWorld.addStaticObject(b);
-
-        // diagonal 2 static
-//        myCache.set(-150, 100);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1000);
-//        myGameWorld.addStaticObject(b);
-//        myCache.set(150, 100);
-//        RegularPolygon b2 = new RegularPolygon(myCache, 4, 200, 1000);
-//        myGameWorld.addStaticObject(b2);
-
-        // flat 2 dynamic
-//        myCache.set(-60, 100);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 100, 10000);
-//        b.setDynamics(true);
-//        b.rotate(Math.toRadians(45));
-//        myGameWorld.addDynamicObject(b);
-//        myCache.set(60, 100);
-//        RegularPolygon b2 = new RegularPolygon(myCache, 4, 100, 10000);
-//        b2.setDynamics(true);
-//        b2.rotate(Math.toRadians(45));
-//        myGameWorld.addDynamicObject(b2);
-
-        // stack 2 dynamic
-//        myCache.set(0, 100);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 100, 10000);
-//        b.setDynamics(true);
-//        b.rotate(Math.toRadians(45));
-//        myGameWorld.addDynamicObject(b);
-//        myCache.set(0, 150);
-//        RegularPolygon b2 = new RegularPolygon(myCache, 4, 100, 10000);
-//        b2.setDynamics(true);
-//        b2.rotate(Math.toRadians(45));
-//        myGameWorld.addDynamicObject(b2);
-
-        // flat 1 dynamic
-//        myCache.set(0, 100);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 50000);
-//        b.rotate(Math.toRadians(45));
-//        b.setDynamics(true);
-//        myGameWorld.addDynamicObject(b);
 
         // walls
         myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
@@ -125,15 +59,17 @@ public class GameplayController {
             debugMode = !debugMode;
         }
 
+        // create object when mouse is pressed
         if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
-            System.out.println(myInputs.getMousePos());
-            RigidCircle c = new RigidCircle(myInputs.getMousePos(), 50, 1);
+            int l = (int) (Math.random() * 5) + 2;
+            Rigid2D c;
+            if (l <= 2) {
+                c = new RigidCircle(myInputs.getMousePos(), 50, 1);
+            } else {
+                c = new RegularPolygon(myInputs.getMousePos(), l, 50, 1);
+            }
             c.setDynamics(true);
             myGameWorld.addDynamicObject(c);
-
-//            RigidBody c = new RegularPolygon(myInputs.getMousePos(), 5, 50, 2);
-//            c.setDynamics(true);
-//            myGameWorld.addDynamicObject(c);
         }
 
         if (myInputs.getKeyboard().isKeyHeld(KeyType.Space)) {
@@ -149,7 +85,7 @@ public class GameplayController {
         int index = 0;
         for (final GameObject dynObject : myGameWorld.getDynamicObjects())  {
             if (dynObject instanceof final Rigid2D p) {
-                p.applyLinearForce(GameWorld.GRAVITY);
+                p.applyGravity();
                 myCollisionManager.detectCollisions(p, index);
             }
             index++;
