@@ -1,4 +1,4 @@
-package com.physicsim.game.controller;
+package com.physicsim.game;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

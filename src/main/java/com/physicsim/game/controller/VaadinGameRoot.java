@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class VaadinGameRoot {
-    private static final int FPS = 60; // Target frames per second
+    private static final int FPS = 60;
     private final Div gameCanvas;
     private final ScheduledExecutorService executorService;
     private boolean isRunning;
@@ -31,7 +31,6 @@ public class VaadinGameRoot {
                 tick();
                 render();
             } catch (Exception e) {
-                // Log exceptions to avoid crashing the executor
                 e.printStackTrace();
             }
         }, 0, 1000 / FPS, TimeUnit.MILLISECONDS);
@@ -51,19 +50,18 @@ public class VaadinGameRoot {
      * Update the game state.
      */
     private void tick() {
-        // Add game state update logic here
-        System.out.println("Game state updated at: " + System.currentTimeMillis());
+        // ticking works
     }
 
     /**
      * Render the game state to the UI.
      */
     private void render() {
-        // Render logic here
-        UI.getCurrent().access(() -> {
-            // Example: Displaying current time as the game's "state"
-            gameCanvas.setText("Game rendered at: " + System.currentTimeMillis());
-        });
+//        if (UI.getCurrent() != null) {
+//            UI.getCurrent().access(() -> {
+//                gameCanvas.setText("Game rendered at: " + System.currentTimeMillis());
+//            });
+//        }
     }
 }
 
