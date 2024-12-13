@@ -7,21 +7,29 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
+/**
+ * View that first starts.
+ *
+ * @author Bairu Li
+ */
 @Route("")
 public class MainView extends VerticalLayout {
     /** The scale of the canvas. */
     private static final int SCALE = 80;
+    /** Reference to the game root to start and stop it. */
     private final VaadinGameRoot gameRoot;
 
+    /**
+     * Constructs main view.
+     */
     public MainView() {
         // creates the game canvas and set the aspect ratio, default is 16:9
         final Vector2 vector = new Vector2(16, 9);
         vector.mul(SCALE);
+        final DrawCanvas canvas = new DrawCanvas(vector.intX(), vector.intY());
 
         setWidth(vector.intX() + "px");
         setHeight(vector.intY() + "px");
-
-        final DrawCanvas canvas = new DrawCanvas(vector.intX(), vector.intY());
         add(canvas);
 
         gameRoot = new VaadinGameRoot(canvas);

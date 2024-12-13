@@ -9,7 +9,6 @@ import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.view.DrawCanvas;
 
 import java.awt.Color;
-import java.awt.Graphics;
 
 /**
  * GameObjectRenderer provides functionality to render all kinds of Game objects. This is a
@@ -41,12 +40,12 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
 
     @Override
     public Void visit(final Particle theEntity) {
-//        final int x = myOrigin.intX() + theEntity.getPosition().intX();
-//        final int y = myOrigin.intY() + theEntity.getPosition().intY();
-//        myGraphics.setColor(Color.black);
-//        myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
-//        myGraphics.setColor(Color.yellow);
-//        myGraphics.fillOval(x - theEntity.getRadius() + 1,y - theEntity.getRadius() + 1, theEntity.getDiameter() - 2, theEntity.getDiameter() - 2);
+        final int x = myOrigin.intX() + theEntity.getPosition().intX();
+        final int y = myOrigin.intY() + theEntity.getPosition().intY();
+        myGraphics.setColor(Color.black);
+        myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
+        myGraphics.setColor(Color.yellow);
+        myGraphics.fillOval(x - theEntity.getRadius() + 1,y - theEntity.getRadius() + 1, theEntity.getDiameter() - 2, theEntity.getDiameter() - 2);
 
         // draw velocity tail
 //        myGraphics.setColor(Color.red);
@@ -84,7 +83,6 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
 
     @Override
     public Void visit(final RigidCircle theEntity) {
-//        System.out.println("drawing");
         System.out.println(theEntity.getCenterOfMass());
         myGraphics.setColor(Color.black);
         myGraphics.drawOval(

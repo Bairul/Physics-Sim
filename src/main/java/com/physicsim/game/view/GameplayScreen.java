@@ -5,8 +5,6 @@ import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.visitor.GameObjectRenderer;
 
-import java.awt.Graphics;
-
 /**
  * The gameplay screen where the user plays on.
  *
@@ -44,7 +42,6 @@ public class GameplayScreen extends GameScreen {
      */
     @Override
     public void render(final DrawCanvas theG) {
-        // must have update graphics
         myRenderer.updateGraphics(theG);
         final GameWorld gw = myGameplayController.getGameWorld();
 

@@ -2,7 +2,6 @@ package com.physicsim.game.controller.input;
 
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.view.DrawCanvas;
-import com.physicsim.game.view.GameCanvas;
 
 /**
  * Class for all the inputs like mouse and keyboard.

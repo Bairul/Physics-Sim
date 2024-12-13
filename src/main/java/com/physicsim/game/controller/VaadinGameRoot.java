@@ -5,29 +5,35 @@ import com.physicsim.game.view.DrawCanvas;
 import com.physicsim.game.view.GameScreen;
 import com.physicsim.game.view.GameplayScreen;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.page.AppShellConfigurator;
-import com.vaadin.flow.component.page.Push;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Main class that starts a thread and runs the program.
+ *
+ * @author Bairu Li
+ */
 public class VaadinGameRoot {
     /** The default frames per second that the game runs on. */
     private static final int FPS = 60;
-    private final DrawCanvas gameCanvas;
-    private UI ui;
-    private final ScheduledExecutorService executorService;
+    /** Game canvas for graphics. */
+    private final DrawCanvas myCanvas;
+    /** Spring boot service that creates the game loop. */
+    private final ScheduledExecutorService myExecutorService;
+    /** Reference to the Ui for graphics at the start. */
+    private UI myUi;
 
     public VaadinGameRoot(DrawCanvas canvas) {
-        gameCanvas = canvas;
-        executorService = Executors.newSingleThreadScheduledExecutor();
+        myCanvas = canvas;
+        myExecutorService = Executors.newSingleThreadScheduledExecutor();
 
-        Vector2 origin = new Vector2(gameCanvas.getCanvasWidth(), gameCanvas.getCanvasHeight());
+        // set origin to be the center of the canvas
+        final Vector2 origin = new Vector2(myCanvas.getCanvasWidth(), myCanvas.getCanvasHeight());
         origin.mul(0.5F);
         GameScreen.setOrigin(origin);
-        GameScreen.setCanvas(gameCanvas);
+        GameScreen.setCanvas(myCanvas);
 
         // create and set the screen of the game
         final GameScreen myGameplayScreen = new GameplayScreen("GameplayScreen");
@@ -38,13 +44,13 @@ public class VaadinGameRoot {
      * Starts the game loop.
      */
     public void start() {
-        ui = UI.getCurrent();
-        executorService.scheduleAtFixedRate(() -> {
+        myUi = UI.getCurrent();
+        myExecutorService.scheduleAtFixedRate(() -> {
             try {
                 tick();
                 render();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (final Exception theE) {
+                theE.printStackTrace();
             }
         }, 0, 1000 / FPS, TimeUnit.MILLISECONDS);
     }
@@ -53,7 +59,7 @@ public class VaadinGameRoot {
      * Stops the game loop.
      */
     public void stop() {
-        executorService.shutdownNow();
+        myExecutorService.shutdownNow();
     }
 
     /**
@@ -69,17 +75,16 @@ public class VaadinGameRoot {
      * Render the game state to the UI.
      */
     private void render() {
-        if (ui != null) {
-            ui.access(() -> {
-                gameCanvas.clearRect(0,0, gameCanvas.getCanvasWidth(), gameCanvas.getCanvasHeight());
+        if (myUi != null) {
+            myUi.access(() -> {
+                myCanvas.clearRect(0,0, myCanvas.getCanvasWidth(), myCanvas.getCanvasHeight());
 
                 if (GameScreen.getCurrentScreen() != null) {
-                    GameScreen.getCurrentScreen().render(gameCanvas);
+                    GameScreen.getCurrentScreen().render(myCanvas);
                 }
             });
-//            ui.push();
         } else {
-            System.err.println("UI.getCurrent() is null. Cannot render.");
+            System.err.println("UI.getCurrent() is null. Cannot render :(");
         }
     }
 }
