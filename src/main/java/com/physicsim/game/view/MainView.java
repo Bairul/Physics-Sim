@@ -1,28 +1,28 @@
 package com.physicsim.game.view;
 
 import com.physicsim.game.controller.VaadinGameRoot;
+import com.physicsim.game.utility.Vector2;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
 @Route("")
 public class MainView extends VerticalLayout {
+    /** The scale of the canvas. */
+    private static final int SCALE = 80;
     private final VaadinGameRoot gameRoot;
 
     public MainView() {
-        setWidth("1280px");
-        setHeight("720px");
+        // creates the game canvas and set the aspect ratio, default is 16:9
+        final Vector2 vector = new Vector2(16, 9);
+        vector.mul(SCALE);
 
-        DrawCanvas canvas = new DrawCanvas(1280, 720);
+        setWidth(vector.intX() + "px");
+        setHeight(vector.intY() + "px");
+
+        final DrawCanvas canvas = new DrawCanvas(vector.intX(), vector.intY());
         add(canvas);
-
-        // Draw some shapes
-//        canvas.drawLine(50, 50, 200, 200, "black", 2);
-//        canvas.drawRectangle(100, 100, 200, 100, "red", "transparent");
-//        canvas.drawCircle(400, 300, 50, "blue", "yellow");
-//        canvas.drawPolygon("300,100 400,200 500,100", "green", "lightgreen");
 
         gameRoot = new VaadinGameRoot(canvas);
     }

@@ -43,7 +43,7 @@ public final class GameRoot implements Runnable {
         vector.set(myGameCanvas.getWidth(), myGameCanvas.getHeight());
         vector.mul(0.5F);
         GameScreen.setOrigin(vector);
-        GameScreen.setCanvas(myGameCanvas);
+//        GameScreen.setCanvas(myGameCanvas);
 
         // create and set the screen of the game
         final GameScreen myGameplayScreen = new GameplayScreen("GameplayScreen");
@@ -92,7 +92,7 @@ public final class GameRoot implements Runnable {
         g.clearRect(0,0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
 
         if (GameScreen.getCurrentScreen() != null) {
-            GameScreen.getCurrentScreen().render(g);
+//            GameScreen.getCurrentScreen().render(g);
         }
 
         g.dispose();

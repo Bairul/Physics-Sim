@@ -43,7 +43,7 @@ public class GameplayScreen extends GameScreen {
      * @param theG the graphics
      */
     @Override
-    public void render(final Graphics theG) {
+    public void render(final DrawCanvas theG) {
         // must have update graphics
         myRenderer.updateGraphics(theG);
         final GameWorld gw = myGameplayController.getGameWorld();
