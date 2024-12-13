@@ -1,9 +1,9 @@
 package com.physicsim.game.controller.input;
 
 import com.physicsim.game.utility.Vector2;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Div;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @author Bairu Li
  */
-public class Mouse extends MouseAdapter {
+public class Mouse extends Div {
     private final Vector2 myOrigin;
     /** The X and Y coordinate of the mouse. */
     private final Vector2 myPosition;
@@ -23,16 +23,18 @@ public class Mouse extends MouseAdapter {
     /** Storing the state when a mouse button is being held down. */
     private final Set<Integer> myButtonHelds;
 
-
     /**
      * Constructor for mouse.
      */
-    public Mouse(final Vector2 theOrigin) {
+    public Mouse(final Vector2 size, Vector2 theOrigin) {
         myPosition = new Vector2();
         myOrigin = new Vector2(theOrigin);
         myButtonDowns = new boolean[8];
         myButtonUps = new boolean[8];
         myButtonHelds = new HashSet<>();
+
+        setWidth(size.intX() + "px");
+        setHeight(size.intY() + "px");
     }
 
     /**
@@ -50,11 +52,11 @@ public class Mouse extends MouseAdapter {
      */
     private int enumToInt(final ClickType theClick) {
         return switch (theClick) {
-            case LeftClick -> MouseEvent.BUTTON1;
-            case RightClick -> MouseEvent.BUTTON2;
-            case MiddleClick -> MouseEvent.BUTTON3;
-            case SideButton1 -> 4;
-            case SideButton2 -> 5;
+            case LeftClick -> 0;
+            case RightClick -> 1;
+            case MiddleClick -> 2;
+            case SideButton1 -> 3;
+            case SideButton2 -> 4;
         };
     }
 
@@ -95,26 +97,27 @@ public class Mouse extends MouseAdapter {
         return myButtonDowns[button];
     }
 
-    @Override
-    public void mouseDragged(final MouseEvent theE) {
-        myPosition.set(theE.getX() - myOrigin.getX(), theE.getY() - myOrigin.getY());
-    }
+    public void bindToComponent(Component main) {
+        main.getElement().addEventListener("mousedown", event -> {
+            int button = (int) event.getEventData().getNumber("event.button");
 
-    @Override
-    public void mouseMoved(final MouseEvent theE) {
-        myPosition.set(theE.getX() - myOrigin.getX(), theE.getY() - myOrigin.getY());
-    }
+            myButtonHelds.add(button);
+            myButtonUps[button] = false;
+        }).addEventData("event.button");
 
-    @Override
-    public void mousePressed(final MouseEvent theE) {
-        myButtonHelds.add(theE.getButton());
-        myButtonUps[theE.getButton()] = false;
-    }
+        main.getElement().addEventListener("mouseup", event -> {
+            int button = (int) event.getEventData().getNumber("event.button");
 
-    @Override
-    public void mouseReleased(final MouseEvent theE) {
-        myButtonHelds.remove(theE.getButton());
-        myButtonDowns[theE.getButton()] = false;
-        myButtonUps[theE.getButton()] = true;
+            myButtonHelds.remove(button);
+            myButtonDowns[button] = false;
+            myButtonUps[button] = true;
+        }).addEventData("event.button");
+
+        main.getElement().addEventListener("mousemove", event -> {
+            double x = event.getEventData().getNumber("event.clientX");
+            double y = event.getEventData().getNumber("event.clientY");
+
+            myPosition.set(x - myOrigin.getX(), y - myOrigin.getY());
+        }).addEventData("event.clientX").addEventData("event.clientY");
     }
 }

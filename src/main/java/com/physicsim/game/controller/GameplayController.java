@@ -16,20 +16,18 @@ import com.physicsim.game.view.GameScreen;
  * @author Bairu Li
  */
 public class GameplayController {
-    /** The user inputs. */
-    private final InputController myInputs;
     /** World that holds entities and other stuff. */
     private final GameWorld myGameWorld;
     /** A reusable vector to save some memory. */
     private final CollisionManager myCollisionManager;
+    private final InputController myInputs;
     public static boolean debugMode;
 
     /**
      * Constructs the gameplay controller.
-     * @param theInput the input controller
      */
-    public GameplayController(final InputController theInput) {
-        myInputs = theInput;
+    public GameplayController(final InputController theInputs) {
+        myInputs = theInputs;
         myGameWorld = new GameWorld();
         myCollisionManager = new CollisionManager(myGameWorld);
         final Vector2 myCache = new Vector2();
@@ -48,16 +46,6 @@ public class GameplayController {
 
         myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY() - 50);
         myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
-
-        myCache.set(0, 0);
-        Rigid2D c = new RigidCircle(myCache, 50, 1);
-        c.setDynamics(true);
-        myGameWorld.addDynamicObject(c);
-
-        myCache.set(10, -100);
-        Rigid2D c2 = new RigidCircle(myCache, 50, 1);
-        c2.setDynamics(true);
-        myGameWorld.addDynamicObject(c2);
     }
 
     /**
@@ -69,18 +57,18 @@ public class GameplayController {
 //            debugMode = !debugMode;
 //        }
 //
-//        // create object when mouse is pressed
-//        if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
-//            int l = (int) (Math.random() * 5) + 2;
-//            Rigid2D c;
-//            if (l <= 2) {
-//                c = new RigidCircle(myInputs.getMousePos(), 50, 1);
-//            } else {
-//                c = new RegularPolygon(myInputs.getMousePos(), l, 50, 1);
-//            }
-//            c.setDynamics(true);
-//            myGameWorld.addDynamicObject(c);
-//        }
+        // create object when mouse is pressed
+        if (myInputs.getMouse().isButtonDown(ClickType.LeftClick)) {
+            int l = (int) (Math.random() * 5) + 2;
+            Rigid2D c;
+            if (l <= 2) {
+                c = new RigidCircle(myInputs.getMousePos(), 50, 1);
+            } else {
+                c = new RegularPolygon(myInputs.getMousePos(), l, 50, 1);
+            }
+            c.setDynamics(true);
+            myGameWorld.addDynamicObject(c);
+        }
 //
 //        if (myInputs.getKeyboard().isKeyHeld(KeyType.Space)) {
 //            myGameWorld.clearDynamicObjects();

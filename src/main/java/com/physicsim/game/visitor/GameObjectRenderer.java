@@ -83,7 +83,6 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
 
     @Override
     public Void visit(final RigidCircle theEntity) {
-        System.out.println(theEntity.getCenterOfMass());
         myGraphics.setColor(Color.black);
         myGraphics.drawOval(
                 myOrigin.intX() + theEntity.getCenterOfMass().intX() - (int) theEntity.getRadius(),

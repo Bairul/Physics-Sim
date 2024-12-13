@@ -21,10 +21,10 @@ public class GameplayScreen extends GameScreen {
      *
      * @param theName name of screen
      */
-    public GameplayScreen(final String theName) {
+    public GameplayScreen(final String theName, final InputController theInputs) {
         super(theName);
 
-        myGameplayController = new GameplayController(new InputController(myCanvas, myOrigin));
+        myGameplayController = new GameplayController(theInputs);
         myRenderer = new GameObjectRenderer(myOrigin);
     }
 

@@ -1,6 +1,7 @@
 package com.physicsim.game.view;
 
 import com.physicsim.game.controller.VaadinGameRoot;
+import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.utility.Vector2;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
@@ -32,7 +33,12 @@ public class MainView extends VerticalLayout {
         setHeight(vector.intY() + "px");
         add(canvas);
 
-        gameRoot = new VaadinGameRoot(canvas);
+        // set origin to be the center of the canvas
+        vector.mul(0.5F);
+        final InputController input = new InputController(canvas, vector);
+        input.getMouse().bindToComponent(this);
+
+        gameRoot = new VaadinGameRoot(canvas, vector, input);
     }
 
     @Override

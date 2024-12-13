@@ -1,5 +1,6 @@
 package com.physicsim.game.controller;
 
+import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.view.DrawCanvas;
 import com.physicsim.game.view.GameScreen;
@@ -25,18 +26,15 @@ public class VaadinGameRoot {
     /** Reference to the Ui for graphics at the start. */
     private UI myUi;
 
-    public VaadinGameRoot(DrawCanvas canvas) {
+    public VaadinGameRoot(final DrawCanvas canvas, final Vector2 theOrigin, final InputController input) {
         myCanvas = canvas;
         myExecutorService = Executors.newSingleThreadScheduledExecutor();
 
-        // set origin to be the center of the canvas
-        final Vector2 origin = new Vector2(myCanvas.getCanvasWidth(), myCanvas.getCanvasHeight());
-        origin.mul(0.5F);
-        GameScreen.setOrigin(origin);
+        GameScreen.setOrigin(theOrigin);
         GameScreen.setCanvas(myCanvas);
 
         // create and set the screen of the game
-        final GameScreen myGameplayScreen = new GameplayScreen("GameplayScreen");
+        final GameScreen myGameplayScreen = new GameplayScreen("GameplayScreen", input);
         GameScreen.setCurrentScreen(myGameplayScreen);
     }
 
