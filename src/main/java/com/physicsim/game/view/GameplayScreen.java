@@ -5,8 +5,6 @@ import com.physicsim.game.controller.input.InputController;
 import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.visitor.GameObjectRenderer;
 
-import java.awt.Graphics;
-
 /**
  * The gameplay screen where the user plays on.
  *
@@ -28,6 +26,7 @@ public class GameplayScreen extends GameScreen {
 
         myGameplayController = new GameplayController(new InputController(myCanvas, myOrigin));
         myRenderer = new GameObjectRenderer(myOrigin);
+        myRenderer.updateGraphics(myCanvas);
     }
 
     /**
@@ -40,12 +39,9 @@ public class GameplayScreen extends GameScreen {
 
     /**
      * Renders the gameplay by updating the graphics and drawing each game object.
-     * @param theG the graphics
      */
     @Override
-    public void render(final Graphics theG) {
-        // must have update graphics
-        myRenderer.updateGraphics(theG);
+    public void render() {
         final GameWorld gw = myGameplayController.getGameWorld();
 
         gw.getDynamicObjects().forEach(go -> go.accept(myRenderer));

@@ -6,9 +6,8 @@ import com.physicsim.game.model.rigidbody.RigidBody;
 import com.physicsim.game.model.rigidbody.RigidBodyEdge;
 import com.physicsim.game.model.rigidbody.RigidCircle;
 import com.physicsim.game.utility.Vector2;
-
-import java.awt.Color;
-import java.awt.Graphics;
+import com.physicsim.game.view.Color;
+import com.physicsim.game.view.DrawCanvas;;
 
 /**
  * GameObjectRenderer provides functionality to render all kinds of Game objects. This is a
@@ -17,7 +16,7 @@ import java.awt.Graphics;
  */
 public class GameObjectRenderer extends GameObjectVisitor<Void> {
     /** The graphics for drawing. */
-    private Graphics myGraphics;
+    private DrawCanvas myGraphics;
     /** The origin of the screen. */
     private final Vector2 myOrigin;
 
@@ -34,7 +33,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      * Updates the graphics.
      * @param theG the graphics
      */
-    public void updateGraphics(final Graphics theG) {
+    public void updateGraphics(final DrawCanvas theG) {
         myGraphics = theG;
     }
 
@@ -42,9 +41,9 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     public Void visit(final Particle theEntity) {
         final int x = myOrigin.intX() + theEntity.getPosition().intX();
         final int y = myOrigin.intY() + theEntity.getPosition().intY();
-        myGraphics.setColor(Color.black);
+        myGraphics.setColor(Color.BLACK);
         myGraphics.fillOval(x - theEntity.getRadius(),y - theEntity.getRadius(), theEntity.getDiameter(), theEntity.getDiameter());
-        myGraphics.setColor(Color.yellow);
+        myGraphics.setColor(Color.YELLOW);
         myGraphics.fillOval(x - theEntity.getRadius() + 1,y - theEntity.getRadius() + 1, theEntity.getDiameter() - 2, theEntity.getDiameter() - 2);
 
         // draw velocity tail
@@ -59,14 +58,14 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
         final int y = myOrigin.intY() + theEntity.getStartPoint().getPosition().intY();
         final int x2 = myOrigin.intX() + theEntity.getEndPoint().getPosition().intX();
         final int y2 = myOrigin.intY() + theEntity.getEndPoint().getPosition().intY();
-        myGraphics.setColor(Color.black);
+        myGraphics.setColor(Color.BLACK);
         myGraphics.drawLine(x, y, x2, y2);
         return null;
     }
 
     @Override
     public Void visit(final RigidBody theEntity) {
-        myGraphics.setColor(Color.black);
+        myGraphics.setColor(Color.BLACK);
         for (final RigidBodyEdge edge : theEntity.getEdges()) {
             myGraphics.drawLine(
                     myOrigin.intX() + edge.getStart().intX(),
@@ -75,7 +74,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
                     myOrigin.intY() + edge.getEnd().intY());
 
         }
-        myGraphics.setColor(Color.black);
+        myGraphics.setColor(Color.BLACK);
         myGraphics.drawLine(myOrigin.intX() + theEntity.getCenterOfMass().intX(), myOrigin.intY() + theEntity.getCenterOfMass().intY(), myOrigin.intX() + theEntity.getVertices()[0].intX(), myOrigin.intY() + theEntity.getVertices()[0].intY());
         myGraphics.fillOval(myOrigin.intX() + theEntity.getCenterOfMass().intX() - 2, myOrigin.intY() + theEntity.getCenterOfMass().intY() - 2, 4, 4);
         return null;
@@ -83,7 +82,7 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
 
     @Override
     public Void visit(final RigidCircle theEntity) {
-        myGraphics.setColor(Color.black);
+        myGraphics.setColor(Color.BLACK);
         myGraphics.drawOval(
                 myOrigin.intX() + theEntity.getCenterOfMass().intX() - (int) theEntity.getRadius(),
                 myOrigin.intY() + theEntity.getCenterOfMass().intY() - (int) theEntity.getRadius(),

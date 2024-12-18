@@ -1,7 +1,7 @@
 package com.physicsim.game.controller.input;
 
 import com.physicsim.game.utility.Vector2;
-import com.physicsim.game.view.GameCanvas;
+import com.physicsim.game.view.DrawCanvas;
 
 /**
  * Class for all the inputs like mouse and keyboard.
@@ -23,16 +23,16 @@ public class InputController {
      * @param theCanvas the game canvas
      * @param theOrigin the origin
      */
-    public InputController(final GameCanvas theCanvas, final Vector2 theOrigin) {
-        myMouse = new Mouse(theOrigin);
-        theCanvas.getCanvas().addMouseListener(myMouse);
-        theCanvas.getCanvas().addMouseMotionListener(myMouse);
-        theCanvas.getFrame().addMouseListener(myMouse);
-        theCanvas.getFrame().addMouseMotionListener(myMouse);
+    public InputController(final DrawCanvas theCanvas, final Vector2 theOrigin) {
+//        myMouse = new Mouse(theOrigin);
+//        theCanvas.getCanvas().addMouseListener(myMouse);
+//        theCanvas.getCanvas().addMouseMotionListener(myMouse);
+//        theCanvas.getFrame().addMouseListener(myMouse);
+//        theCanvas.getFrame().addMouseMotionListener(myMouse);
 
-        myKeyboard = new Keyboard();
-        theCanvas.getCanvas().addKeyListener(myKeyboard);
-        theCanvas.getFrame().addKeyListener(myKeyboard);
+//        myKeyboard = new Keyboard();
+//        theCanvas.getCanvas().addKeyListener(myKeyboard);
+//        theCanvas.getFrame().addKeyListener(myKeyboard);
     }
 
     /**

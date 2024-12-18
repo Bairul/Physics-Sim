@@ -14,7 +14,7 @@ public abstract class GameScreen {
     /** Tracks the current screen that the game is on. It can change to potentially different screens like menu or options. */
     private static GameScreen myCurrentScreen;
     /** Size of the screen in case I want to change it. */
-    protected static GameCanvas myCanvas;
+    protected static DrawCanvas myCanvas;
     /** The origin of the screen. Used to offset the origin in the top-left corner of the screen. */
     protected static Vector2 myOrigin;
 
@@ -52,7 +52,7 @@ public abstract class GameScreen {
      * Sets the canvas.
      * @param theCanvas the game canvas
      */
-    public static void setCanvas(final GameCanvas theCanvas) {
+    public static void setCanvas(final DrawCanvas theCanvas) {
         myCanvas = theCanvas;
     }
 
@@ -109,7 +109,6 @@ public abstract class GameScreen {
 
     /**
      * Render method.
-     * @param theG the graphics
      */
-    public abstract void render(final Graphics theG);
+    public abstract void render();
 }

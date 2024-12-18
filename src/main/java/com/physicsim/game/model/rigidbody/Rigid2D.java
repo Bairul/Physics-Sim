@@ -1,6 +1,7 @@
 package com.physicsim.game.model.rigidbody;
 
 import com.physicsim.game.model.GameObject;
+import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.utility.VMath;
 import com.physicsim.game.utility.Vector2;
 
@@ -53,6 +54,12 @@ public abstract class Rigid2D extends GameObject {
      */
     public void setDynamics(final boolean theDynamics) {
         hasDynamics = theDynamics;
+    }
+
+    public void applyGravity() {
+        myCache.set(GameWorld.GRAVITY);
+        myCache.div(myMass);
+        myAcceleration.add(myCache);
     }
 
     // ************========  linear physics  ========************ \\
