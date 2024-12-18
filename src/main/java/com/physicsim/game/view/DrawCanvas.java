@@ -12,17 +12,18 @@ public class DrawCanvas {
     /** The height of the window screen. */
     private final int myHeight;
     private final CanvasRenderingContext2D context;
+    private final HTMLCanvasElement myCanvas;
 
     public DrawCanvas(final Vector2 theRatio, final int theScale) {
         myWidth = theRatio.intX() * theScale;
         myHeight = theRatio.intY() * theScale;
 
         HTMLDocument document = Window.current().getDocument();
-        HTMLCanvasElement canvas = (HTMLCanvasElement) document.createElement("canvas");
-        canvas.setWidth(myWidth);
-        canvas.setHeight(myHeight);
-        document.getBody().appendChild(canvas);
-        context = (CanvasRenderingContext2D) canvas.getContext("2d");
+        myCanvas = (HTMLCanvasElement) document.createElement("canvas");
+        myCanvas.setWidth(myWidth);
+        myCanvas.setHeight(myHeight);
+        document.getBody().appendChild(myCanvas);
+        context = (CanvasRenderingContext2D) myCanvas.getContext("2d");
     }
 
     public void setColor(String color) {
@@ -63,6 +64,10 @@ public class DrawCanvas {
         context.arc(0, 0, 1, 0, 2 * Math.PI, false);
         context.restore();
         context.fill();
+    }
+
+    public HTMLCanvasElement getCanvas() {
+        return myCanvas;
     }
 
     /**

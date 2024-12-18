@@ -9,10 +9,7 @@ import com.physicsim.game.view.DrawCanvas;
  * @author Bairu Li
  */
 public class InputController {
-    /** Input from the mouse. */
-    private Mouse myMouse;
-    /** Input from the keyboard. */
-    private Keyboard myKeyboard;
+    private final Mouse mouse;
 
     /**
      * Creates the controller. Adds the mouse and keyboard to the Game Canvas to make it functional.
@@ -20,19 +17,11 @@ public class InputController {
      * <br><br>
      * By default, the mouse origin is in the top-left corner of the screen,
      * but it can be changed to be at the center of the screen.
-     * @param theCanvas the game canvas
      * @param theOrigin the origin
      */
-    public InputController(final DrawCanvas theCanvas, final Vector2 theOrigin) {
-//        myMouse = new Mouse(theOrigin);
-//        theCanvas.getCanvas().addMouseListener(myMouse);
-//        theCanvas.getCanvas().addMouseMotionListener(myMouse);
-//        theCanvas.getFrame().addMouseListener(myMouse);
-//        theCanvas.getFrame().addMouseMotionListener(myMouse);
-
-//        myKeyboard = new Keyboard();
-//        theCanvas.getCanvas().addKeyListener(myKeyboard);
-//        theCanvas.getFrame().addKeyListener(myKeyboard);
+    public InputController(final DrawCanvas canvas, final Vector2 theOrigin) {
+        mouse = new Mouse(theOrigin);
+        mouse.addListenersCanvas(canvas);
     }
 
     /**
@@ -40,7 +29,7 @@ public class InputController {
      * @return the mouse
      */
     public Mouse getMouse() {
-        return myMouse;
+        return mouse;
     }
 
     /**
@@ -49,14 +38,14 @@ public class InputController {
      * @return the mouse's x and y coordinates
      */
     public Vector2 getMousePos() {
-        return  myMouse.getPos();
+        return mouse.getPos();
     }
 
-    /**
-     * Gets the keyboard input.
-     * @return the keyboard
-     */
-    public Keyboard getKeyboard() {
-        return myKeyboard;
-    }
+//    /**
+//     * Gets the keyboard input.
+//     * @return the keyboard
+//     */
+//    public Keyboard getKeyboard() {
+//        return myKeyboard;
+//    }
 }

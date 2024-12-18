@@ -1,9 +1,9 @@
 package com.physicsim.game.controller.input;
 
 import com.physicsim.game.utility.Vector2;
+import com.physicsim.game.view.DrawCanvas;
+import org.teavm.jso.dom.events.Event;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @author Bairu Li
  */
-public class Mouse extends MouseAdapter {
+public class Mouse {
     private final Vector2 myOrigin;
     /** The X and Y coordinate of the mouse. */
     private final Vector2 myPosition;
@@ -50,9 +50,9 @@ public class Mouse extends MouseAdapter {
      */
     private int enumToInt(final ClickType theClick) {
         return switch (theClick) {
-            case LeftClick -> MouseEvent.BUTTON1;
-            case RightClick -> MouseEvent.BUTTON2;
-            case MiddleClick -> MouseEvent.BUTTON3;
+            case LeftClick -> 0;
+            case RightClick -> 1;
+            case MiddleClick -> 2;
             case SideButton1 -> 4;
             case SideButton2 -> 5;
         };
@@ -95,26 +95,31 @@ public class Mouse extends MouseAdapter {
         return myButtonDowns[button];
     }
 
-    @Override
-    public void mouseDragged(final MouseEvent theE) {
-        myPosition.set(theE.getX() - myOrigin.getX(), theE.getY() - myOrigin.getY());
+    private void onMouseDown(Event event) {
+        handleMouseEvent("Mouse Down", event);
     }
 
-    @Override
-    public void mouseMoved(final MouseEvent theE) {
-        myPosition.set(theE.getX() - myOrigin.getX(), theE.getY() - myOrigin.getY());
+    private void handleMouseEvent(String action, Event event) {
+        // Extract mouse properties using JavaScript interop
+        int x = getClientX(event);
+        int y = getClientY(event);
+        System.out.println(action + " at: (" + x + ", " + y + ")");
     }
 
-    @Override
-    public void mousePressed(final MouseEvent theE) {
-        myButtonHelds.add(theE.getButton());
-        myButtonUps[theE.getButton()] = false;
-    }
+    // JavaScript interop to access `clientX`
+    private native int getClientX(Event event) /*-{
+        return event.clientX || 0;
+    }-*/;
 
-    @Override
-    public void mouseReleased(final MouseEvent theE) {
-        myButtonHelds.remove(theE.getButton());
-        myButtonDowns[theE.getButton()] = false;
-        myButtonUps[theE.getButton()] = true;
+    // JavaScript interop to access `clientY`
+    private native int getClientY(Event event) /*-{
+        return event.clientY || 0;
+    }-*/;
+
+    public void addListenersCanvas(DrawCanvas canvas) {
+        canvas.getCanvas().addEventListener("mousedown", this::onMouseDown);
+//        canvas.getCanvas().addEventListener("mouseup", this::onMouseUp);
+//        canvas.getCanvas().addEventListener("mousemove", this::onMouseMove);
+//        canvas.getCanvas().addEventListener("click", this::onMouseClick);
     }
 }
