@@ -1,5 +1,10 @@
 package com.physicsim.game.view;
 
+/**
+ * Custom color class because TeaVm cannot use awt.
+ *
+ * @author Bairu Li
+ */
 public final class Color {
     private Color() {}
     public static final String BLACK = "black";
@@ -12,7 +17,7 @@ public final class Color {
     public static final String CYAN = "cyan";
     public static final String YELLOW = "yellow";
 
-    public static String rgb(int red, int green, int blue) {
+    public static String rgb(final int red, final int green, final int blue) {
         return "rgb(" + red + "," + green + "," + blue + ")";
     }
 }

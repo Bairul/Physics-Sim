@@ -20,7 +20,7 @@ public class InputController {
      * @param theOrigin the origin
      */
     public InputController(final DrawCanvas canvas, final Vector2 theOrigin) {
-        mouse = new Mouse(theOrigin);
+        mouse = new Mouse(new Vector2(canvas.getCanvas().getBoundingClientRect().getLeft(), canvas.getCanvas().getBoundingClientRect().getTop()), theOrigin);
         mouse.addListenersCanvas(canvas);
     }
 

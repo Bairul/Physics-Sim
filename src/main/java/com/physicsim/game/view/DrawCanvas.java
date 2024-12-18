@@ -11,14 +11,23 @@ public class DrawCanvas {
     private final int myWidth;
     /** The height of the window screen. */
     private final int myHeight;
-    private final CanvasRenderingContext2D context;
+    /** The html canvas element. */
     private final HTMLCanvasElement myCanvas;
+    /** The reference to the html canvas context for drawing. */
+    private final CanvasRenderingContext2D context;
 
+    /**
+     * Constructs the canvas class and creates html canvas element.
+     *
+     * @param theRatio the aspect ratio
+     * @param theScale the scale of the screen
+     */
     public DrawCanvas(final Vector2 theRatio, final int theScale) {
         myWidth = theRatio.intX() * theScale;
         myHeight = theRatio.intY() * theScale;
 
-        HTMLDocument document = Window.current().getDocument();
+        // create canvas
+        final HTMLDocument document = Window.current().getDocument();
         myCanvas = (HTMLCanvasElement) document.createElement("canvas");
         myCanvas.setWidth(myWidth);
         myCanvas.setHeight(myHeight);
@@ -26,15 +35,36 @@ public class DrawCanvas {
         context = (CanvasRenderingContext2D) myCanvas.getContext("2d");
     }
 
-    public void setColor(String color) {
-        context.setFillStyle(color);
-        context.setStrokeStyle(color);
+    /**
+     * Sets the current color.
+     *
+     * @param theColor the color as a awt.Color
+     */
+    public void setColor(final String theColor) {
+        context.setFillStyle(theColor);
+        context.setStrokeStyle(theColor);
     }
 
+    /**
+     * Clear a rectangle area. Good for erasing after each frame.
+     *
+     * @param x      the x value
+     * @param y      the y value
+     * @param width  the width of the rect
+     * @param height the height of the rect
+     */
     public void clearRect(int x, int y, int width, int height) {
         context.clearRect(x, y, width, height);
     }
 
+    /**
+     * Draws a line from x1 y1 to x2 y2.
+     *
+     * @param x1 the x value of point 1
+     * @param y1 the y value of point 1
+     * @param x2 the x value of point 2
+     * @param y2 the y value of point 2
+     */
     public void drawLine(int x1, int y1, int x2, int y2) {
         context.beginPath();
         context.moveTo(x1, y1);
@@ -42,10 +72,14 @@ public class DrawCanvas {
         context.stroke();
     }
 
-    public void drawRect(int x, int y, int width, int height) {
-        context.strokeRect(x, y, width, height);
-    }
-
+    /**
+     * Draw an oval (ellipse outline).
+     *
+     * @param x      the x value
+     * @param y      the y value
+     * @param width  the horizontal diameter of oval
+     * @param height the vertical diameter of oval
+     */
     public void drawOval(int x, int y, int width, int height) {
         context.save();
         context.beginPath();
@@ -56,6 +90,14 @@ public class DrawCanvas {
         context.stroke();
     }
 
+    /**
+     * Fill an oval (ellipse filled with color)/
+     *
+     * @param x      the x value
+     * @param y      the y value
+     * @param width  the horizontal diameter of oval
+     * @param height the vertical diameter of oval
+     */
     public void fillOval(int x, int y, int width, int height) {
         context.save();
         context.beginPath();
@@ -66,6 +108,10 @@ public class DrawCanvas {
         context.fill();
     }
 
+    /**
+     * Gets the html canvas element.
+     * @return the canvas
+     */
     public HTMLCanvasElement getCanvas() {
         return myCanvas;
     }

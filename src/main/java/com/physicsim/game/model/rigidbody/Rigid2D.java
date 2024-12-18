@@ -166,7 +166,6 @@ public abstract class Rigid2D extends GameObject {
     protected void preMove() {
         // impulsive movement
         if (myImpulse.getX() != 0D || myImpulse.getY() != 0D) {
-            System.out.println("Net Impulse: " + myImpulse);
             setLinearVelocity(getLinearVelocity().addNew(myImpulse.divNew(myMass)));
         }
         if (myAngularImpulse != 0F) {

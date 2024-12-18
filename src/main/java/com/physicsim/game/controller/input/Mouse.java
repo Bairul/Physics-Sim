@@ -15,6 +15,7 @@ import java.util.Set;
 public class Mouse {
     private final Vector2 myOrigin;
     /** The X and Y coordinate of the mouse. */
+    private final Vector2 myOffset;
     private final Vector2 myPosition;
     /** Whether a mouse button is let go. */
     private final boolean[] myButtonUps;
@@ -27,8 +28,9 @@ public class Mouse {
     /**
      * Constructor for mouse.
      */
-    public Mouse(final Vector2 theOrigin) {
+    public Mouse(final Vector2 theOffset, final Vector2 theOrigin) {
         myPosition = new Vector2();
+        myOffset = new Vector2(theOffset);
         myOrigin = new Vector2(theOrigin);
         myButtonDowns = new boolean[8];
         myButtonUps = new boolean[8];
@@ -51,10 +53,10 @@ public class Mouse {
     private int enumToInt(final ClickType theClick) {
         return switch (theClick) {
             case LeftClick -> 0;
-            case RightClick -> 1;
-            case MiddleClick -> 2;
-            case SideButton1 -> 4;
-            case SideButton2 -> 5;
+            case RightClick -> 2;
+            case MiddleClick -> 1;
+            case SideButton1 -> 3;
+            case SideButton2 -> 4;
         };
     }
 
@@ -95,31 +97,59 @@ public class Mouse {
         return myButtonDowns[button];
     }
 
-    private void onMouseDown(Event event) {
-        handleMouseEvent("Mouse Down", event);
+    // === event handling === \\
+
+    /**
+     * Handles mouse down event.
+     * @param theEvent the mouse event
+     */
+    private void onMouseDown(final Event theEvent) {
+        int button = getMouseButton(theEvent);
+
+        myButtonHelds.add(button);
+        myButtonUps[button] = false;
     }
 
-    private void handleMouseEvent(String action, Event event) {
-        // Extract mouse properties using JavaScript interop
-        int x = getClientX(event);
-        int y = getClientY(event);
-        System.out.println(action + " at: (" + x + ", " + y + ")");
+    /**
+     * Handles mouse up event.
+     * @param theEvent the mouse event
+     */
+    private void onMouseUp(final Event theEvent) {
+        int button = getMouseButton(theEvent);
+
+        myButtonHelds.remove(button);
+        myButtonDowns[button] = false;
+        myButtonUps[button] = true;
     }
 
-    // JavaScript interop to access `clientX`
-    private native int getClientX(Event event) /*-{
-        return event.clientX || 0;
-    }-*/;
+    /**
+     * Handles mouse movement event.
+     * @param theEvent the mouse event
+     */
+    private void onMouseMove(final Event theEvent) {
+        double x = getClientX(theEvent) - myOffset.getX() - myOrigin.getX();
+        double y = getClientY(theEvent) - myOffset.getY() - myOrigin.getY();
 
-    // JavaScript interop to access `clientY`
-    private native int getClientY(Event event) /*-{
-        return event.clientY || 0;
-    }-*/;
+        myPosition.set(x, y);
+    }
 
-    public void addListenersCanvas(DrawCanvas canvas) {
-        canvas.getCanvas().addEventListener("mousedown", this::onMouseDown);
-//        canvas.getCanvas().addEventListener("mouseup", this::onMouseUp);
-//        canvas.getCanvas().addEventListener("mousemove", this::onMouseMove);
-//        canvas.getCanvas().addEventListener("click", this::onMouseClick);
+    // JavaScript interop
+    @org.teavm.jso.JSBody(params = {"event"}, script = "return event.clientX;")
+    private static native int getClientX(final Event event);
+
+    @org.teavm.jso.JSBody(params = {"event"}, script = "return event.clientY;")
+    private static native int getClientY(final Event event);
+
+    @org.teavm.jso.JSBody(params = {"event"}, script = "return event.button;")
+    private static native int getMouseButton(final Event event);
+
+    /**
+     * Adds mouse listener to the canvas.
+     * @param theCanvas the canvas to get html canvas
+     */
+    public void addListenersCanvas(final DrawCanvas theCanvas) {
+        theCanvas.getCanvas().addEventListener("mousedown", this::onMouseDown);
+        theCanvas.getCanvas().addEventListener("mouseup", this::onMouseUp);
+        theCanvas.getCanvas().addEventListener("mousemove", this::onMouseMove);
     }
 }
