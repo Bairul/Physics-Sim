@@ -63,7 +63,6 @@ public final class GameRoot implements Runnable {
         double dt;
         long tickNow;
         long tickPast = System.nanoTime();
-        System.out.println("Preferred Dt: " + (1.0 / FPS));
 
         // the game loop
         while (isRunning) {
@@ -90,7 +89,6 @@ public final class GameRoot implements Runnable {
      * @param dt the time between this tick and previous tick in seconds
      */
     private void tick(final double dt) {
-        System.out.println("Actual Dt: " + dt);
         if (GameScreen.getCurrentScreen() != null) {
             GameScreen.getCurrentScreen().tick();
         }
