@@ -10,9 +10,9 @@ import com.physicsim.game.view.GameCanvas;
  */
 public class InputController {
     /** Input from the mouse. */
-    private Mouse myMouse;
+    private final Mouse myMouse;
     /** Input from the keyboard. */
-    private Keyboard myKeyboard;
+    private final Keyboard myKeyboard;
 
     /**
      * Creates the controller. Adds the mouse and keyboard to the Game Canvas to make it functional.

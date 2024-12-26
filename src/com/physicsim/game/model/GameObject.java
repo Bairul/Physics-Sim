@@ -1,6 +1,5 @@
 package com.physicsim.game.model;
 
-import com.physicsim.game.utility.Vector2;
 import com.physicsim.game.visitor.GameObjectVisitor;
 
 /**

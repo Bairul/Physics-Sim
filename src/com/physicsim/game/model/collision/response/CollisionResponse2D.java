@@ -1,6 +1,6 @@
-package com.physicsim.game.model.collision;
+package com.physicsim.game.model.collision.response;
 
-import com.physicsim.game.model.collision.response.CollisionResponse;
+import com.physicsim.game.model.collision.Manifold;
 import com.physicsim.game.model.rigidbody.Rigid2D;
 import com.physicsim.game.utility.Vector2;
 

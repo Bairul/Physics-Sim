@@ -1,4 +1,6 @@
-package com.physicsim.game.controller;
+package com.physicsim.game;
+
+import com.physicsim.game.controller.GameRoot;
 
 /**
  * Class for launching the program.

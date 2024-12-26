@@ -1,9 +1,10 @@
 package com.physicsim.game.model.collision;
 
-import com.physicsim.game.controller.GameplayController;
 import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.model.collision.response.CollisionResponse;
+import com.physicsim.game.model.collision.response.CollisionResponse1D;
+import com.physicsim.game.model.collision.response.CollisionResponse2D;
 import com.physicsim.game.model.particle.VerletObject;
 import com.physicsim.game.model.rigidbody.RigidBody;
 import com.physicsim.game.model.rigidbody.RigidCircle;
