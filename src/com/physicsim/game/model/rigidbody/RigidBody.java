@@ -3,6 +3,7 @@ package com.physicsim.game.model.rigidbody;
 import com.physicsim.game.model.GameObject;
 import com.physicsim.game.utility.VMath;
 import com.physicsim.game.utility.Vector2;
+import com.physicsim.game.utility.Vector3;
 
 /**
  * Abstract class for a rigid body physics game object. Must be a convex polygon.
@@ -42,65 +43,22 @@ public abstract class RigidBody extends Rigid2D {
         }
         if (!VMath.isConvex(myEdges)) throw new IllegalArgumentException("A rigid body must be convex");
 
-        myMoi = VMath.findMomentOfInertia(myVertices, theCenterOfMass, myMass);
+        myMassMatrix.getData()[2][2] = VMath.findMomentOfInertia(myVertices, theCenterOfMass, theMass);
     }
 
-    /**
-     * Translates the rigid body by a vector while keeping its velocity.
-     * @param theTranslation the vector of translation
-     */
-    @Override
-    public void translate(final Vector2 theTranslation) {
-        translateBody(theTranslation);
-        myOldPosition.add(theTranslation);
-    }
-
-    /**
-     * Rotates the angular position (orientation) of the body by some radian.
-     * @param theOrientation the angular position in radians
-     */
-    @Override
-    public void rotate(final double theOrientation) {
-        rotateBody(theOrientation);
-        myOldAngularPos += theOrientation;
-    }
-
-    /**
-     * Translates the rigid body by a vector.
-     * @param theTranslation the vector of translation
-     */
-    private void translateBody(final Vector2 theTranslation) {
-        for (final Vector2 v : myVertices) {
-            v.add(theTranslation);
-        }
-        myPosition.add(theTranslation);
-    }
-
-    /**
-     * Rotates the rigid body about its center of mass by some radian.
-     * @param theRadians the degree
-     */
-    private void rotateBody(final double theRadians) {
-        for (final Vector2 v : myVertices) {
-            VMath.rotate(v, myPosition, theRadians);
-        }
-        myAngularPos += theRadians;
-    }
-
-    /**
-     * Updates the object using verlet integration. Assumes dt = 1.
-     */
     @Override
     protected void move() {
-        // linear movement
-        myCache.set(myPosition);
-        translateBody(myPosition.subNew(myOldPosition).addNew(myAcceleration));
-        myOldPosition.set(myCache);
+        final Vector2 vel = myVelocity.toVector2();
 
-        // angular movement
-        double current = myAngularPos;
-        rotateBody(myAngularPos - myOldAngularPos + myAngularAccel);
-        myOldAngularPos = current;
+        for (final Vector2 v : myVertices) {
+            v.add(vel);
+        }
+
+        for (final Vector2 v : myVertices) {
+            VMath.rotate(v, new Vector2(myTransform.getX(), myTransform.getY()), myVelocity.getZ());
+        }
+
+        myTransform.add(myVelocity);
     }
 
 

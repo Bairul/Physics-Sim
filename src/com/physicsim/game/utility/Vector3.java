@@ -34,6 +34,17 @@ public class Vector3 {
     }
 
     /**
+     * Constructs a vector given another vector. This copies the x and y components.
+     * @param theV the other vector
+     */
+    public Vector3(final Vector2 theV) {
+        if (theV == null)
+            set(0, 0, 0);
+        else
+            set(theV.getX(), theV.getY(), 0);
+    }
+
+    /**
      * Default constructor when no parameters are given. (0, 0)
      */
     public Vector3() {
@@ -218,7 +229,7 @@ public class Vector3 {
      * @param theZ the new z (double)
      */
     public void setZ(final double theZ) {
-        myY = theZ;
+        myZ = theZ;
     }
 
     /**
@@ -240,6 +251,10 @@ public class Vector3 {
      */
     public void set(final Vector3 theV) {
         set(theV.getX(), theV.getY(), theV.getZ());
+    }
+
+    public Vector2 toVector2() {
+        return new Vector2(myX, myY);
     }
 
     /**

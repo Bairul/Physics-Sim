@@ -1,13 +1,14 @@
 package com.physicsim.game.model;
 
 import com.physicsim.game.utility.Vector2;
+import com.physicsim.game.utility.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameWorld {
     /** Constant field for setting the world gravity. */
-    public static final Vector2 GRAVITY = new Vector2(0, 0);
+    public static final Vector3 GRAVITY = new Vector3(0, 0, 0);
     /** Constant field for setting the boundary of the world screen. */
     public static final Vector2 SCREEN_BOUNDARY = new Vector2(0, 0);
 

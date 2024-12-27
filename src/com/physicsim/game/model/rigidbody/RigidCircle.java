@@ -23,32 +23,12 @@ public class RigidCircle extends Rigid2D {
         if (theRadius <= 0) throw new IllegalArgumentException("radius must be positive");
 
         myRadius = theRadius;
-        myMoi = myRadius * myRadius * myMass / 2;
-    }
-
-    @Override
-    public void translate(final Vector2 theTranslation) {
-        myPosition.add(theTranslation);
-        myOldPosition.add(theTranslation);
-    }
-
-    @Override
-    public void rotate(final double theOrientation) {
-        myAngularPos += theOrientation;
-        myOldAngularPos += theOrientation;
+        myMassMatrix.getData()[2][2] = myRadius * myRadius * theMass / 2;
     }
 
     @Override
     protected void move() {
-        // linear movement
-        myCache.set(myPosition);
-        myPosition.add(myPosition.subNew(myOldPosition).addNew(myAcceleration));
-        myOldPosition.set(myCache);
 
-        // angular movement
-        double current = myAngularPos;
-        myAngularPos += myAngularPos - myOldAngularPos + myAngularAccel;
-        myOldAngularPos = current;
     }
     /**
      * Gets the radius of the circle.
@@ -71,9 +51,10 @@ public class RigidCircle extends Rigid2D {
      * @return the orientation in radians
      */
     public Vector2 getOrientationVector() {
-        myCache.set(myRadius, 0);
-        VMath.rotate(myCache, new Vector2(), myAngularPos);
-        return myPosition.addNew(myCache);
+//        myCache.set(myRadius, 0);
+//        VMath.rotate(myCache, new Vector2(), myAngularPos);
+//        return myPosition.addNew(myCache);
+        return null;
     }
 
     @Override

@@ -37,16 +37,17 @@ public class GameplayController {
         // boundary will be at the center of the game screen
         GameWorld.SCREEN_BOUNDARY.set(GameScreen.getWidth() >> 1, GameScreen.getHeight() >> 1);
         // set gravity
-        GameWorld.GRAVITY.set(0, 0.1);
+        GameWorld.GRAVITY.set(0, 0.1, 0);
         debugMode = false;
 
-//        myCache.set(0, -150);
-//        RegularPolygon b3 = new RegularPolygon(myCache, 4, 100, 100);
-//        b3.setDynamics(true);
-//        b3.rotate(Math.toRadians(45));
-//        myCache.set(0, 1);
-//        b3.setLinearVelocity(myCache);
-//        myGameWorld.addDynamicObject(b3);
+        myCache.set(-20, -150);
+        RegularPolygon b3 = new RegularPolygon(myCache, 4, 100, 100);
+        b3.setDynamics(true);
+        myGameWorld.addDynamicObject(b3);
+
+//        Box db = new Box(myCache, 80, 100, 100);
+//        db.setDynamics(true);
+//        myGameWorld.addDynamicObject(db);
 
         // flat 2 static
 //        myCache.set(-100.5, 100);
@@ -61,10 +62,9 @@ public class GameplayController {
 //        myGameWorld.addStaticObject(b2);
 
         // flat 1 static
-//        myCache.set(-149, 100);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1);
-//        b.rotate(Math.toRadians(45));
-//        myGameWorld.addStaticObject(b);
+        myCache.set(-149, 100);
+        Box b = new Box(myCache, 200, 200, 100);
+        myGameWorld.addStaticObject(b);
 
         // diagonal 2 static
 //        myCache.set(-150, 100);
@@ -149,14 +149,13 @@ public class GameplayController {
         }
 
         // O(D * (S + D)) --> every dynamic object with every static and dynamic object
-//        int index = 0;
-//        for (final GameObject dynObject : myGameWorld.getDynamicObjects())  {
-//            if (dynObject instanceof final Rigid2D p) {
-//                myCollisionManager.detectCollisions(p, index);
-//                if (index == 0) System.out.println(p.getLinearVelocity().getMagnitude());
-//            }
-//            index++;
-//        }
+        int index = 0;
+        for (final GameObject dynObject : myGameWorld.getDynamicObjects())  {
+            if (dynObject instanceof final Rigid2D p) {
+                myCollisionManager.detectCollisions(p, index);
+            }
+            index++;
+        }
 
 //        myCollisionManager.handleCollisions();
 

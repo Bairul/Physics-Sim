@@ -36,6 +36,9 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
      */
     public void updateGraphics(final Graphics theG) {
         myGraphics = theG;
+        myGraphics.setColor(Color.black);
+//        myGraphics.fillOval(myOrigin.intX() - 20 - 2, myOrigin.intY() + 104 - 2, 4, 4);
+//        myGraphics.fillOval(myOrigin.intX() - 40 - 2, myOrigin.intY() + 104 - 2, 4, 4);
     }
 
     @Override
@@ -76,8 +79,8 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
 
         }
         myGraphics.setColor(Color.black);
-        myGraphics.drawLine(myOrigin.intX() + theEntity.getCenterOfMass().intX(), myOrigin.intY() + theEntity.getCenterOfMass().intY(), myOrigin.intX() + theEntity.getVertices()[0].intX(), myOrigin.intY() + theEntity.getVertices()[0].intY());
-        myGraphics.fillOval(myOrigin.intX() + theEntity.getCenterOfMass().intX() - 2, myOrigin.intY() + theEntity.getCenterOfMass().intY() - 2, 4, 4);
+        myGraphics.drawLine(myOrigin.intX() + theEntity.getTransform().intX(), myOrigin.intY() + theEntity.getTransform().intY(), myOrigin.intX() + theEntity.getVertices()[0].intX(), myOrigin.intY() + theEntity.getVertices()[0].intY());
+        myGraphics.fillOval(myOrigin.intX() + theEntity.getTransform().intX() - 2, myOrigin.intY() + theEntity.getTransform().intY() - 2, 4, 4);
         return null;
     }
 
@@ -85,12 +88,12 @@ public class GameObjectRenderer extends GameObjectVisitor<Void> {
     public Void visit(final RigidCircle theEntity) {
         myGraphics.setColor(Color.black);
         myGraphics.drawOval(
-                myOrigin.intX() + theEntity.getCenterOfMass().intX() - (int) theEntity.getRadius(),
-                myOrigin.intY() + theEntity.getCenterOfMass().intY() - (int) theEntity.getRadius(),
+                myOrigin.intX() + theEntity.getTransform().intX() - (int) theEntity.getRadius(),
+                myOrigin.intY() + theEntity.getTransform().intY() - (int) theEntity.getRadius(),
                 theEntity.getDiameter(), theEntity.getDiameter());
 
         final Vector2 orient = theEntity.getOrientationVector();
-        myGraphics.drawLine(myOrigin.intX() + theEntity.getCenterOfMass().intX(), myOrigin.intY() + theEntity.getCenterOfMass().intY(), myOrigin.intX() + orient.intX(), myOrigin.intY() + orient.intY());
+        myGraphics.drawLine(myOrigin.intX() + theEntity.getTransform().intX(), myOrigin.intY() + theEntity.getTransform().intY(), myOrigin.intX() + orient.intX(), myOrigin.intY() + orient.intY());
 
         return null;
     }

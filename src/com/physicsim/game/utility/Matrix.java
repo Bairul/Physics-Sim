@@ -37,7 +37,25 @@ public class Matrix {
         }
     }
 
-    // Constructor to create a matrix from a Vector3
+    /**
+     * Constructor to initialize a square diagonal matrix of a value. Non-diagonals are 0.
+     * @param theSize the size of the square matrix
+     * @param theDiagonalValue the value
+     */
+    public Matrix(final int theSize, final double theDiagonalValue) {
+        this(theSize, theSize);
+
+        for (int i = 0; i < theSize; i++) {
+            myData[i][i] = theDiagonalValue;
+        }
+    }
+
+    /**
+     * Construcor to initialize the matrix with a 3D vector.
+     *
+     * @param theV the 3D vector
+     * @param isColumnVector true if column vector, false if row vector
+     */
     public Matrix(final Vector3 theV, final boolean isColumnVector) {
         if (isColumnVector) {
             myRows = 3;
