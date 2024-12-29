@@ -4,6 +4,7 @@ import com.physicsim.game.controller.GameplayController;
 import com.physicsim.game.model.GameObject;
 import com.physicsim.game.model.GameWorld;
 import com.physicsim.game.model.collision.response.CollisionResponse;
+import com.physicsim.game.model.collision.response.RigidBodyCollisionResponse;
 import com.physicsim.game.model.particle.VerletObject;
 import com.physicsim.game.model.rigidbody.RigidBody;
 import com.physicsim.game.model.rigidbody.RigidCircle;
@@ -20,7 +21,7 @@ import java.util.function.BiConsumer;
 public final class CollisionManager {
     /** The coefficient of restitution. ( 0 <= x <= 1)*/
     public static double COE_RES = 1;
-    private static int SUB_STEPS = 1;
+    private static final int SUB_STEPS = 1;
     /** The game world containing all the game objects. */
     private final GameWorld myWorld;
     private final Map<String, BiConsumer<GameObject, GameObject>> myCollisionType;
@@ -72,7 +73,9 @@ public final class CollisionManager {
     public void handleCollisions() {
         if (myCollisionResponses.isEmpty()) return;
 
-        myCollisionResponses.forEach(CollisionResponse::handleResponse);
+        for (int j = 0; j < SUB_STEPS; j++) {
+            myCollisionResponses.forEach(CollisionResponse::handleResponse);
+        }
 
         myCollisionResponses.clear();
     }
@@ -151,10 +154,11 @@ public final class CollisionManager {
     private void detectRigidBodyAndRigidBody(final RigidBody theA, final RigidBody theB) {
         final Manifold[] manifold = CollisionDetection.detect(theA, theB);
         if (manifold != null) {
-            GameplayController.debugMode = true;
-            System.out.println(manifold[0].getPoint());
+//            GameplayController.debugMode = true;
+
+            myCollisionResponses.add(new RigidBodyCollisionResponse(theA, theB, manifold[0]));
             if (manifold.length > 1) {
-                System.out.println(manifold[1].getPoint());
+                myCollisionResponses.add(new RigidBodyCollisionResponse(theA, theB, manifold[1]));
             }
         }
     }

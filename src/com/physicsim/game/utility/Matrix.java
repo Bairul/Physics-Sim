@@ -51,7 +51,7 @@ public class Matrix {
     }
 
     /**
-     * Construcor to initialize the matrix with a 3D vector.
+     * Constructor to initialize the matrix with a 3D vector.
      *
      * @param theV the 3D vector
      * @param isColumnVector true if column vector, false if row vector
@@ -66,6 +66,15 @@ public class Matrix {
             myCols = 3;
             myData = new double[][]{{theV.getX(), theV.getY(), theV.getZ()}};
         }
+    }
+
+    /**
+     * Constructor to initialize the ROW matrix with a 3D vector.
+     *
+     * @param theV the 3D vector
+     */
+    public Matrix(final Vector3 theV) {
+        this(theV, false);
     }
 
     /**
@@ -148,10 +157,14 @@ public class Matrix {
         return new Matrix(result);
     }
 
-    // Inverse of a diagonal matrix
+    /**
+     * Method to get the inverse of this matrix. The matrix have to be diagonal
+     *
+     * @return the inverted matrix
+     */
     public Matrix inverseDiagonal() {
         if (myRows != myCols) {
-            throw new UnsupportedOperationException("Only square matrices can have an inverse");
+            throw new IllegalStateException("Only square matrices can have an inverse");
         }
 
         double[][] result = new double[myRows][myCols];
@@ -162,6 +175,23 @@ public class Matrix {
             result[i][i] = 1.0 / myData[i][i];
         }
         return new Matrix(result);
+    }
+
+    public Vector3 toVector3() {
+        if (myRows == 1 && myCols == 3) {
+            return new Vector3(myData[0][0], myData[0][1], myData[0][2]);
+        } else if (myRows == 3 && myCols == 1) {
+            return new Vector3(myData[0][0], myData[1][0], myData[2][0]);
+        } else {
+            throw new IllegalStateException("Matrix must be 1x3 or 3x1 to convert to Vector3");
+        }
+    }
+
+    public double toScalar() {
+        if (myRows == 1 && myCols == 1) {
+            return myData[0][0];
+        }
+        throw new IllegalStateException("Matrix must be 1x1 to convert to scalar");
     }
 
     // Getter for matrix data

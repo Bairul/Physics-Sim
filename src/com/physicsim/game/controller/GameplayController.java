@@ -62,15 +62,14 @@ public class GameplayController {
 //        myGameWorld.addStaticObject(b2);
 
         // flat 1 static
-        myCache.set(-149, 100);
-        Box b = new Box(myCache, 200, 200, 100);
-        myGameWorld.addStaticObject(b);
+//        myCache.set(-149, 100);
+//        Box b = new Box(myCache, 200, 200, 100);
+//        myGameWorld.addStaticObject(b);
 
         // diagonal 2 static
-//        myCache.set(-150, 100);
-//        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1000);
-//        b.setDynamics(true);
-//        myGameWorld.addStaticObject(b);
+        myCache.set(-150, 100);
+        RegularPolygon b = new RegularPolygon(myCache, 4, 200, 1000);
+        myGameWorld.addStaticObject(b);
 //        myCache.set(150, 100);
 //        RegularPolygon b2 = new RegularPolygon(myCache, 4, 200, 1000);
 //        b2.setDynamics(true);
@@ -108,12 +107,12 @@ public class GameplayController {
 //        myGameWorld.addDynamicObject(b);
 
         // walls
-//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
-//        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX() - 50, -GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
-//        myCache.set(GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY());
-//        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 1));
+        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 10000));
+        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX() - 50, -GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 10000));
+        myCache.set(GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY());
+        myGameWorld.addStaticObject(new Box(myCache, 50, GameScreen.getHeight(), 10000));
 //
 //        myCache.set(-GameWorld.SCREEN_BOUNDARY.getX(), -GameWorld.SCREEN_BOUNDARY.getY() - 50);
 //        myGameWorld.addStaticObject(new Box(myCache, GameScreen.getWidth(), 50, 1));
@@ -157,7 +156,7 @@ public class GameplayController {
             index++;
         }
 
-//        myCollisionManager.handleCollisions();
+        myCollisionManager.handleCollisions();
 
         myGameWorld.getDynamicObjects().forEach(GameObject::update);
     }

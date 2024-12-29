@@ -6,9 +6,6 @@ public final class Manifold {
     private final Vector2 myCollisionPoint;
     private final Vector2 myCollisionNormal;
     private final Vector2 myPenetrationVector;
-//    public Manifold(final Vector2 theCollisionPoint, final Vector2 theCollisionNormal, final Vector2 thePenetrationVector) {
-//        this(theCollisionPoint, null, theCollisionNormal, thePenetrationVector);
-//    }
 
     public Manifold(final Vector2 theCollisionPoint, final Vector2 theCollisionNormal, final Vector2 thePenetrationVector) {
         myCollisionPoint = theCollisionPoint;

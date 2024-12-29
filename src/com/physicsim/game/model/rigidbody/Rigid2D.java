@@ -57,6 +57,10 @@ public abstract class Rigid2D extends GameObject {
         return myVelocity;
     }
 
+    public Matrix getInverseMassMatrix() {
+        return myMassMatrix.inverseDiagonal();
+    }
+
     /**
      * Enables/Disables the dynamics of this body. By Default the dynamics are disabled. When disabled, it will be
      * treated as a static object that can still be interacted with.
